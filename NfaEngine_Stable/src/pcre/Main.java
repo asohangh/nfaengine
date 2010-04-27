@@ -98,6 +98,7 @@ public class Main {
         engine.createEngine(nfa);
         System.out.println("OK... ");
         engine.print();
+        engine.reduceBlockChar();
         System.out.println("Build HDL ...");
         engine.buildHDL("/home/heckarim/work/xilinx/test/simple/");
         /*System.out.println("Build HDL ... ");
