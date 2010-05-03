@@ -329,11 +329,11 @@ public class Element {
         while(index < data.length()) {
             range1 = this.getChar(data, index);
             index += range1.length();
-            
+
             if(this.getChar(data, index).compareTo("-") == 0){
                 index ++;
                 range2 = this.getChar(data, index);
-                
+
                 if(range2.length() == 0){ // if end with '-'
                     ret = ret + range1 + "\\x" + Integer.toHexString((int)'-');
                 }else{
@@ -348,7 +348,7 @@ public class Element {
                     if(range2.length()== 4)
                         range2 = range2.substring(2);
                     else{
-                        range2 = Integer.toHexString((int)range2.substring(range2.length()-1).charAt(0)); // just take last character.                    
+                        range2 = Integer.toHexString((int)range2.substring(range2.length()-1).charAt(0)); // just take last character.
                     }
 
                    ret = ret + "\\z" + range1 + range2;

@@ -18,6 +18,7 @@ public class BlockChar {
     public ReEngine engine;
     public int[] array_id;
 
+
     public BlockChar(NFAEdge edge, ReEngine engine) {
         this.engine = engine;
         this.value = edge.value;
@@ -26,7 +27,7 @@ public class BlockChar {
         this.toState = new LinkedList<BlockState>();
         this.listToState = new LinkedList<LinkedList>();
         this.array_id = new int[10];
-        for (int i = 0; i < 10; i++) {
+        for(int i = 0; i<10; i++){
             array_id[i] = -1;
         }
     }

@@ -6,9 +6,9 @@ import java.util.LinkedList;
 
 
 /**
- * 
+ *
  * @author heckarim
- *	Class cac doi tuong dai dien cho trang thai theo mo hinh Compact Architecture for High-Throughput  
+ *	Class cac doi tuong dai dien cho trang thai theo mo hinh Compact Architecture for High-Throughput
  *   yeyang, weirongj, prasanna
  */
 
@@ -52,7 +52,7 @@ public class BlockState{
             }
     }
 
-    
+
     /**
      * Build blockStart
      * @param bw
@@ -105,7 +105,7 @@ public class BlockState{
         bw.write("endmodule\n\n");
         bw.flush();
     }
-	
+
 
     /**
      * Build normal blockState
@@ -131,7 +131,7 @@ public class BlockState{
         }
 
         int inputsize=this.comming.size();
-        
+
         bw.write("module state_" + this.engine.id_num + "_"+ this.id + "(out1,in_char,clk,en,rst");
 
         for(int i=0;i<inputsize;i++){

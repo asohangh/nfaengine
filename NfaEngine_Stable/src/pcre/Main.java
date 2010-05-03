@@ -62,7 +62,7 @@ public class Main {
         //String rule = "/[\\?\\x20\\x3b\\x26]module=[a-zA-Z0-9]*[^\\x3b\\x26]/";
         //System.out.print (rule);
         //String rule = "/^<window\\s+version\\s*=\\s*(\\?!(1\\.(0|2|4|5|6)))/smi";
- 
+
         //String rule = "/a[a-z](m|n){120}z/smi";
        //String rule = "/^\\s*MAIL\\s+FROM\\s*\\x3A\\s*\\x3C?\\s*[^\\x3E\\s]{257}\\s*/mi";
        //String rule = "/^100013Agentsvr\\x5E\\x5EMerlin$/smi";
@@ -80,14 +80,14 @@ public class Main {
         ParseTree tree=new ParseTree(rule);
         System.out.println("pcre is: "+tree.rule.getPattern() +" -------- "+tree.rule.getModifier())	;
         tree.printTree();
-        
+
         NFA nfa = new NFA();
         nfa.tree2NFA(tree);
 
         nfa.updateID();
         System.out.println("Original NFA:");
         nfa.print();
-        
+
         nfa.deleteRedundantState();;
         System.out.println("Modified NFA:");
         nfa.print();
@@ -98,12 +98,11 @@ public class Main {
         engine.createEngine(nfa);
         System.out.println("OK... ");
         engine.print();
-        engine.reduceBlockChar();
         System.out.println("Build HDL ...");
-        engine.buildHDL("/home/heckarim/work/xilinx/test/simple/");
+        engine.buildHDL("E:\\Java\\test");
         /*System.out.println("Build HDL ... ");
         engine.buildHDL();//*/
         System.out.println("Finish");
-         
+
     }
 }

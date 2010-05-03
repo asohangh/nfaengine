@@ -21,9 +21,12 @@ public class Main {
         // TODO code application logic here
         String[] rule = new String[3];
         // String rule = "/(ga|at)((ag|aaa)*)/";
-        rule[0] = "/(ga|at)((ag|aaa)*)cde/";
-        rule[1] = "/b*c(a|b)*[ac]#Adf+/";
-        rule[2] = "/ab[^cd][\\x3A2a]/smi";
+        //rule[0] = "/(ga|at)((ag|aaa)*)cde/";
+        //rule[1] = "/b*c(a|b)*[ac]#Adf+/";
+        //rule[2] = "/ab[^cd][\\x3A2a]/";
+        rule[0] = "/^CSeq\\x3A[^\\r\\n]+[^\\x01-\\x08\\x0B1-8\\x0C\\128-\\011\\x0E-\\x1F\\126-\\127]/smi";
+        rule[1] = "/a\\010[abc\\x3a]*b/smi";
+        rule[2] = "/^<window\\s+version\\s*=\\s*(\\?!(1\\.(0|2|4|5|6)))/smi";
         //String rule = "/FTPON\\d+\\s+TIME\\d+\\s+/smi";
         ///^Subject\x3A[^\r\n]*2\x2E41/smi
         //ParseTree temp=new ParseTree("b*c(a|b)*[ac]#");
@@ -83,16 +86,31 @@ public class Main {
             bRam.addEngine(engine, i);
 
             System.out.println("OK... ");
-            //engine.print();
+            engine.print();
             System.out.println("Build HDL ...");
             engine.buildHDL("E:\\Java\\test");
             /*System.out.println("Build HDL ... ");
             engine.buildHDL();//*/
             System.out.println("Finish");
         }
-
-
         bRam.unionCharBlocks();
-        bRam.print();
+        /*for (int i = 0; i < bRam.blockCharList.size(); i++) {
+            BlockChar temp = bRam.blockCharList.get(i);
+            System.out.print(temp.value + " ");
+        }
+        System.out.println();
+        for (int i = 0; i < bRam.blockCharList.size(); i++) {
+            BlockChar temp = bRam.blockCharList.get(i);
+            System.out.println(temp.value);
+            for (int j = 0; j < temp.listToState.size(); j++) {
+                for (int k = 0; k < temp.listToState.get(j).size(); k++) {
+                    BlockState tempState = (BlockState) temp.listToState.get(j).get(k);
+                    System.out.println("Engine: " + temp.array_id[j] + " state: " + tempState.id);
+                }
+            }
+        }*/
+        bRam.fillEntryValue();
+        //bRam.printBRam();
+        bRam.buildCOE();
     }
 }

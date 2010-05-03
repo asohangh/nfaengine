@@ -78,7 +78,7 @@ public class NFA {
         public void insertEdge(NFAState from, NFAState to, Node s) {
 
     	//Ham insert canh vao nfastate frome, cahj epsilon nam dau tien, canh char nam cuoi cung
-        
+
         NFAEdge newEdge = new NFAEdge(this.rule);
         if (newEdge == null) {
             return;
@@ -170,7 +170,7 @@ endNFA
                         bw.write(" " + q.dest.order);
                     q = q.nextEdge;
                 }
-                
+
 
                 //Mo hinh nfa nay chi co duy nha mot nextsate for ...
                 q = p.edge;
@@ -410,7 +410,7 @@ endNFA
         nfa.insertExitState(sExit);
         nfa.insertEdge(sStart, sExit, temp);
         return nfa;
-    
+
     }
 
     public void tree2NFA (ParseTree tree)
@@ -433,7 +433,7 @@ endNFA
     	ret.exit.isFinal=true;
         this.start = ret.start;
         this.exit  = ret.exit;
-        
+
         //insert rule for every NFAEdge.
         NFAState p = this.start;
         while (p != null) {

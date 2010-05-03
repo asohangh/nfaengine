@@ -20,7 +20,7 @@ import pcre.Refer;
  */
 public class BlockContraint extends BlockState{
 
-    
+
     public ReEngine ContEngine;
     public int m,n,g,k;
 
@@ -43,22 +43,22 @@ public class BlockContraint extends BlockState{
             this.comming.get(i).going.remove(num);
             this.comming.get(i).going.add(num, this);
         }
-        
+
     }
 
 
     /**
-     * 
+     *
      */
     @Override
-    public void buildHDL(){ 
+    public void buildHDL(){
         String rule;
         String s[] = this.acceptChar.value.split(",");
         this.m = Integer.parseInt(s[1]);
         this.n = Integer.parseInt(s[0]);
         int max= Math.max(n, m);
         this.k = (int)(Math.floor(Math.log(max)/Math.log(2)) +1);
-        
+
         if(this.acceptChar.code_id == Refer._op_atleast)
             this.g = 0;
         else
@@ -67,7 +67,7 @@ public class BlockContraint extends BlockState{
         pcre.Refer.println("Create BlockConstraint: " + this.acceptChar.value , this.engine.document);
         pcre.Refer.println("\tm,n,g,k: " + m +" "+ n+" "+g+" "+k,this.engine.document );
         rule = this.acceptChar.value.substring(this.acceptChar.value.indexOf("/"));
-        
+
         ParseTree tempTree = new ParseTree(rule);
         NFA nfa = new NFA();
         nfa.tree2NFA(tempTree);
@@ -187,7 +187,7 @@ public class BlockContraint extends BlockState{
 		}
     }
 
-    
+
     public void buildCountCompUnit(BufferedWriter bw){
         try {
             bw.write("module CountCompUnit_" + this.engine.id_num + "_" + this.id + "(out,clk,inc,en_in,rst,rst_inc);\n");
@@ -198,7 +198,7 @@ public class BlockContraint extends BlockState{
             bw.write("\tparameter\tG="+this.g+"; // g==0 is atmost, g==1 is exactly or between; g==2 is atleast;\n");
 
             bw.write("\n\tinput\t\tinc, clk, en_in, rst, rst_inc;\n");
-            bw.write("\toutput\t\tout;\n");            
+            bw.write("\toutput\t\tout;\n");
             bw.write("\twire\tcompN, compM, en, mux_out;\n");
             bw.write("\twire\t[K-1:0]\tcReg;\n\n");
 

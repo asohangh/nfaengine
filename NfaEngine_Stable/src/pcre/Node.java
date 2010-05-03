@@ -12,7 +12,7 @@ public class Node {
             this.value = e.value;
             this.left = this.right = null;
     }
-    
+
     public Node (String s,int id){
     	this.id=id;
         value = s;

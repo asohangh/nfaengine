@@ -7,31 +7,31 @@ import javax.swing.text.Document;
  */
 
 /*
- * 			Chaim Frenkel: "Perl's grammar can not be reduced to BNF. 
+ * 			Chaim Frenkel: "Perl's grammar can not be reduced to BNF.
  * 				The work of parsing perl is distributed between yacc, the lexer, smoke and mirrors."
  */
 
 /* The BNF will be apply:
- * 
+ *
  * pcre		::= concat | (concat '|' expr)
- * 
+ *
  * concat	::= rep | (rep '\176' concat)
- * 
+ *
  * rep		::= atom '*' | atom '?' | atome '+' | atom '{...}'
- * 
+ *
  * atom		::= char | '(' expr ')'
- * 
+ *
  * char		::= alphanumeric or class character "[]";
  */
 
-/* 
+/*
  * Supported::
  * 			Operator: *, and, +, ?, {}, |, ()
  * 			Leaf:    a, ., [], \xFF, \d, \w, \s, \n, \r, \t
  * 			Modifier: smi
  * NotSupport::
  * 			Operator: backreference, ^, $, ...
- * 			Leaf: \000 ... 
+ * 			Leaf: \000 ...
  */
 
 
@@ -40,7 +40,7 @@ public class ParseTree {
 	public Node root;			// Root of the tree
 	public PcreRule rule;                   // DataStructure for Pcre rule.
 
-	//Building Node Function nest.	
+	//Building Node Function nest.
     public Node buildLeafNode (Element e){
         Node re = new Node (e);
         return re;
@@ -160,7 +160,7 @@ public class ParseTree {
                 }
                 return temp;
 	}
-        
+
     /*
      *      PRINT TREE FUNCTION NEST.
      */

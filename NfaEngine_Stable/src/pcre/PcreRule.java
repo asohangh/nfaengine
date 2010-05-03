@@ -10,7 +10,7 @@ package pcre;
  *
  */
 public class PcreRule {
-	
+
     // pcre:  /<pattern>/[<modifier>]
     private String pattern;         //Content of pcreRule
     private String modifier;		//Modifier of pcreRule
@@ -47,7 +47,7 @@ public class PcreRule {
 
     /**
      * Separate pcre rule into pattern and modifier.
-     * 
+     *
      * @param rule :    pcre rule
      *          format: /<pattern>/[<modifier>]
      * return:  true if success
@@ -77,7 +77,7 @@ public class PcreRule {
     /**
      * Get element with current index position
      * @return
-     *         
+     *
      */
     public Element getElement(){
             Element ret = this.getElementAt(this.index);
@@ -110,7 +110,7 @@ public class PcreRule {
     public Element getNextElement(){
         return getElementAt(this.nextIndex);
     }
-	
+
     /**
      * turn pcre pattern into formated model, easy to parse.
      * @return pattern after format;
@@ -221,7 +221,7 @@ public class PcreRule {
         return this.pattern;
     }
 
-    
+
     /**
      * Insert and character (176) into specific position
      * @param index
