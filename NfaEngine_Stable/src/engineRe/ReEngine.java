@@ -326,6 +326,7 @@ public class ReEngine {
     public void buildHDL() {	//Build myDff;
         this.buildDflipflop();
         //Create top module HDL code.
+        pcre.Refer.println("Build HDL to : " + _outputfolder);
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(this._outputfolder + "engine_" + this.id_num + ".v"));
             bw.write("module engine_" + this.id_num + "(out,clk,sod,en,char);\n");

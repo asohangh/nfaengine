@@ -416,7 +416,7 @@ public class BRAM {
 
     public void buildCOE() {
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(System.getProperty("user.dir") + System.getProperty("file.separator") + "BRAM_" + ID + ".coe" ));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(System.getProperty("user.dir") + System.getProperty("file.separator") + "test" + System.getProperty("file.separator") + "BRAM_" + ID + ".coe" ));
             bw.write(";");
             for(int i = 0; i < this.blockCharList.size(); i ++) {
                 bw.write(this.blockCharList.get(i).value + " ");
