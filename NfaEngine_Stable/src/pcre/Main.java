@@ -87,12 +87,13 @@ public class Main {
         nfa.updateID();
         System.out.println("Original NFA:");
         nfa.print();
-
+        nfa.generateDotFile("nfa_origin.dot", null);
         nfa.deleteRedundantState();;
         System.out.println("Modified NFA:");
         nfa.print();
+        nfa.generateDotFile("nfa_reduce.dot", null);
 
-        System.out.println("Building Regular Expression Engine....:");
+       /* System.out.println("Building Regular Expression Engine....:");
 
         ReEngine engine=new ReEngine();
         engine.createEngine(nfa);

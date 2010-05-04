@@ -7,6 +7,8 @@ package NFA;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -27,6 +29,8 @@ public class NFA {
     public NFAState exit = null;
     //public String modifier;
     public PcreRule rule = null;
+    public static String _default_folder = System.getProperty("user.dir") + System.getProperty("file.separator");
+    public static String _default_file_name = "nfa.dot";
     //public int count = 0;
 
 
@@ -232,6 +236,53 @@ endNFA
         }
     }
 
+    public void generateDotFile(String name, String folder){
+        BufferedWriter bw = null;
+        try {
+            if (null == folder || folder.isEmpty()) {
+                folder = _default_folder;
+            }
+            if (null == name || name.isEmpty()) {
+                name = _default_file_name;
+            }
+            bw = new BufferedWriter(new FileWriter(folder + name));
+            bw.write("digraph \"nfa path\" {" +
+                    "\ngraph [ranksep=.2,rankdir=LR];" +
+                    "\nnode [shape=circle,fontname=Helvetica,fontsize=14];" +
+                    "\nnode [width=0.4,fixedsize=true];" +
+                    "\nedge [fontname=Helvetica,fontsize=14];" +
+                    "\n-1 [width=0.2,shape=point color=red];" +
+                    "\n-1 -> 0 [ color=red];");
+            NFAState p = this.start;
+            while (p != null){
+                if(p.isFinal)
+                    bw.write("\n" + p.order + " [label=q" + p.order + " color=red];");
+                else
+                    bw.write("\n" + p.order + " [label=q" + p.order + " color=green];");
+                p = p.nextState;
+            }
+            p = this.start;
+            String color ="";
+            while (p != null){
+                NFAEdge q = p.edge;
+                while (q != null){
+                    if (q.isEpsilon){
+                        color = "red";
+                    }else
+                        color = "black";
+                    bw.write("\n" + p.order + " -> " + q.dest.order + "  [label=" + q.value + " color=" + color + "];");
+                    q = q.nextEdge;
+                }
+                p = p.nextState;
+            }
+            bw.write("\n}\n");
+            bw.flush();
+            bw.close();
+        } catch (IOException ex){
+            System.err.println(ex);
+        }
+    }
+     
     public void updateID() {
         int order = 0;
         NFAState p = start;
@@ -304,7 +355,7 @@ endNFA
 
     }
 
-    public NFA buildUnion (NFA nfa1, NFA nfa2)
+       public NFA buildUnion (NFA nfa1, NFA nfa2)
     {
         NFAState sStart = new NFAState ();
         NFAState sExit = new NFAState();
