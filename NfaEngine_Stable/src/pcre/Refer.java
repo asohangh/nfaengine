@@ -19,26 +19,26 @@ public class Refer {
 	public static final int _class_word		=	6; 			// \w
 	public static final int _class_dot		=	7;          // .
 	public static final int _ascii_hex		=	8;			// \xFF
-        public static final int _char_start             =       20;         // ^
-        public static final int _char_end               =       21;         // $
+        public static final int _char_start             =       9;         // ^
+        public static final int _char_end               =       10;         // $
 
-	public static final int _op_and			= 	9;			// Operator and
-	public static final int _op_or			=	10; 			// Operator or	|
-	public static final int _op_star		=	11;			// Operator repetition 	*
-	public static final int _op_plus		=	12;			//		...				+
-	public static final int _op_ques		=	13;			//		...				?
-	public static final int _op_constraint	        = 	14;			//  Contraint Repetiton
-	public static final int _op_atleast		=	15;			//	Contraint Repetiton {n,}
-	public static final int _op_between		=	16;			// 		...				{n,x}
-	public static final int _op_exactly		=	17;			//		...				{n}
-	public static final int _op_parent		= 	18; 		//	Parenthesis 		()
-	public static final int _op_backrefer	        =	19;			//  BackReference		\1, \2, ...\n
+	public static final int _op_and			= 	11;			// Operator and
+	public static final int _op_or			=	12; 			// Operator or	|
+	public static final int _op_star		=	13;			// Operator repetition 	*
+	public static final int _op_plus		=	14;			//		...				+
+	public static final int _op_ques		=	15;			//		...				?
+	public static final int _op_constraint	        = 	16;			//  Contraint Repetiton
+	public static final int _op_atleast		=	17;			//	Contraint Repetiton {n,}
+	public static final int _op_between		=	18;			// 		...				{n,x}
+	public static final int _op_exactly		=	19;			//		...				{n}
+	public static final int _op_parent		= 	20; 		//	Parenthesis 		()
+	public static final int _op_backrefer	        = 21;			//  BackReference		\1, \2, ...\n
 
 
         public static final String [] convert = {"Char","Class","NegC","CRange","NegCRange",
-                                             "CDigit","CWord","CDot","Hex","AND",
-                                             "OR","STAR","PLUS","QUES","CONTR",
-                                             "ATLEA","BETW","EXACT","PAREN","BACKRE","START","END"};
+                                             "CDigit","CWord","CDot","Hex","START","END",
+                                             "AND","OR","STAR","PLUS","QUES","CONTR",
+                                             "ATLEA","BETW","EXACT","PAREN","BACKRE"};
 
 
 	/**
@@ -108,7 +108,11 @@ public class Refer {
         return success;
     }
 
-    public String fixFolderPath(String path){
+    public static boolean isOperator(int id){
+        return (id>=11 && id<=21);
+    }
+
+    public static String fixFolderPath(String path){
         if(path.indexOf("\\") !=-1 ){ // he thong file window
             if(!path.endsWith("\\"))
                return path + "\\";

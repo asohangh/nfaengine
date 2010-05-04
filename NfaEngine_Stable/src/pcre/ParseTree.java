@@ -1,5 +1,8 @@
 package pcre;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import javax.swing.text.Document;
 
 /*
@@ -39,6 +42,8 @@ public class ParseTree {
 
 	public Node root;			// Root of the tree
 	public PcreRule rule;                   // DataStructure for Pcre rule.
+    public static String _default_folder = System.getProperty("user.dir") + System.getProperty("file.separator");
+    public static String _default_file_name = "parsetree.dot";
 
 	//Building Node Function nest.
     public Node buildLeafNode (Element e){
@@ -191,4 +196,59 @@ public class ParseTree {
 			this.printTreeRecursive(doc,root.right, tab+1);
     }
 
+    public void generateDotFile(String name, String folder){
+        BufferedWriter bw = null;
+        try {
+            if (null == folder || folder.isEmpty()) {
+                folder = _default_folder;
+            }
+            if (null == name || name.isEmpty()) {
+                name = _default_file_name;
+            }
+            bw = new BufferedWriter(new FileWriter(folder + name));
+            bw.write("digraph \"parse Tree\" {" +
+                    "\ngraph [ranksep=.2,rankdir=TD];" +
+                    "\nnode [shape=circle,fontname=Arial,fontsize=14];" +
+                    "\nnode [width=1,fixedsize=true];" +
+                    "\nedge [fontname=Arial,fontsize=14];" +
+                    "\n-1 [width=0.2,shape=point color=red];" +
+                    "\n-1 -> 0 [ color=red];");
+            this.generateDotFile_recursive(this.root, bw, 0);
+            bw.write("\n}\n");
+            
+
+            bw.flush();
+            bw.close();
+        }catch(IOException ex){
+            System.err.println(ex);
+        }
+    }
+
+    private int generateDotFile_recursive(Node root, BufferedWriter bw, int order) throws IOException{
+        if(root==null)
+			return order;
+        String colornode = "blue";
+        String coloredge = "green";
+        if( Refer.isOperator(root.id))
+            colornode = "red";
+        int neworder = order + 1;
+        if( Refer.isOperator(root.id))
+            bw.write("\n" + order + " [label=\"[" + Refer.convert[root.id] + "]\" color=" + colornode + "];");
+        else
+            bw.write("\n" + order + " [label=\"" + root.value +  "\" color=" + colornode + "];");
+
+		if(root.left==null && root.right==null)
+			return neworder;
+
+		if(root.left!=null){
+            bw.write("\n" + order + " -> " + neworder + " [color=" + coloredge + "];" );
+			neworder = this.generateDotFile_recursive(root.left, bw, neworder);
+        }
+		if(root.right!=null){
+            bw.write("\n" + order + " -> " + neworder + " [color=" + coloredge + "];" );
+			neworder = this.generateDotFile_recursive(root.right, bw, neworder);
+        }
+
+    return neworder;
+    }
 }

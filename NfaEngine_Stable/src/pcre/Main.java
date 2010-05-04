@@ -42,13 +42,13 @@ public class Main {
         //ParseTree temp=new ParseTree("(g.a|a.t).((a.g|a.a.a)*)");
         //ParseTree temp=new ParseTree("(ga|at)((ag|aaa)*)");
         //b*c(a|b)*[ac]d
-        String rule = "/(ga|at)((ag|aaa)*)/";
+        //String rule = "/(ga|at)((ag|aaa)*)/";
         //String rule = "/FTPON\\d+\\s+TIME\\d+\\s+/smi";
         ///^Subject\x3A[^\r\n]*2\x2E41/smi
         //ParseTree temp=new ParseTree("b*c(a|b)*[ac]#");
         ///FROM|3A|\\s+HTTP_RAT_.*SUBJECT|3A|\\s+there\\s+is\\s+a\\s+HTTPRAT\\s+waiting\\s+4\\s+u\\s+on/sm
         //temp.printTree();
-        //String rule="/\\x3Ctitle\\x3ETroya\\s+\\x2D\\s+by\\s+Sma\\s+Soft\\x3C\\x2Ftitle\\x3E/smi";
+        String rule="/\\x3Ctitle\\x3ETroya\\s+\\x2D\\s+by\\s+Sma\\s+Soft\\x3C\\x2Ftitle\\x3E/smi";
         //String rule = "/\\x2F(fn|s)\\x3F[\\r\\n]*si/smi";
        //String rule = "/a\\010[abc\\x3a]*b/smi";
        //String rule = "/abc/";
@@ -80,6 +80,7 @@ public class Main {
         ParseTree tree=new ParseTree(rule);
         System.out.println("pcre is: "+tree.rule.getPattern() +" -------- "+tree.rule.getModifier())	;
         tree.printTree();
+        tree.generateDotFile(null, null);
 
         NFA nfa = new NFA();
         nfa.tree2NFA(tree);
@@ -89,6 +90,7 @@ public class Main {
         nfa.print();
         nfa.generateDotFile("nfa_origin.dot", null);
         nfa.deleteRedundantState();;
+        nfa.updateID();
         System.out.println("Modified NFA:");
         nfa.print();
         nfa.generateDotFile("nfa_reduce.dot", null);

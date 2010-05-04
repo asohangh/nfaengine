@@ -248,9 +248,9 @@ endNFA
             bw = new BufferedWriter(new FileWriter(folder + name));
             bw.write("digraph \"nfa path\" {" +
                     "\ngraph [ranksep=.2,rankdir=LR];" +
-                    "\nnode [shape=circle,fontname=Helvetica,fontsize=14];" +
-                    "\nnode [width=0.4,fixedsize=true];" +
-                    "\nedge [fontname=Helvetica,fontsize=14];" +
+                    "\nnode [shape=circle,fontname=Arial,fontsize=14];" +
+                    "\nnode [width=1,fixedsize=true];" +
+                    "\nedge [fontname=Arial,fontsize=14];" +
                     "\n-1 [width=0.2,shape=point color=red];" +
                     "\n-1 -> 0 [ color=red];");
             NFAState p = this.start;
@@ -270,7 +270,7 @@ endNFA
                         color = "red";
                     }else
                         color = "black";
-                    bw.write("\n" + p.order + " -> " + q.dest.order + "  [label=" + q.value + " color=" + color + "];");
+                    bw.write("\n" + p.order + " -> " + q.dest.order + "  [label=\"[" + q.value + "]\" color=" + color + "];");
                     q = q.nextEdge;
                 }
                 p = p.nextState;
