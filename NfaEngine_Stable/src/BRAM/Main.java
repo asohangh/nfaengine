@@ -7,6 +7,7 @@ package BRAM;
 import NFA.*;
 import engineRe.*;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.util.LinkedList;
 import java.util.logging.Level;
@@ -26,15 +27,12 @@ public class Main {
         // TODO code application logic here
         String[] rule = new String[3];
         // String rule = "/(ga|at)((ag|aaa)*)/";
-        //rule[0] = "/(ga|at)((ag|aaa)*)cde/";
-        //rule[1] = "/b*c(a|b)*[ac]#Adf+/";
-        //rule[2] = "/ab[^cd][\\x3A2a]/";
-        //rule[0] = "/^CSeq\\x3A[^\\r\\n]+[^\\x01-\\x08\\x0B1-8\\x0C\\128-\\011\\x0E-\\x1F\\126-\\127]/smi";
-        //rule[1] = "/a\\010[abc\\x3a]*b/smi";
-        //rule[2] = "/^<window\\s+version\\s*=\\s*(\\?!(1\\.(0|2|4|5|6)))/smi";
-        rule[0] = "/abc/";
-        rule[1] = "/a[^b]/";
-        rule[2] = "/[abc]bc/";
+        rule[0] = "/(ga|at)((ag|aaa)*)cde/";
+        rule[1] = "/b*c(a|b)*[ac]#Adf+/";
+        rule[2] = "/ab[^cd][\\x3A2a]/";
+        //rule[3] = "/^CSeq\\x3A[^\\r\\n]+[^\\x01-\\x08\\x0B1-8\\x0C\\128-\\011\\x0E-\\x1F\\126-\\127]/smi";
+        //rule[4] = "/A\\010[abc\\x3a]*b/smi";
+        //rule[5] = "/^<window\\s+version\\s*=\\s*(\\?!(1\\.(0|2|4|5|6)))/smi";
         //String rule = "/FTPON\\d+\\s+TIME\\d+\\s+/smi";
         ///^Subject\x3A[^\r\n]*2\x2E41/smi
         //ParseTree temp=new ParseTree("b*c(a|b)*[ac]#");
@@ -68,9 +66,11 @@ public class Main {
         //String rule = "/^CSeq\\x3A[^\\r\\n]+[^\\x01-\\x08\\x0B1-8\\x0C\\128-\\011\\x0E-\\x1F\\126-\\127]/smi";
         //String rule = "/abc[aA-G]";
         //String rule = "/ab{3}c/smi";
+
         BRAM bRam = new BRAM(0);
         LinkedList<ReEngine> engineList = new LinkedList<ReEngine>();
-        String folders = System.getProperty("user.dir") + System.getProperty("file.separator") + "test" + System.getProperty("file.separator");
+        //String folders = System.getProperty("user.dir") + System.getProperty("file.separator") + "test" + System.getProperty("file.separator");
+        String folders = BRAM._outputFolder + File.separator;
         for (int i = 0; i < rule.length; i++) {
             ParseTree tree = new ParseTree(rule[i]);
             System.out.println("pcre is: " + tree.rule.getPattern() + " -------- " + tree.rule.getModifier());
@@ -98,18 +98,17 @@ public class Main {
             System.out.println("OK... ");
             engine.print();
             System.out.println("Build HDL ...");
-            System.out.println(folders);
-            engine.buildHDL(folders);
+            engine.buildHDL("E:\\Java\\");
             /*System.out.println("Build HDL ... ");
             engine.buildHDL();//*/
             System.out.println("Finish");
         }
         bRam.unionCharBlocks();
-        /*for (int i = 0; i < bRam.blockCharList.size(); i++) {
+        for (int i = 0; i < bRam.blockCharList.size(); i++) {
             BlockChar temp = bRam.blockCharList.get(i);
             System.out.print(temp.value + " ");
         }
-        System.out.println();
+        System.out.println("Width: " + bRam.blockCharList.size());
         for (int i = 0; i < bRam.blockCharList.size(); i++) {
             BlockChar temp = bRam.blockCharList.get(i);
             System.out.println(temp.value);
@@ -119,14 +118,18 @@ public class Main {
                     System.out.println("Engine: " + temp.array_id[j] + " state: " + tempState.id);
                 }
             }
-        }*/
+        }
         bRam.fillEntryValue();
         //bRam.printBRam();
         bRam.buildCOE();
-        Main.createTopEngineTogether(folders, engineList);
+        bRam.buildHDL();
+        bRam.buildXCO();
+        LinkedList <BRAM> bramList = new LinkedList<BRAM> ();
+        bramList.add(bRam);
+        Main.createTopEngineTogether(folders, bramList);
     }
 
-    public static void createTopEngineTogether(String folder, LinkedList<ReEngine> engine)throws Exception{
+ /*  public static void createTopEngineTogether(String folder, LinkedList<ReEngine> engine)throws Exception{
 
         Main.doBuildInterfacer(folder);
         BufferedWriter bw;
@@ -142,15 +145,42 @@ public class Main {
         bw.write("\tinterfacer I1(stop,char_int,en_int,en,char,sod,eod,clk);\n");
         for(int j =0; j<engine.size(); j++){
             bw.write("\tengine_"+ j + " E_" + j +  " (out["+j+"],clk,sod,en_int,char_int);\n");
-        }
-        
+}
+
         bw.write("\nendmodule\n");
         bw.flush();
         bw.close();
+    }*/
+
+    public static void createTopEngineTogether(String folder, LinkedList<BRAM> bramList) {
+        try {
+            Main.doBuildInterfacer(folder);
+            BufferedWriter bw;
+            bw = new BufferedWriter(new FileWriter(folder + "top_engine.v"));
+            bw.write("module top_engine(out,stop,clk_in,sod,en,char,eod);\n");
+            bw.write("\tinput [7:0] char;\n\tinput clk_in,sod,en,eod;\n");
+            bw.write("\toutput stop;\n ");
+            bw.write("\twire [7:0] char_int;\n\twire en_int;\n");
+            bw.write("\toutput ["+(bramList.size()-1)+":0] out;\n\n");
+            bw.write("\tassign clk = ~clk_in;\n");
+            bw.write("\tinterfacer I1(stop,char_int,en_int,en,char,sod,eod,clk);\n");
+            for(int j = 0; j < bramList.size(); j++){
+                BRAM temp = bramList.get(j);
+                bw.write("\tBRAM_"+ temp.ID + " blockram_" + temp.ID +  " (out["+j+"],clk,sod,en_int,char_int);\n");
+            }
+
+            bw.write("\nendmodule\n");
+            bw.flush();
+            bw.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
     }
-    public static void doBuildInterfacer(String folder)throws Exception{
-       
-            BufferedWriter bw = new BufferedWriter(new FileWriter(folder + "interfacer.v"));
+
+   public static void doBuildInterfacer(String folder)throws Exception{
+
+      BufferedWriter bw = new BufferedWriter(new FileWriter(folder + "interfacer.v"));
 
        bw.write("module interfacer(stop,data,en,en_in,data_in,sod,eod,clk);\n" +
                "\tinput en_in,eod,clk,sod;\n" +

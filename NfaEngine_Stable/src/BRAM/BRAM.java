@@ -6,6 +6,7 @@ package BRAM;
 
 import engineRe.*;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -25,6 +26,7 @@ public class BRAM {
     int row = -1;
     int col = -1;
     public int width = -1;
+    public static final String _outputFolder = "GeneratedFiles";
 
 
 
@@ -33,6 +35,8 @@ public class BRAM {
         this.blockCharList = new LinkedList();
         this.ID = id;
         this.BRam = new char[256][1]; // deep = 256, width = 1
+        File file = new File(this._outputFolder);
+        file.mkdir();
     }
 
     public void addEngine(ReEngine engine, int id) {
@@ -45,8 +49,7 @@ public class BRAM {
      *
      ***************************************/
     public void unionCharBlocks() {
-        //TO DO
-        for (int i = 0; i < engineList.size(); i++) {
+         for (int i = 0; i < this.engineList.size(); i++) {
             engineList.get(i).reduceBlockChar();
             for (int j = 0; j < engineList.get(i).listBlockChar.size(); j++) {
                 this.blockCharList.add(engineList.get(i).listBlockChar.get(j));
@@ -58,13 +61,15 @@ public class BRAM {
             temp.listToState.add(temp.toState);
             for (int j = i + 1; j < this.blockCharList.size(); j++) {
                 BlockChar walk = this.blockCharList.get(j);
-                if (this.engineList.get(0).compareBlockChar(temp, walk)) {
+                if (this.compareBlockChar(temp, walk)) {
                     temp.listToState.add(walk.toState);
                     temp.array_id[temp.listToState.size() - 1] = walk.engine.id_num;
                     this.blockCharList.remove(walk);
                 }
             }
         }
+
+
 
         /*for (int i = 0; i < engineList.size(); i++) {
         ReEngine temp = engineList.get(i);
@@ -77,7 +82,85 @@ public class BRAM {
         }
         }*/
         this.width = this.blockCharList.size();
+        //update ID;
+        for (int i = 0; i < this.blockCharList.size(); i++) {
+            //System.out.print(this.blockCharList.get(i).value + " ");
+            this.blockCharList.get(i).id = i;
+            System.out.print(this.blockCharList.get(i).value + "[" + this.blockCharList.get(i).id +"] ");
+        }
+
+        for(int i = 0; i < this.blockCharList.size(); i++) {
+            BlockChar bChar = this.blockCharList.get(i);
+            for(int j = 0; j < this.engineList.size(); j++){
+                ReEngine engine = this.engineList.get(j);
+                for(int k = 0; k < engine.listBlockChar.size(); k++) {
+                    BlockChar bc = engine.listBlockChar.get(k);
+                    if(bc.value.equals(bChar.value)) {
+                        bc.id = bChar.id;
+                    }
+                }
+            }
+        }
+
+        //need sort list
+         for(int i = 0; i < this.engineList.size(); i++){
+                ReEngine engine = this.engineList.get(i);
+                for(int j = 0; j < engine.listBlockChar.size(); j++) {
+                    BlockChar bc = engine.listBlockChar.get(j);
+                    for(int k = j + 1; k < engine.listBlockChar.size(); k++) {
+                        BlockChar bc_1 = engine.listBlockChar.get(k);
+                        BlockChar temp;
+                        if(bc.id > bc_1.id) {
+                            temp = bc;
+                            engine.listBlockChar.add(k+1, temp);
+                            engine.listBlockChar.remove(j);
+                            j--;
+                            break;
+                    }
+                }
+            }
+         }
+
+
+        System.out.println();
+        for(int i = 0; i < this.engineList.size(); i++) {
+            ReEngine eng = this.engineList.get(i);
+            System.out.println(" Eng" + eng.id_num +": ");
+            for(int j = 0; j < eng.listBlockChar.size(); j++) {
+                BlockChar bc = eng.listBlockChar.get(j);
+                System.out.print(bc.value + "[" + bc.id +"] ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+
+
     }
+
+     public boolean compareBlockChar(BlockChar temp, BlockChar walk) {
+        boolean res = false;
+        if (temp.code_id == walk.code_id) {
+            if (temp.value.compareTo(walk.value) == 0) {
+                /*for (int k = 0; k < walk.toState.size(); k++) {
+                temp.toState.add(walk.toState.get(k));
+                walk.toState.get(k).acceptChar = temp;
+                }*/
+                res = true;
+            } else {
+                if (walk.engine.rule.getModifier().indexOf("i") != -1 && temp.engine.rule.getModifier().indexOf("i") != -1 && temp.value.compareToIgnoreCase(walk.value) == 0) {// neu la case insensitive
+                    //chep toState tu walk vo temp;
+                    /*for (int k = 0; k < walk.toState.size(); k++) {
+                    temp.toState.add(walk.toState.get(k));
+                    walk.toState.get(k).acceptChar = temp;
+                    }*/
+
+                    res = true;
+                }
+            }
+        }
+        return res;
+    }
+
 
     public void fillEntryValue() {
 
@@ -416,9 +499,9 @@ public class BRAM {
 
     public void buildCOE() {
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(System.getProperty("user.dir") + System.getProperty("file.separator") + "test" + System.getProperty("file.separator") + "BRAM_" + ID + ".coe" ));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(BRAM._outputFolder + File.separator + "BRAM_" + ID + ".coe" ));
             bw.write(";");
-            for(int i = 0; i < this.blockCharList.size(); i ++) {
+            for(int i = this.blockCharList.size() - 1; i >= 0; i--) {
                 bw.write(this.blockCharList.get(i).value + " ");
             }
             bw.write("\n");
@@ -426,7 +509,7 @@ public class BRAM {
                     + "MEMORY_INITIALIZATION_RADIX=2;\n"
                     + "MEMORY_INITIALIZATION_VECTOR=\n");
             for (int i = 0; i < 256; i++) {
-                for(int j = 0; j < width; j++) {
+                for(int j = width - 1; j >= 0; j--) {
                     bw.write(BRam[i][j]);
                 }
                 if (i != 255)
@@ -440,6 +523,147 @@ public class BRAM {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    /*Example:
+    module BRAM_0(out,clk,sod,en,char);
+	input clk, sod, en;
+	input [7:0] char;
+	output [2:0] out;
+	wire [12:0] q_out;
+
+////BRAM declare
+
+bram_entity_0 ram (
+	.addr(char),
+	.clk(clk),
+	.dout(q_out),
+	.en(en));
+
+
+
+
+
+	engine_0 en_0(out[0], clk, sod, en, q_out[0], q_out[1], q_out[2], q_out[3], q_out[4], q_out[5]);
+	engine_1 en_1(out[1], clk, sod, en, q_out[1], q_out[2], q_out[3], q_out[6], q_out[7], q_out[8], q_out[9], q_out[10]);
+	engine_2 en_2(out[2], clk, sod, en, q_out[1], q_out[6], q_out[11], q_out[12]);
+
+endmodule
+
+     */
+
+    public void buildHDL() {
+        try {
+
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(BRAM._outputFolder + File.separator + "BRAM_" + this.ID + ".v")));
+            bw.write("module BRAM_" + this.ID + "(out,clk,sod,en,char);\n");
+            bw.write("\tinput clk, sod, en;\n");
+            bw.write("\tinput [7:0] char;\n");
+            bw.write("\toutput [" + (this.engineList.size() - 1) + ":0] out;\n" );
+            bw.write("\twire [" + (this.width - 1) + ":0] q_out;\n");
+
+            //BRAM declare
+            // assume that output of single port ram is q_out[width - 1 : 0]
+            bw.write("\n//BRAM declare \n");
+
+            bw.write("\tbram_entity_" + this.ID + " ram (.addr(char),.clk(clk),.dout(q_out),.en(en));\n");
+            //end of bram
+
+            //declare engine
+            for(int i = 0; i < this.engineList.size(); i++) {
+                bw.write("\tengine_" + this.engineList.get(i).id_num + " en_" + this.engineList.get(i).id_num + "(out[" + i + "], clk, sod, en"); // thieu char
+
+                //routing to each engine
+                for (int j = 0; j < this.blockCharList.size(); j++) {
+                    BlockChar temp = this.blockCharList.get(j);
+                    for (int k = 0; k < temp.listToState.size(); k++) {
+                        //for (int l = 0; l < temp.listToState.get(k).size(); l++) {
+                            if (temp.array_id[k] == this.engineList.get(i).id_num) {
+                                bw.write(", q_out[" + j + "]");
+                            }
+                        //}
+
+                    }
+                }
+                bw.write(");\n");
+            }
+            for(int i = 0; i < this.engineList.size(); i++)
+                this.engineList.get(i).buildHDL(".\\");
+
+           bw.write("\n");
+           bw.write("endmodule\n");
+           bw.flush();
+           bw.close();
+
+
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    public void buildXCO(){
+        try {
+            
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(BRAM._outputFolder + File.separator + "bram_entity_" + this.ID + ".xco")));
+            bw.write("# BEGIN Project Options\n" +
+            "SET flowvendor = Foundation_iSE\n" +
+            "SET vhdlsim = True\n" +
+            "SET verilogsim = True\n" +
+            "SET workingdirectory = " + BRAM._outputFolder + "\n" + //working dir
+            "SET speedgrade = -7\n" +
+            "SET simulationfiles = Behavioral\n" +
+            "SET asysymbol = True\n" +
+            "SET addpads = False\n" +
+            "SET device = xc2vp50\n" +
+            "SET implementationfiletype = Edif\n" +
+            "SET busformat = BusFormatAngleBracketNotRipped\n" +
+            "SET foundationsym = False\n" +
+            "SET package = ff1148\n" +
+            "SET createndf = False\n" +
+            "SET designentry = VHDL\n" +
+            "SET devicefamily = virtex2p\n" +
+            "SET formalverification = False\n" +
+            "SET removerpms = False\n" +
+            "# END Project Options\n" +
+            "# BEGIN Select\n" +
+            "SELECT Single_Port_Block_Memory family Xilinx,_Inc. 6.2\n" +
+            "# END Select\n" +
+            "# BEGIN Parameters\n" +
+            "CSET handshaking_pins=false\n" +
+            "CSET init_value=0\n" +
+            "CSET coefficient_file=" + BRAM._outputFolder + File.separator + "BRAM_" + this.ID + ".coe\n" +
+            "CSET select_primitive=512x36\n" +
+            "CSET initialization_pin_polarity=Active_High\n" +
+            "CSET global_init_value=0\n" +
+            "CSET depth=256\n" +
+            "CSET write_enable_polarity=Active_High\n" +
+            "CSET port_configuration=Read_Only\n" +
+            "CSET enable_pin_polarity=Active_High\n" +
+            "CSET component_name=" + "bram_entity_" + this.ID + "\n" +
+            "CSET active_clock_edge=Rising_Edge_Triggered\n" +
+            "CSET additional_output_pipe_stages=0\n" +
+            "CSET disable_warning_messages=true\n" +
+            "CSET limit_data_pitch=18\n" +
+            "CSET primitive_selection=Select_Primitive\n" +
+            "CSET enable_pin=true\n" +
+            "CSET init_pin=false\n" +
+            "CSET write_mode=Read_After_Write\n" +
+            "CSET has_limit_data_pitch=false\n" +
+            "CSET load_init_file=true\n" +
+            "CSET width=" + this.width + "\n" +
+            "CSET register_inputs=false\n" +
+            "# END Parameters\n" +
+            "GENERATE");
+            
+            bw.flush();
+            bw.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
     }
 }
 

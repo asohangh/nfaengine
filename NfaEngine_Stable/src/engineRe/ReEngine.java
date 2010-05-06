@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 import NFA.*;
+import java.io.File;
 import javax.swing.text.Document;
 import pcre.PcreRule;
 import pcre.Refer;
@@ -21,7 +22,7 @@ public class ReEngine {
     public static final int _start = 0;   //BlockState Start
     public static final int _end = 1;     //Block State Exit
     public static final int _normal = 2;  //Block normal :D
-    public String _outputfolder;                    //HDL output folder.
+    public static final String _outputfolder = "GeneratedFiles";                    //HDL output folder.
     public LinkedList<BlockChar> listBlockChar;    // All block char in RegEx engine.
     public BlockState start;                        // fist blockState in RegEx engine
     public BlockState end;                          // last blockState in RegEx engine
@@ -29,6 +30,7 @@ public class ReEngine {
     public PcreRule rule;                           // Need infomation about pcre Rule
     public int id_num;                              // many pcre rule, many engine? its responsibility
     public Document document = null;
+   
 
     public ReEngine() {
         this.id_num = 0;
@@ -36,6 +38,7 @@ public class ReEngine {
         end = new BlockState(ReEngine._end, this);
         this.listBlockChar = new LinkedList<BlockChar>();
         this.listBlockState = new LinkedList<BlockState>();
+        
     }
 
     public void print() {
@@ -231,6 +234,7 @@ public class ReEngine {
                     }
                 }*/
             }
+
         }
         pcre.Refer.print("\nblockChar after reduce: ", this.document);
         for (int i = 0; i < this.listBlockChar.size(); i++) {
@@ -280,7 +284,7 @@ public class ReEngine {
      */
     public void buildDflipflop() {
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(this._outputfolder + "myDff.v"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(this._outputfolder + File.separator + "myDff.v"));
             bw.write("module myDff (q_o,d_i, clk,en,rst);\n "
                     + "\t input d_i,clk,en,rst;\n"
                     + "\t output reg q_o;\n"
@@ -303,7 +307,7 @@ public class ReEngine {
     }
 
     public void buildHDL(String folder) {
-        this._outputfolder = folder;
+        //this._outputfolder = folder;
         this.buildHDL();
     }
 
@@ -323,10 +327,9 @@ public class ReEngine {
     state_0_4 (out,clk,w3);
     endmodule
      */
-    public void buildHDL() {	//Build myDff;
+  /*  public void buildHDL() {	//Build myDff;
         this.buildDflipflop();
         //Create top module HDL code.
-        pcre.Refer.println("Build HDL to : " + _outputfolder);
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(this._outputfolder + "engine_" + this.id_num + ".v"));
             bw.write("module engine_" + this.id_num + "(out,clk,sod,en,char);\n");
@@ -422,4 +425,112 @@ public class ReEngine {
             ex.printStackTrace();
         }
     }
+   * */
+    public void buildHDL() {
+        System.out.println("Here");
+        this.buildDflipflop(); // build DFF
+        
+        //this.reduceBlockChar(); // need here
+
+        System.out.println(" Engine " + this.id_num + ": " + this.listBlockChar.size());
+        for(int i = 0; i < this.listBlockChar.size(); i++){
+            BlockChar bc = this.listBlockChar.get(i);
+            System.out.print(bc.value + "[" + bc.id +"] ");
+        }
+         System.out.println();
+        //Create top module HDL code.
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(this._outputfolder + File.separator + "engine_" + this.id_num + ".v"));
+            bw.write("module engine_" + this.id_num + "(out,clk,sod,en");
+            for(int i = 0; i < this.listBlockChar.size(); i++) {
+                //this.listBlockChar.get(i).id = i; //update id for block char
+                bw.write(", in_" + this.id_num + "_" + this.listBlockChar.get(i).id);
+            }
+            bw.write(");\n");
+            bw.write("//pcre: " + this.rule.toString() +"\n");
+            bw.write("//block char: ");
+            for(int i = 0; i < this.listBlockChar.size(); i++) {
+                bw.write(this.listBlockChar.get(i).value + "[" + this.listBlockChar.get(i).id +"], ");
+            }
+            bw.write("\n");
+
+            // declare parameter, variable verilog
+            bw.write("\n\tinput clk,sod,en;\n");
+            bw.write("\n\tinput ");
+            for(int i = 0; i < this.listBlockChar.size(); i++) {
+                if (i == 0)
+                    bw.write("in_" + this.id_num + "_" + this.listBlockChar.get(i).id);
+                else
+                    bw.write(", in_" + this.id_num + "_" + this.listBlockChar.get(i).id);
+            }
+            bw.write(";\n");
+            bw.write("\toutput out;\n\n");
+
+            //routing here
+            //net connect block State
+            //Start State
+            boolean start_n = false;
+            if (this.rule.getModifier().contains("t")) { //???? this pcre contain ^
+                if (this.rule.getModifier().contains("m")) {
+                    bw.write("\n\tstate_" + this.id_num + "_" + "0 St_0 (y1,~y3,clk,en,sod);\n");
+                    start_n = true;
+                    bw.write("\t charBlock_" + this.id_num + "_" + "100000" + " cB (y3,char);\n");
+                } else {
+                    //TODO: need to replace it to new structure
+                    // bw.write("\tassign w0 = ~y1;");
+                    // bw.write ("\tmyDff D_" + this.id_num + " (y,1'b1,clk,en,sod);\n");
+                    // bw.write("\tassign y1=~y;\n");
+                    bw.write("\n\tstate_" + this.id_num + "_" + "0 St_0 (y1,1'b1,clk,en,sod);\n");
+                }
+            } else {
+                bw.write("\n\tstate_" + this.id_num + "_" + "0 St_0 (y1,1'b0,clk,en,sod);\n");
+            }
+            bw.write("\tassign w0 = ~y1;\n");
+
+             //route other blockState
+            int size = this.listBlockState.size();
+            for (int i = 1; i < size; i++) {
+                BlockState bt = this.listBlockState.get(i);
+                if (bt.isEnd) {
+                    bw.write("\tstate_" + this.id_num + "_" + bt.id + " BS_" + this.id_num + "_" + bt.id + " (out" + ",clk,en,sod");
+                    for (int j = 0; j < bt.comming.size(); j++) {
+                        bw.write(",w" + bt.comming.get(j).id);
+                    }
+                    bw.write(");\n");
+                } else if (bt.isContraint) {//???? tam thoi chua biet xu ly sao
+                    //TODO
+                    //module blockContraint_0_id (out, in, clk);
+                    bw.write("\tBlockContraint_" + this.id_num + "_" + bt.id + " BS_" + this.id_num + "_" + bt.id + "(w" + bt.id + ",char");
+                    for (int j = 0; j < bt.comming.size(); j++) {
+                        bw.write(",w" + bt.comming.get(j).id);
+                    }
+                    bw.write(",clk,en,sod);\n");
+                } else {
+                    bw.write("\tstate_" + this.id_num + "_" + bt.id + " BS_" + this.id_num + "_" + bt.id + " (w" + bt.id + ",in_" + this.id_num + "_" + bt.acceptChar.id + ",clk,en,sod");
+                    for (int j = 0; j < bt.comming.size(); j++) {
+                        bw.write(",w" + bt.comming.get(j).id);
+                    }
+                    bw.write(");\n");
+                }
+            }
+            
+            bw.write("endmodule\n\n");
+
+            //Build hdl block State
+            for (int i = 0; i < this.listBlockState.size(); i++) {
+                if (this.listBlockState.get(i).isContraint) {
+                    this.listBlockState.get(i).buildHDL();
+                } else {
+                    this.listBlockState.get(i).buildHDL(bw);
+                }
+            }
+            bw.flush();
+            bw.close();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
 }
