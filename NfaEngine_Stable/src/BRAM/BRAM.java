@@ -95,7 +95,10 @@ public class BRAM {
                 ReEngine engine = this.engineList.get(j);
                 for(int k = 0; k < engine.listBlockChar.size(); k++) {
                     BlockChar bc = engine.listBlockChar.get(k);
-                    if(bc.value.equals(bChar.value)) {
+                    if(bc.engine.rule.getModifier().contains("i") && bChar.engine.rule.getModifier().contains("i") && bc.value.compareToIgnoreCase(bChar.value) == 0) {
+                        bc.id = bChar.id;
+                    }
+                    else if ((!bc.engine.rule.getModifier().contains("i") || !bChar.engine.rule.getModifier().contains("i")) && bc.value.compareTo(bChar.value) == 0) {
                         bc.id = bChar.id;
                     }
                 }
@@ -612,7 +615,7 @@ endmodule
             "SET flowvendor = Foundation_iSE\n" +
             "SET vhdlsim = True\n" +
             "SET verilogsim = True\n" +
-            "SET workingdirectory = " + BRAM._outputFolder + "\n" + //working dir
+            "SET workingdirectory = " + "." + "\n" + //working dir
             "SET speedgrade = -7\n" +
             "SET simulationfiles = Behavioral\n" +
             "SET asysymbol = True\n" +
@@ -634,7 +637,7 @@ endmodule
             "# BEGIN Parameters\n" +
             "CSET handshaking_pins=false\n" +
             "CSET init_value=0\n" +
-            "CSET coefficient_file=" + BRAM._outputFolder + File.separator + "BRAM_" + this.ID + ".coe\n" +
+            "CSET coefficient_file=" + "BRAM_" + this.ID + ".coe\n" +
             "CSET select_primitive=512x36\n" +
             "CSET initialization_pin_polarity=Active_High\n" +
             "CSET global_init_value=0\n" +
@@ -664,6 +667,79 @@ endmodule
             ex.printStackTrace();
         }
 
+    }
+
+    public void buildCORE_RAM_HDL() {
+        try {
+        BufferedWriter bw = new BufferedWriter(new FileWriter(new File(BRAM._outputFolder + File.separator + "bram_entity_" + this.ID + ".v")));
+        bw.write("`timescale 1ns/1ps\n" +
+                    "module bram_entity_0(\n" +
+                    "addr,\n" + "clk,\n" + "dout,\n"  + "en);\n" +
+                    "input [7 : 0] addr;\n" +
+                    "input clk;\n" +
+                    "output [" + (this.width-1) + " : 0] dout;\n" +
+                    "input en;\n" +
+                    "// synopsys translate_off\n" +
+                    "\tBLKMEMSP_V6_2 #(\n" +
+                    "\t8,	// c_addr_width\n" +
+                    "\t\"0\",	// c_default_data\n" +
+                    "\t256,	// c_depth\n" +
+                    "\t0,	// c_enable_rlocs\n" +
+                    "\t0,	// c_has_default_data\n" +
+                    "\t0,	// c_has_din\n" +
+                    "\t1,	// c_has_en\n" +
+                    "\t0,	// c_has_limit_data_pitch\n" +
+                    "\t0,	// c_has_nd\n" +
+                    "\t0,	// c_has_rdy\n" +
+                    "\t0,	// c_has_rfd\n" +
+                    "\t0,	// c_has_sinit\n" +
+                    "\t0,	// c_has_we\n" +
+                    "\t18,	// c_limit_data_pitch\n" +
+                    "\t\"bram_entity_0.mif\",	// c_mem_init_file\n" +
+                    "\t0,	// c_pipe_stages\n" +
+                    "\t0,	// c_reg_inputs\n" +
+                    "\t\"0\",	// c_sinit_value\n" +
+                    "\t" + this.width + ",	// c_width\n" +
+                    "\t0,	// c_write_mode\n" +
+                    "\t\"0\",	// c_ybottom_addr" +
+                    "\t1,	// c_yclk_is_rising\n" +
+                    "\t1,	// c_yen_is_high\n" +
+                    "\t\"hierarchy1\",	// c_yhierarchy\n" +
+                    "\t0,	// c_ymake_bmm\n" +
+                    "\t\"512x36\",	// c_yprimitive_type\n" +
+                    "\t1,	// c_ysinit_is_high\n" +
+                    "\t\"1024\",	// c_ytop_addr\n" +
+                    "\t1,	// c_yuse_single_primitive\n" +
+                    "\t1,	// c_ywe_is_high\n" +
+                    "\t1)	// c_yydisable_warnings\n" +
+                    "\t\tinst (\n" +
+                            "\t\t.ADDR(addr),\n" +
+                            "\t\t.CLK(clk),\n" +
+                            "\t\t.DOUT(dout),\n" +
+                            "\t\t.EN(en),\n" +
+                            "\t\t.DIN(),\n" +
+                            "\t\t.ND(),\n" +
+                            "\t\t.RFD(),\n" +
+                            "\t\t.RDY(),\n" +
+                            "\t\t.SINIT(),\n" +
+                            "\t\t.WE());\n" +
+                            "endmodule\n");
+
+// synopsys translate_on
+
+// FPGA Express black box declaration
+// synopsys attribute fpga_dont_touch "true"
+// synthesis attribute fpga_dont_touch of bram_entity_0 is "true"
+
+// XST black box declaration
+// box_type "black_box"
+// synthesis attribute box_type of bram_entity_0 is "black_box"
+        bw.flush();
+        bw.close();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }
 

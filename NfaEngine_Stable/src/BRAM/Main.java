@@ -25,11 +25,11 @@ public class Main {
      */
     public static void main(String[] args) throws Exception{
         // TODO code application logic here
-        String[] rule = new String[3];
+       // String[] rule = new String[3];
         // String rule = "/(ga|at)((ag|aaa)*)/";
-        rule[0] = "/(ga|at)((ag|aaa)*)cde/";
-        rule[1] = "/b*c(a|b)*[ac]#Adf+/";
-        rule[2] = "/ab[^cd][\\x3A2a]/";
+       // rule[0] = "/(ga|at)((ag|aaa)*)cde/";
+       // rule[1] = "/b*c(a|b)*[ac]#Adf+/";
+       // rule[2] = "/ab[^cd][\\x3A2a]/";
         //rule[3] = "/^CSeq\\x3A[^\\r\\n]+[^\\x01-\\x08\\x0B1-8\\x0C\\128-\\011\\x0E-\\x1F\\126-\\127]/smi";
         //rule[4] = "/A\\010[abc\\x3a]*b/smi";
         //rule[5] = "/^<window\\s+version\\s*=\\s*(\\?!(1\\.(0|2|4|5|6)))/smi";
@@ -66,6 +66,17 @@ public class Main {
         //String rule = "/^CSeq\\x3A[^\\r\\n]+[^\\x01-\\x08\\x0B1-8\\x0C\\128-\\011\\x0E-\\x1F\\126-\\127]/smi";
         //String rule = "/abc[aA-G]";
         //String rule = "/ab{3}c/smi";
+
+        String[] rule = new String[8];
+        rule[1] = "/Welcome\\s+to\\s+the\\s+Omniquad\\s+File\\s+Transfer\\s+Server/smi";
+        rule[3] = "/SrvInfoFearless\\s+Lite\\s+Server/smi";
+        rule[2] = "/libManager\\x2Edll\\x5Eget(drives|files)\\x2A/smi";
+        rule[0] = "/Advanced\\s+Spy\\s+Report\\s+for/smi";
+        rule[4] = "/\\x2Fcbn\\x2F(c|b)\\.smx\\?[^\\r\\n]*u=/Ui";
+        rule[5] = "/\\x2Fmartuz\\x2Ecn\\x2Fvid\\x2F\\x3Fid\\x3D\\d+/smi";
+        rule[6] = "/\\x2Fgumblar\\x2Ecn\\x2Frss\\x2F\\x3Fid\\x3D\\d+/smi";
+        rule[7] = "/Advanced\\s+Spy\\s+Report\\s+for/smi";
+
 
         BRAM bRam = new BRAM(0);
         LinkedList<ReEngine> engineList = new LinkedList<ReEngine>();
@@ -124,6 +135,7 @@ public class Main {
         bRam.buildCOE();
         bRam.buildHDL();
         bRam.buildXCO();
+        bRam.buildCORE_RAM_HDL();
         LinkedList <BRAM> bramList = new LinkedList<BRAM> ();
         bramList.add(bRam);
         Main.createTopEngineTogether(folders, bramList);
