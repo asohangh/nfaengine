@@ -19,11 +19,14 @@ public class PcreRule {
     private int nextIndex;			//index of next element, set after call getElement
 
 
+    public String testPartten;
+
     public PcreRule(){
             pattern = "";
             modifier = "";
             index = 0;
             nextIndex = 0;
+            testPartten = "";
     }
 
     public PcreRule(String rule){

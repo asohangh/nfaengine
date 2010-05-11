@@ -3,6 +3,7 @@ package pcre;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Random;
 import javax.swing.text.Document;
 
 /*
@@ -74,6 +75,8 @@ public class ParseTree {
     public ParseTree(String rule){
         this.rule = new PcreRule(rule);
         this.root = parsePcre(this.rule);
+
+        this.rule.testPartten = patternOfPCRE(this.root); // set test pattern
     }
 
     /**
@@ -251,4 +254,260 @@ public class ParseTree {
 
     return neworder;
     }
+
+    public String patternOfPCRE(Node root) {
+        String ptern = "";
+        if (root == null)
+            return "";
+
+        ptern = ptern.concat(patternOfPCRE(root.left));
+        
+        if (root.id == Refer._op_plus || root.id == Refer._op_star) {
+            Random rand = new Random();
+            int c = rand.nextInt(10);
+            for (int i = 0; i < c; i++)
+                ptern = ptern.concat(patternOfPCRE(root.left));
+        }
+
+        if(root.left == null && root.right == null) {
+            //ptern = ptern.concat(root.value);
+            System.out.println(root.value +" "+  root.id);
+            Random rand = new Random();
+            //String temp = root.value;
+            
+            switch (root.id) {
+                case Refer._char:
+                    ptern = ptern.concat(root.value);
+                    break;
+                case Refer._ascii_hex: {
+                    char c = (char) Integer.parseInt(root.value.substring(2),16);
+                    ptern = ptern + c;
+                }
+                    break;
+                case Refer._class_digit: {
+
+                    int c = rand.nextInt(10);
+                    c = '0' + c;
+                    ptern = ptern + (char) c;
+                }
+                    break;
+                case Refer._class_word: {
+                    // cai nay lam an gian ti ^^
+                    int c = rand.nextInt(27);
+                    c = 'a' + c;
+                    ptern = ptern + (char) c;
+                }
+                    break;
+                case Refer._class_dot: {
+                    int c = rand.nextInt(256);
+                    if (!this.rule.getModifier().contains("s")) {
+                        while(((char) c ) == '\n')
+                            c = rand.nextInt(256);
+                    }
+                    ptern = ptern + (char) c;
+                }
+                    break;
+                case Refer._class: { //[\z617a\z415a\z3039]
+                    char[] BRam = new char[256];
+                    for (int i = 0; i < 256; i++)
+                        BRam[i] = '0';
+                    // value = [abc]
+                    int from = 0, to = 0;
+                    String value = root.value.substring(1, root.value.length() - 1);
+                    for (int i = 0; i < value.length(); i++) {
+                        int hex;
+                        if (value.charAt(i) == '\\') {
+                            switch (value.charAt(i + 1)) {
+                            case 'x':
+                            case 'X':
+                                hex = Integer.parseInt(value.substring(i + 2, i + 4), 16);
+                                BRam[hex] = '1';
+                                i = i + 3;
+                                break;
+                            case 'd':
+                                for (int j = 48; j <= 57; j++)
+                                    BRam[j] = '1';
+                                i++;
+                                break;
+                            case 'w':
+                                //TODO
+                                i++;
+                                break;
+                            case 's': // white space \x20 = 32
+                                BRam[32] = '1';
+                                i++;
+                                break;
+                            case 'n': // LF \x0A
+                                BRam[10] = '1';
+                                i++;
+                                break;
+                            case 'r': // CR \x0D
+                                BRam[14] = '1';
+                                i++;
+                                break;
+                            case 't': // tab \x09
+                                BRam[9] = '1';
+                                i++;
+                                break;
+                            case 'z': // range
+                                from = (int) Integer.valueOf(value.substring(i + 2, i + 4), 16);
+                                to = (int) Integer.valueOf(value.substring(i + 4, i + 6), 16);
+                                if (this.rule.getModifier().contains("i")) {
+                                    int from1 = 0, to1 = 0;
+                                    if (from >= 65 && from <= 90) {
+                                        from1 = from + 32;
+                                    } else if (from >= 97 && from <= 122) {
+                                        from1 = from - 32;
+                                    }
+                                    if (to >= 65 && to <= 90) {
+                                        to1 = to + 32;
+                                    } else if (from >= 97 && from <= 122) {
+                                        to1 = to - 32;
+                                    }
+                                    if ((from >= 65 && from <= 90 && to >= 65 && to <= 90)
+                                         || (from >= 97 && from <= 122 && to >= 97 && to <= 122)) {
+                                         for (int j = from; j <= to; j++)
+                                             BRam[j] = '1';
+                                         for (int j = from1; j <= to1; j++)
+                                             BRam[j] = '1';
+                                    } else  {// not letter
+                                        for (int j = from; j <= to; j++)
+                                            BRam[j] = '1';
+                                    }
+                                } else { // case sensitive
+                                     for (int j = from; j <= to; j++)
+                                            BRam[j] = '1';
+                                }
+                                i = i + 3;
+                                break;
+                            default: // \?
+                                hex = (int) value.charAt(i + 1);
+                                BRam[hex] = '1';
+                                i++;
+                                break;
+
+                        }
+                    } else {
+                    //value.charAt(i) != '\\' ex: a
+                        BRam[(int) value.charAt(i)]= '1';
+
+                        }
+                    }
+
+                    int c = rand.nextInt(256);
+                    while (BRam[c] == '0')
+                        c = rand.nextInt(256);
+                    ptern = ptern + (char) c;
+
+                } // Refer.class
+                    break;
+                case Refer._neg_class: {
+                     char[] BRam = new char[256];
+                    for (int i = 0; i < 256; i++)
+                        BRam[i] = '1';
+                    // value = [^abc]
+                    int from = 0, to = 0;
+                    String value = root.value.substring(2, root.value.length() - 1);
+                    //System.out.println("value: " + value);
+                    for (int i = 0; i < value.length(); i++) {
+                        int hex;
+                        if (value.charAt(i) == '\\') {
+                            switch (value.charAt(i + 1)) {
+                            case 'x':
+                            case 'X':
+                                hex = Integer.parseInt(value.substring(i + 2, i + 4), 16);
+                                BRam[hex] = '0';
+                                i = i + 3;
+                                break;
+                            case 'd':
+                                for (int j = 48; j <= 57; j++)
+                                    BRam[j] = '0';
+                                i++;
+                                break;
+                            case 'w':
+                                //TODO
+                                i++;
+                                break;
+                            case 's': // white space \x20 = 32
+                                BRam[32] = '0';
+                                i++;
+                                break;
+                            case 'n': // LF \x0A
+                                BRam[10] = '0';
+                                i++;
+                                break;
+                            case 'r': // CR \x0D
+                                BRam[14] = '0';
+                                i++;
+                                break;
+                            case 't': // tab \x09
+                                BRam[9] = '0';
+                                i++;
+                                break;
+                            case 'z': // range
+                                from = (int) Integer.valueOf(value.substring(i + 2, i + 4), 16);
+                                to = (int) Integer.valueOf(value.substring(i + 4, i + 6), 16);
+                                if (this.rule.getModifier().contains("i")) {
+                                    int from1 = 0, to1 = 0;
+                                    if (from >= 65 && from <= 90) {
+                                        from1 = from + 32;
+                                    } else if (from >= 97 && from <= 122) {
+                                        from1 = from - 32;
+                                    }
+                                    if (to >= 65 && to <= 90) {
+                                        to1 = to + 32;
+                                    } else if (from >= 97 && from <= 122) {
+                                        to1 = to - 32;
+                                    }
+                                    if ((from >= 65 && from <= 90 && to >= 65 && to <= 90)
+                                         || (from >= 97 && from <= 122 && to >= 97 && to <= 122)) {
+                                         for (int j = from; j <= to; j++)
+                                             BRam[j] = '0';
+                                         for (int j = from1; j <= to1; j++)
+                                             BRam[j] = '0';
+                                    } else  {// not letter
+                                        for (int j = from; j <= to; j++)
+                                            BRam[j] = '0';
+                                    }
+                                } else { // case sensitive
+                                     for (int j = from; j <= to; j++)
+                                            BRam[j] = '0';
+                                }
+                                i = i + 3;
+                                break;
+                            default: // \?
+                                hex = (int) value.charAt(i + 1);
+                                BRam[hex] = '0';
+                                i++;
+                                break;
+
+                        }
+                    } else {
+                    //value.charAt(i) != '\\' ex: a
+                      
+
+                        }
+                    }
+                    //System.out.println(BRam[38]);
+                    int c = rand.nextInt(256);
+                    //System.out.println("C: " + c);
+                    while (BRam[c] == '0')
+                        c = rand.nextInt(256);
+                    System.out.println("BRam[c]: " + BRam[c]);
+                    ptern = ptern + (char) c;
+
+                }
+                     break;
+                default:
+                    break;
+        }
+     }
+      
+        ptern = ptern.concat(patternOfPCRE(root.right));
+        
+        return ptern;
+    }
+
+    
+
 }

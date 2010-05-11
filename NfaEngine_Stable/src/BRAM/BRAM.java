@@ -374,9 +374,11 @@ public class BRAM {
         //initialize
         for (int i = 0; i < 256; i++)
             BRam[i][col] = '1';
-         // value = [abc]
+         // value = [^abc]
             int from = 0, to = 0;
-            value = value.substring(1, value.length() - 1);
+            System.out.println("value: " + value);
+            value = value.substring(2, value.length() - 1);
+             System.out.println("value after: " + value);
             for (int i = 0; i < value.length(); i++) {
                 int hex;
                 if (value.charAt(i) == '\\') {
@@ -740,6 +742,78 @@ endmodule
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public void buildTestBench() {
+        try {
+             BufferedWriter bw = new BufferedWriter(new FileWriter(new File(BRAM._outputFolder + File.separator + "BRAM_" + this.ID + "_tb.v")));
+             bw.write("`timescale 1ns/1ps\n" +
+                       "module bram_test_tb_v;\n" +
+                        "// Inputs\n" +
+                       "\treg clk;\n" +
+                        "\treg sod;\n" +
+                        "\treg en;\n" +
+                        "\treg [7:0] char;\n" +
+                        "// Outputs\n" +
+                        "\twire [" + (this.engineList.size() - 1) +":0] out;\n" +
+
+                        "// Instantiate the Unit Under Test (UUT)\n" +
+                        "\tBRAM_" + this.ID + " uut (\n" +
+                                "\t\t.out(out),\n" +
+                                "\t\t.clk(clk),\n" +
+                                "\t\t.sod(sod),\n" +
+                                "\t\t.en(en),\n" +
+                                "\t\t.char(char)\n" +
+                                "\t\t);\n" +
+
+                                "\tinitial begin\n" +
+                                 "       // Initialize Inputs\n" +
+                                        "\t\tclk = 0;\n" +
+                                        "\t\tsod = 1;\n" +
+                                        "\t\ten = 1;\n" +
+                                        "\t\tchar = 0;" +
+
+                                        "\t// Wait 100 ns for global reset to finish\n" +
+                                        "\t\t#100;\n" +
+
+                                        "\t// Add stimulus here\n" +
+                                "\t\tend\n" +
+                                "\tinitial begin\n");
+                         for (int i = 0; i < this.engineList.size();i++) {
+                             ReEngine temp = this.engineList.get(i);
+                             bw.write("//" + temp.rule.getPattern()+ "..." + temp.rule.getModifier() + ";\n");
+                         }
+
+                        bw.write("\t\t#20 sod = 0;\n");
+                         for (int i = 0; i < this.engineList.size();i++) {
+                             ReEngine temp = this.engineList.get(i);
+                             for (int j = 0; j < temp.rule.testPartten.length(); j++)
+                                bw.write ("\t\t#20 char = " + ((int) temp.rule.testPartten.charAt(j)) + ";\n");
+
+                        }
+
+                    bw.write("\tend\n" +
+                    "\tinitial begin\n" +
+                            "\t\t#10 clk = ~clk;\n" +
+                            "\t\tforever #10 clk = ~clk;\n" +
+                    "\tend\n" +
+
+                    "\tinitial #100000 $finish;\n" +
+                    "endmodule\n" );
+
+             bw.flush();
+             bw.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void buildNecessaryFiles(){
+        this.buildHDL();
+        this.buildCOE();
+        this.buildCORE_RAM_HDL();
+        this.buildXCO();
+        this.buildTestBench();
     }
 }
 

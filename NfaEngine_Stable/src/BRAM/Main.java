@@ -25,11 +25,11 @@ public class Main {
      */
     public static void main(String[] args) throws Exception{
         // TODO code application logic here
-       // String[] rule = new String[3];
-        // String rule = "/(ga|at)((ag|aaa)*)/";
-       // rule[0] = "/(ga|at)((ag|aaa)*)cde/";
-       // rule[1] = "/b*c(a|b)*[ac]#Adf+/";
-       // rule[2] = "/ab[^cd][\\x3A2a]/";
+        String[] rule = new String[3];
+         //String rule = "/(ga|at)((ag|aaa)*)/";
+        rule[0] = "/(ga|at)((ag|aaa)*)cde/";
+        rule[1] = "/b*c(a|b)*[ac]#Adf+/";
+       rule[2] = "/ab[^cd][\\x3A2a]/";
         //rule[3] = "/^CSeq\\x3A[^\\r\\n]+[^\\x01-\\x08\\x0B1-8\\x0C\\128-\\011\\x0E-\\x1F\\126-\\127]/smi";
         //rule[4] = "/A\\010[abc\\x3a]*b/smi";
         //rule[5] = "/^<window\\s+version\\s*=\\s*(\\?!(1\\.(0|2|4|5|6)))/smi";
@@ -67,7 +67,7 @@ public class Main {
         //String rule = "/abc[aA-G]";
         //String rule = "/ab{3}c/smi";
 
-        String[] rule = new String[8];
+        /*String[] rule = new String[8];
         rule[1] = "/Welcome\\s+to\\s+the\\s+Omniquad\\s+File\\s+Transfer\\s+Server/smi";
         rule[3] = "/SrvInfoFearless\\s+Lite\\s+Server/smi";
         rule[2] = "/libManager\\x2Edll\\x5Eget(drives|files)\\x2A/smi";
@@ -75,7 +75,9 @@ public class Main {
         rule[4] = "/\\x2Fcbn\\x2F(c|b)\\.smx\\?[^\\r\\n]*u=/Ui";
         rule[5] = "/\\x2Fmartuz\\x2Ecn\\x2Fvid\\x2F\\x3Fid\\x3D\\d+/smi";
         rule[6] = "/\\x2Fgumblar\\x2Ecn\\x2Frss\\x2F\\x3Fid\\x3D\\d+/smi";
-        rule[7] = "/Advanced\\s+Spy\\s+Report\\s+for/smi";
+        rule[7] = "/Advanced\\s+Spy\\s+Report\\s+for/smi";*/
+       // String[] rule = new String[3];
+
 
 
         BRAM bRam = new BRAM(0);
@@ -132,10 +134,11 @@ public class Main {
         }
         bRam.fillEntryValue();
         //bRam.printBRam();
-        bRam.buildCOE();
-        bRam.buildHDL();
-        bRam.buildXCO();
-        bRam.buildCORE_RAM_HDL();
+       // bRam.buildCOE();
+       // bRam.buildHDL();
+       // bRam.buildXCO();
+       // bRam.buildCORE_RAM_HDL();
+        bRam.buildNecessaryFiles();
         LinkedList <BRAM> bramList = new LinkedList<BRAM> ();
         bramList.add(bRam);
         Main.createTopEngineTogether(folders, bramList);
@@ -163,6 +166,14 @@ public class Main {
         bw.flush();
         bw.close();
     }*/
+    public static int sumOfPCRE(LinkedList<BRAM> bramList) {
+        int sum = 0;
+        for(int i = 0; i < bramList.size(); i++) {
+            BRAM temp = bramList.get(i);
+            sum = sum + temp.engineList.size();
+        }
+        return sum;
+    }
 
     public static void createTopEngineTogether(String folder, LinkedList<BRAM> bramList) {
         try {
@@ -173,12 +184,14 @@ public class Main {
             bw.write("\tinput [7:0] char;\n\tinput clk_in,sod,en,eod;\n");
             bw.write("\toutput stop;\n ");
             bw.write("\twire [7:0] char_int;\n\twire en_int;\n");
-            bw.write("\toutput ["+(bramList.size()-1)+":0] out;\n\n");
+            bw.write("\toutput ["+(sumOfPCRE(bramList)-1)+":0] out;\n\n");
             bw.write("\tassign clk = ~clk_in;\n");
             bw.write("\tinterfacer I1(stop,char_int,en_int,en,char,sod,eod,clk);\n");
+            int offset = 0;
             for(int j = 0; j < bramList.size(); j++){
                 BRAM temp = bramList.get(j);
-                bw.write("\tBRAM_"+ temp.ID + " blockram_" + temp.ID +  " (out["+j+"],clk,sod,en_int,char_int);\n");
+                offset = offset + temp.engineList.size();
+                bw.write("\tBRAM_"+ temp.ID + " blockram_" + temp.ID +  " (out["+(offset - temp.engineList.size()) + ":" + (offset - 1)+"],clk,sod,en_int,char_int);\n");
             }
 
             bw.write("\nendmodule\n");
