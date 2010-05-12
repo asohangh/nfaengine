@@ -22,7 +22,7 @@ public class ReEngine {
     public static final int _start = 0;   //BlockState Start
     public static final int _end = 1;     //Block State Exit
     public static final int _normal = 2;  //Block normal :D
-    public static final String _outputfolder = "GeneratedFiles";                    //HDL output folder.
+    public String _outputfolder = "GeneratedFiles";                    //HDL output folder.
     public LinkedList<BlockChar> listBlockChar;    // All block char in RegEx engine.
     public BlockState start;                        // fist blockState in RegEx engine
     public BlockState end;                          // last blockState in RegEx engine
@@ -30,6 +30,7 @@ public class ReEngine {
     public PcreRule rule;                           // Need infomation about pcre Rule
     public int id_num;                              // many pcre rule, many engine? its responsibility
     public Document document = null;
+    public String id_ram;
    
 
     public ReEngine() {
@@ -236,7 +237,7 @@ public class ReEngine {
             }
 
         }
-        pcre.Refer.print("\nblockChar after reduce: ", this.document);
+        pcre.Refer.print("\n engine: " + this.id_num + " blockChar after reduce: ", this.document);
         for (int i = 0; i < this.listBlockChar.size(); i++) {
             pcre.Refer.print(" " + this.listBlockChar.get(i).value, this.document);
         }
@@ -307,7 +308,7 @@ public class ReEngine {
     }
 
     public void buildHDL(String folder) {
-        //this._outputfolder = folder;
+        this._outputfolder = folder;
         this.buildHDL();
     }
 
@@ -440,8 +441,8 @@ public class ReEngine {
          System.out.println();
         //Create top module HDL code.
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(this._outputfolder + File.separator + "engine_" + this.id_num + ".v"));
-            bw.write("module engine_" + this.id_num + "(out,clk,sod,en");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(this._outputfolder + File.separator + "engine_" + this.id_ram + "_" + this.id_num + ".v"));
+            bw.write("module engine_" + this.id_ram + "_" + this.id_num + "(out,clk,sod,en");
             for(int i = 0; i < this.listBlockChar.size(); i++) {
                 //this.listBlockChar.get(i).id = i; //update id for block char
                 bw.write(", in_" + this.id_num + "_" + this.listBlockChar.get(i).id);

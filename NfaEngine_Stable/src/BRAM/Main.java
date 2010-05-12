@@ -6,9 +6,12 @@ package BRAM;
 
 import NFA.*;
 import engineRe.*;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,16 +28,25 @@ public class Main {
      */
     public static void main(String[] args) throws Exception{
         // TODO code application logic here
-        String[] rule = new String[3];
+        boolean fromfile = true;
+        if(fromfile){
+            String filename = System.getProperty("user.dir") + System.getProperty("file.separator") + "ram.mip.1.pcre";
+            Main.buildfromfile(filename);
+            return;
+        }
+
+
+        String[] rule = new String[8];
          //String rule = "/(ga|at)((ag|aaa)*)/";
         rule[0] = "/(ga|at)((ag|aaa)*)cde/";
         rule[1] = "/b*c(a|b)*[ac]#Adf+/";
        rule[2] = "/ab[^cd][\\x3A2a]/";
+       rule[3] = "/\\x2F(fn|s)\\x3F[\\r\\n]*si/smi";
         //rule[3] = "/^CSeq\\x3A[^\\r\\n]+[^\\x01-\\x08\\x0B1-8\\x0C\\128-\\011\\x0E-\\x1F\\126-\\127]/smi";
-        //rule[4] = "/A\\010[abc\\x3a]*b/smi";
-        //rule[5] = "/^<window\\s+version\\s*=\\s*(\\?!(1\\.(0|2|4|5|6)))/smi";
-        //String rule = "/FTPON\\d+\\s+TIME\\d+\\s+/smi";
-        ///^Subject\x3A[^\r\n]*2\x2E41/smi
+        rule[4] = "/A\\010[abc\\x3a]*b/smi";
+        rule[5] = "/<window\\s+version\\s*=\\s*(\\?!(1\\.(0|2|4|5|6)))/smi";
+        rule[6] = "/FTPON\\d+\\s+TIME\\d+\\s+/smi";
+        rule[7] = "/Subject\\x3A[^\\r\\n]*2\\x2E41/smi";
         //ParseTree temp=new ParseTree("b*c(a|b)*[ac]#");
         ///FROM|3A|\\s+HTTP_RAT_.*SUBJECT|3A|\\s+there\\s+is\\s+a\\s+HTTPRAT\\s+waiting\\s+4\\s+u\\s+on/sm
         //temp.printTree();
@@ -142,7 +154,113 @@ public class Main {
         LinkedList <BRAM> bramList = new LinkedList<BRAM> ();
         bramList.add(bRam);
         Main.createTopEngineTogether(folders, bramList);
+
+        System.out.println("\n\nResult: " + bRam.blockCharList.size());
+        for (int i = 0; i < bRam.blockCharList.size(); i++) {
+            //System.out.print(this.blockCharList.get(i).value + " ");
+            bRam.blockCharList.get(i).id = i;
+            System.out.print(bRam.blockCharList.get(i).value + "[" + bRam.blockCharList.get(i).id +"] ");
+        }
     }
+
+    public static void buildfromfile(String name) throws IOException{
+        BufferedReader bw = new BufferedReader(new FileReader(name));
+        LinkedList<String[]> listBram = new LinkedList<String[]>();
+        String temp;
+        int id = -1;
+        while((temp = bw.readLine()) != null){
+            if(temp.isEmpty())
+                continue;
+            while(temp !=null && temp.trim().startsWith("#")){
+                int index = temp.indexOf("#size");
+                int size = Integer.parseInt(temp.substring(index+5));
+                String[] listPcre = new String[size];
+                index = 0;
+                while((temp = bw.readLine())!= null){
+                    if(temp.isEmpty())
+                        continue;
+                    if(temp.startsWith("#")){
+                        listBram.add(listPcre);
+                        break;
+                    }
+
+                    listPcre[index] = temp.trim();
+                    index ++;
+                }
+                if(temp == null)
+                    listBram.add(listPcre);
+            }
+        }
+        System.out.println("Finish parse pcrefile: ");
+        for(int i =0; i<listBram.size(); i++){
+
+            String[] listPcre = listBram.get(i);
+            System.out.println("BRAM " + i + " : ");
+            for(int j =0; j<listPcre.length; j++){
+                System.out.println(listPcre[j]);
+            }
+        }
+        LinkedList<BRAM> bramlist = new LinkedList<BRAM>();
+        for(int i =0; i< listBram.size(); i++){
+            System.out.println("Bramxxx " + i);
+            String[] listPcre = listBram.get(i);
+            BRAM br = Main.createHDLFromListPCRE(listPcre, i);
+            bramlist.add(br);
+        }
+
+        String folders = BRAM._outputFolder + File.separator;
+        Main.createTopEngineTogether(folders, bramlist);
+    }
+
+    public static BRAM createHDLFromListPCRE(String[] rule, int index){
+        BRAM bRam = new BRAM(index);
+        LinkedList<ReEngine> engineList = new LinkedList<ReEngine>();
+        //String folders = System.getProperty("user.dir") + System.getProperty("file.separator") + "test" + System.getProperty("file.separator");
+        String folders = BRAM._outputFolder + File.separator;
+        for (int i = 0; i < rule.length; i++) {
+            ParseTree tree = new ParseTree(rule[i]);
+            System.out.println("pcre is: " + tree.rule.getPattern() + " -------- " + tree.rule.getModifier());
+            NFA nfa = new NFA();
+            nfa.tree2NFA(tree);
+            nfa.updateID();
+            nfa.deleteRedundantState();
+
+            ReEngine engine = new ReEngine();
+            engine.createEngine(nfa);
+
+            bRam.addEngine(engine, i);
+            engineList.add(engine);
+
+            engine.buildHDL();
+            engine.print();
+        }
+        bRam.unionCharBlocks();
+        for (int i = 0; i < bRam.blockCharList.size(); i++) {
+            BlockChar temp = bRam.blockCharList.get(i);
+            System.out.print(temp.value + " ");
+        }
+        System.out.println("Width: " + bRam.blockCharList.size());
+        for (int i = 0; i < bRam.blockCharList.size(); i++) {
+            BlockChar temp = bRam.blockCharList.get(i);
+            System.out.println(temp.value);
+            for (int j = 0; j < temp.listToState.size(); j++) {
+                for (int k = 0; k < temp.listToState.get(j).size(); k++) {
+                    BlockState tempState = (BlockState) temp.listToState.get(j).get(k);
+                    System.out.println("Engine: " + temp.array_id[j] + " state: " + tempState.id);
+                }
+            }
+        }
+        bRam.fillEntryValue();
+        bRam.buildNecessaryFiles();
+        System.out.println("\n\nResult: " + bRam.blockCharList.size());
+        for (int i = 0; i < bRam.blockCharList.size(); i++) {
+            //System.out.print(this.blockCharList.get(i).value + " ");
+            bRam.blockCharList.get(i).id = i;
+            System.out.print(bRam.blockCharList.get(i).value + "[" + bRam.blockCharList.get(i).id +"] ");
+        }
+        return bRam;
+    }
+
 
  /*  public static void createTopEngineTogether(String folder, LinkedList<ReEngine> engine)throws Exception{
 
@@ -280,8 +398,6 @@ public class Main {
                "endmodule\n\n");
                bw.flush();
                bw.close();
-
-
     }
 
 }

@@ -70,7 +70,6 @@ public class BRAM {
         }
 
 
-
         /*for (int i = 0; i < engineList.size(); i++) {
         ReEngine temp = engineList.get(i);
         for (int j = 0; j < temp.listBlockChar.size(); j++) {
@@ -577,7 +576,7 @@ endmodule
 
             //declare engine
             for(int i = 0; i < this.engineList.size(); i++) {
-                bw.write("\tengine_" + this.engineList.get(i).id_num + " en_" + this.engineList.get(i).id_num + "(out[" + i + "], clk, sod, en"); // thieu char
+                bw.write("\tengine_" + this.engineList.get(i).id_num + " en_" + this.ID + "_" + this.engineList.get(i).id_num +  "(out[" + i + "], clk, sod, en"); // thieu char
 
                 //routing to each engine
                 for (int j = 0; j < this.blockCharList.size(); j++) {
