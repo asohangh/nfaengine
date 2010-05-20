@@ -59,7 +59,7 @@ public class BlockState{
      * @throws java.io.IOException
      */
     public void buildHDL_start(BufferedWriter bw) throws IOException{
-        bw.write("module state_" + this.engine.id_num + "_"+ this.id + "(out1,in1,clk,en,rst");
+        bw.write("module state_" + this.engine.id_ram + "_" + this.engine.id_num + "_"+ this.id + "(out1,in1,clk,en,rst");
         bw.write(");\n");
         bw.write("\tinput in1,clk,rst,en");
         bw.write(";\n");
@@ -77,7 +77,7 @@ public class BlockState{
      */
     public void buildHDL_End(BufferedWriter bw) throws IOException{
         int inputsize=this.comming.size();
-        bw.write("module state_" + this.engine.id_num + "_"+ this.id + "(out1,clk,en,rst");
+        bw.write("module state_" + this.engine.id_ram + "_" + this.engine.id_num + "_"+ this.id + "(out1,clk,en,rst");
 
         for(int i=0;i<inputsize;i++){
             bw.write(",in"+i);
@@ -132,7 +132,7 @@ public class BlockState{
 
         int inputsize=this.comming.size();
 
-        bw.write("module state_" + this.engine.id_num + "_"+ this.id + "(out1,in_char,clk,en,rst");
+        bw.write("module state_" + this.engine.id_ram + "_" + this.engine.id_num + "_"+ this.id + "(out1,in_char,clk,en,rst");
 
         for(int i=0;i<inputsize;i++){
             bw.write(",in"+i);

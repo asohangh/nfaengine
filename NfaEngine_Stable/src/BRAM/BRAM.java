@@ -576,7 +576,7 @@ endmodule
 
             //declare engine
             for(int i = 0; i < this.engineList.size(); i++) {
-                bw.write("\tengine_" + this.engineList.get(i).id_num + " en_" + this.ID + "_" + this.engineList.get(i).id_num +  "(out[" + i + "], clk, sod, en"); // thieu char
+                bw.write("\tengine_" + this.ID + "_" + this.engineList.get(i).id_num + " en_" + this.ID + "_" + this.engineList.get(i).id_num +  "(out[" + i + "], clk, sod, en"); // thieu char
 
                 //routing to each engine
                 for (int j = 0; j < this.blockCharList.size(); j++) {
@@ -593,7 +593,7 @@ endmodule
                 bw.write(");\n");
             }
             for(int i = 0; i < this.engineList.size(); i++)
-                this.engineList.get(i).buildHDL(".\\");
+                this.engineList.get(i).buildHDL();
 
            bw.write("\n");
            bw.write("endmodule\n");
@@ -610,7 +610,6 @@ endmodule
 
     public void buildXCO(){
         try {
-            
             BufferedWriter bw = new BufferedWriter(new FileWriter(new File(BRAM._outputFolder + File.separator + "bram_entity_" + this.ID + ".xco")));
             bw.write("# BEGIN Project Options\n" +
             "SET flowvendor = Foundation_iSE\n" +
@@ -674,7 +673,7 @@ endmodule
         try {
         BufferedWriter bw = new BufferedWriter(new FileWriter(new File(BRAM._outputFolder + File.separator + "bram_entity_" + this.ID + ".v")));
         bw.write("`timescale 1ns/1ps\n" +
-                    "module bram_entity_0(\n" +
+                    "module bram_entity_" + this.ID + "(\n" +
                     "addr,\n" + "clk,\n" + "dout,\n"  + "en);\n" +
                     "input [7 : 0] addr;\n" +
                     "input clk;\n" +
@@ -810,7 +809,7 @@ endmodule
     public void buildNecessaryFiles(){
         this.buildHDL();
         this.buildCOE();
-        this.buildCORE_RAM_HDL();
+        //this.buildCORE_RAM_HDL();
         this.buildXCO();
         this.buildTestBench();
     }

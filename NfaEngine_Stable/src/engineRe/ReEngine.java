@@ -30,7 +30,7 @@ public class ReEngine {
     public PcreRule rule;                           // Need infomation about pcre Rule
     public int id_num;                              // many pcre rule, many engine? its responsibility
     public Document document = null;
-    public String id_ram;
+    public int id_ram;
    
 
     public ReEngine() {
@@ -473,7 +473,7 @@ public class ReEngine {
             boolean start_n = false;
             if (this.rule.getModifier().contains("t")) { //???? this pcre contain ^
                 if (this.rule.getModifier().contains("m")) {
-                    bw.write("\n\tstate_" + this.id_num + "_" + "0 St_0 (y1,~y3,clk,en,sod);\n");
+                    bw.write("\n\tstate_" + this.id_ram + "_"+ this.id_num + "_" + "0 St_0 (y1,~y3,clk,en,sod);\n");
                     start_n = true;
                     bw.write("\t charBlock_" + this.id_num + "_" + "100000" + " cB (y3,char);\n");
                 } else {
@@ -481,10 +481,10 @@ public class ReEngine {
                     // bw.write("\tassign w0 = ~y1;");
                     // bw.write ("\tmyDff D_" + this.id_num + " (y,1'b1,clk,en,sod);\n");
                     // bw.write("\tassign y1=~y;\n");
-                    bw.write("\n\tstate_" + this.id_num + "_" + "0 St_0 (y1,1'b1,clk,en,sod);\n");
+                    bw.write("\n\tstate_" + this.id_ram + "_" + this.id_num + "_" + "0 St_0 (y1,1'b1,clk,en,sod);\n");
                 }
             } else {
-                bw.write("\n\tstate_" + this.id_num + "_" + "0 St_0 (y1,1'b0,clk,en,sod);\n");
+                bw.write("\n\tstate_" + this.id_ram + "_" + this.id_num + "_" + "0 St_0 (y1,1'b0,clk,en,sod);\n");
             }
             bw.write("\tassign w0 = ~y1;\n");
 
@@ -493,7 +493,7 @@ public class ReEngine {
             for (int i = 1; i < size; i++) {
                 BlockState bt = this.listBlockState.get(i);
                 if (bt.isEnd) {
-                    bw.write("\tstate_" + this.id_num + "_" + bt.id + " BS_" + this.id_num + "_" + bt.id + " (out" + ",clk,en,sod");
+                    bw.write("\tstate_" + this.id_ram + "_" + this.id_num + "_" + bt.id + " BS_"  + this.id_ram + "_" + this.id_num + "_" + bt.id + " (out" + ",clk,en,sod");
                     for (int j = 0; j < bt.comming.size(); j++) {
                         bw.write(",w" + bt.comming.get(j).id);
                     }
@@ -507,7 +507,7 @@ public class ReEngine {
                     }
                     bw.write(",clk,en,sod);\n");
                 } else {
-                    bw.write("\tstate_" + this.id_num + "_" + bt.id + " BS_" + this.id_num + "_" + bt.id + " (w" + bt.id + ",in_" + this.id_num + "_" + bt.acceptChar.id + ",clk,en,sod");
+                    bw.write("\tstate_" + this.id_ram + "_" + this.id_num + "_" + bt.id + " BS_" + this.id_ram + "_" + this.id_num + "_" + bt.id + " (w" + bt.id + ",in_" + this.id_num + "_" + bt.acceptChar.id + ",clk,en,sod");
                     for (int j = 0; j < bt.comming.size(); j++) {
                         bw.write(",w" + bt.comming.get(j).id);
                     }

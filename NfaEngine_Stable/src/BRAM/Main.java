@@ -13,8 +13,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import pcre.*;
 
 /**
@@ -30,16 +28,15 @@ public class Main {
         // TODO code application logic here
         boolean fromfile = true;
         if(fromfile){
-            String filename = System.getProperty("user.dir") + System.getProperty("file.separator") + "ram.mip.1.pcre";
+            //String filename = System.getProperty("user.dir") + System.getProperty("file.separator") + "pcre20.4.mip.1.pcre";
+            String filename = System.getProperty("user.dir") + System.getProperty("file.separator") + "pcre20.2.mip";
             Main.buildfromfile(filename);
             return;
         }
-
-
         String[] rule = new String[8];
          //String rule = "/(ga|at)((ag|aaa)*)/";
-        rule[0] = "/(ga|at)((ag|aaa)*)cde/";
-        rule[1] = "/b*c(a|b)*[ac]#Adf+/";
+       rule[0] = "/(ga|at)((ag|aaa)*)cde/";
+       rule[1] = "/b*c(a|b)*[ac]#Adf+/";
        rule[2] = "/ab[^cd][\\x3A2a]/";
        rule[3] = "/\\x2F(fn|s)\\x3F[\\r\\n]*si/smi";
         //rule[3] = "/^CSeq\\x3A[^\\r\\n]+[^\\x01-\\x08\\x0B1-8\\x0C\\128-\\011\\x0E-\\x1F\\126-\\127]/smi";
@@ -89,9 +86,7 @@ public class Main {
         rule[6] = "/\\x2Fgumblar\\x2Ecn\\x2Frss\\x2F\\x3Fid\\x3D\\d+/smi";
         rule[7] = "/Advanced\\s+Spy\\s+Report\\s+for/smi";*/
        // String[] rule = new String[3];
-
-
-
+        
         BRAM bRam = new BRAM(0);
         LinkedList<ReEngine> engineList = new LinkedList<ReEngine>();
         //String folders = System.getProperty("user.dir") + System.getProperty("file.separator") + "test" + System.getProperty("file.separator");
@@ -123,9 +118,6 @@ public class Main {
             System.out.println("OK... ");
             engine.print();
             System.out.println("Build HDL ...");
-            engine.buildHDL("E:\\Java\\");
-            /*System.out.println("Build HDL ... ");
-            engine.buildHDL();//*/
             System.out.println("Finish");
         }
         bRam.unionCharBlocks();
@@ -227,7 +219,7 @@ public class Main {
 
             ReEngine engine = new ReEngine();
             engine.createEngine(nfa);
-
+            engine.id_ram = index;
             bRam.addEngine(engine, i);
             engineList.add(engine);
 
@@ -309,7 +301,7 @@ public class Main {
             for(int j = 0; j < bramList.size(); j++){
                 BRAM temp = bramList.get(j);
                 offset = offset + temp.engineList.size();
-                bw.write("\tBRAM_"+ temp.ID + " blockram_" + temp.ID +  " (out["+(offset - temp.engineList.size()) + ":" + (offset - 1)+"],clk,sod,en_int,char_int);\n");
+                bw.write("\tBRAM_"+ temp.ID + " blockram_" + temp.ID +  " (out["+(offset - 1)+ ":" + (offset - temp.engineList.size()) +"],clk,sod,en_int,char_int);\n");
             }
 
             bw.write("\nendmodule\n");
