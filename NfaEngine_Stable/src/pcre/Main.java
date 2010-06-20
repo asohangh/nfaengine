@@ -60,7 +60,8 @@ public class Main {
         //String rule = "/(form|module|report)\\s*=\\s*(\\x2e\\x2e|\\x2f|[a-z]\\x3a\\x5c)/i";
         //System.out.print (rule.substring(1, rule.length() - 2));
         //String rule = "/[\\?\\x20\\x3b\\x26]module=[a-zA-Z0-9]*[^\\x3b\\x26]/";
-        String rule = "/\\w\\d\\x3Fmodule=[ab]*[^\\x3b\\x26]/";
+        //String rule = "/\\w\\d\\x3Fmodule=[ab]*[^\\x3b\\x26]/";
+        String rule = "/goaway\\?message=[^\\sno]{10,30}/smi";
         //System.out.print (rule);
         //String rule = "/^<window\\s+version\\s*=\\s*(\\?!(1\\.(0|2|4|5|6)))/smi";
 
@@ -84,20 +85,20 @@ public class Main {
         String s = "e";
         s = tree.patternOfPCRE(tree.root);
         System.out.println(s);
-       // tree.generateDotFile(null, null);
+        tree.generateDotFile(null, null);
 
-       // NFA nfa = new NFA();
-       // nfa.tree2NFA(tree);
+        NFA nfa = new NFA();
+        nfa.tree2NFA(tree);
 
-       // nfa.updateID();
-        //System.out.println("Original NFA:");
-        //nfa.print();
-       // nfa.generateDotFile("nfa_origin.dot", null);
-        //nfa.deleteRedundantState();;
-        //nfa.updateID();
-        //System.out.println("Modified NFA:");
-       // nfa.print();
-       // nfa.generateDotFile("nfa_reduce.dot", null);
+        nfa.updateID();
+        System.out.println("Original NFA:");
+        nfa.print();
+        nfa.generateDotFile("nfa_origin.dot", null);
+        nfa.deleteRedundantState();;
+        nfa.updateID();
+        System.out.println("Modified NFA:");
+       nfa.print();
+       nfa.generateDotFile("nfa_reduce.dot", null);
 
        /* System.out.println("Building Regular Expression Engine....:");
 
