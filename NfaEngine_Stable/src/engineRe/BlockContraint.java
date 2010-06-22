@@ -7,6 +7,7 @@ package engineRe;
 
 import NFA.NFA;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -32,26 +33,38 @@ public class BlockContraint extends BlockState{
         this.engine = bState.engine;
         this.isContraint = true;
 
-        //Replace old blockState.
+        //Replace old blockState. in other blockstate
+        // in comming list of other blockstate.
         for(int i=0; i<this.going.size(); i++){
             int num = this.going.get(i).comming.indexOf(bState);
             this.going.get(i).comming.remove(num);
             this.going.get(i).comming.add(num, this);
         }
+        // in goint list of other block state.
         for(int i=0; i<this.comming.size(); i++){
             int num = this.comming.get(i).going.indexOf(bState);
             this.comming.get(i).going.remove(num);
             this.comming.get(i).going.add(num, this);
         }
+        // add to listConrep.
+        this.engine.listConRep.add(this);
+
+        this.constructReEngine();
+
+        //now remove acceptchar of this
+        bState.engine.listBlockChar.remove(bState.acceptChar);
+
+        // now add up listblockchar.
+        for(int i = 0; i<this.ContEngine.listBlockChar.size(); i++){
+            this.engine.listBlockChar.add(this.ContEngine.listBlockChar.get(i));
+        }
+
+
+
 
     }
 
-
-    /**
-     *
-     */
-    @Override
-    public void buildHDL(){
+    public void constructReEngine(){
         String rule;
         String s[] = this.acceptChar.value.split(",");
         this.m = Integer.parseInt(s[1]);
@@ -83,13 +96,33 @@ public class BlockContraint extends BlockState{
         pcre.Refer.println("\tBuilding Regular Expression Engine....:",this.engine.document);
         this.ContEngine = new ReEngine();
 
-        this.ContEngine.id_num = 100000 + this.engine.id_num *100 + this.id;
+        
         ContEngine.createEngine(nfa);
+
+        //ContEngine.isInsideConRep = true;
+        //ContEngine.ConRepBlock = this;
+
+
+
         pcre.Refer.println("\tOK... ",this.engine.document);
         ContEngine.print();
-        this.ContEngine.buildHDL(this.engine._outputfolder);
+        //this.ContEngine.buildHDL(this.engine._outputfolder);
+
+        
+        //pcre.Refer.println("Build engine_"+this.ContEngine.id_num,this.engine.document);
+       // this.buildHDLBlockContraint();
+    }
+
+    /**
+     *
+     */
+    @Override
+    public void buildHDL(){
+        
+        //this.ContEngine.buildHDL(this.engine._outputfolder);
         //pcre.Refer.println("Build engine_"+this.ContEngine.id_num,this.engine.document);
         this.buildHDLBlockContraint();
+        
     }
 
 
@@ -117,20 +150,28 @@ public class BlockContraint extends BlockState{
         endmodule
      */
     public void buildHDLBlockContraint(){
+        this.ContEngine.id_num = (this.engine.id_num+1) *100 + this.id;
         pcre.Refer.println("build block constraint " + this.engine._outputfolder,this.engine.document);
         try {
-			BufferedWriter bw=new BufferedWriter(new FileWriter(this.engine._outputfolder + "BlockContraint_" + this.engine.id_num + "_" + this.id + ".v"));
-			bw.write("module BlockContraint_" +this.engine.id_num + "_" + this.id + "(out,char");
+			BufferedWriter bw=new BufferedWriter(new FileWriter(this.engine._outputfolder + System.getProperty("file.separator") +  "BlockConRep_" + this.engine.id_ram + "_" + this.engine.id_num + "_" + this.id +".v"));
+            bw.write("\tmodule BlockConRep_" + this.engine.id_ram + "_" + this.engine.id_num + "_" + this.id +  " (out" );
+            // need insert character
+            for(int j =0; j < this.ContEngine.listBlockChar.size(); j++){
+                bw.write(",char_" + this.ContEngine.listBlockChar.get(j).id);
+            }
+
+            bw.write(",clk,en,rst");
             for (int i = 0; i < this.comming.size(); i ++)
                 bw.write (",in" + i);
-            bw.write(", clk, en,rst);\n");
+            bw.write(");\n");
 
             bw.write("\t//" + this.acceptChar.value + "\n");
-            bw.write("\tinput [7:0] char;\n");
-            bw.write("\tinput clk,en,rst, in0");
-
+            bw.write("\tinput clk,en,rst,in0");
             for (int i = 1; i < this.comming.size(); i ++)
                 bw.write (",in" + i);
+            for(int j =0; j < this.ContEngine.listBlockChar.size(); j++){
+                bw.write(",char_" + this.ContEngine.listBlockChar.get(j).id);
+            }
             bw.write (";\n\toutput out;\n\n");
             bw.write("\tor(w0,out_inc");
             for (int i = 0; i < this.comming.size(); i ++)
@@ -151,17 +192,19 @@ public class BlockContraint extends BlockState{
                 bw.write(",w" + bt.id);
 	        }
             bw.write(");\n");
+            
 
-            bw.write("\tCountCompUnit_"+this.engine.id_num+"_"+this.id+" c (out,clk,out_inc,en,rst,rst_inc);\n");
-
+            bw.write("\tCountCompUnit_" + this.engine.id_ram + "_" + this.engine.id_num + "_" + this.id + " c (out,clk,out_inc,en,rst,rst_inc);\n");
+            int size;
             //modified code
-            int size = this.ContEngine.listBlockChar.size();
+           /* int size = this.ContEngine.listBlockChar.size();
             pcre.Refer.println("list block char size: "+this.ContEngine.listBlockChar.size(),this.engine.document);
             for (int i = 0; i < size; i ++)
             {
                 BlockChar bc = this.ContEngine.listBlockChar.get(i);
                 bw.write ("\tcharBlock_" + this.ContEngine.id_num + "_" + bc.id + " C"+ i + " (char_" + this.ContEngine.id_num + "_" + bc.id + ",char);\n");
             }
+            */
             size = this.ContEngine.listBlockState.size();
             pcre.Refer.print(size + "<- size\n",this.engine.document);
             for (int i = 1; i < size; i++)
@@ -170,16 +213,23 @@ public class BlockContraint extends BlockState{
                if(bt.isEnd){
             	  continue;
                }else{
-	                bw.write("\tstate_"+this.ContEngine.id_num + "_" + bt.id + " S"+ i + " (w" + bt.id + ",char_" +this.ContEngine.id_num + "_"+ bt.acceptChar.id + ",clk,en,rst");
-	                for (int j = 0; j < bt.comming.size(); j++)
-	                {
-	                    bw.write(",w" + bt.comming.get(j).id);
-	                }
-	                bw.write(");\n");
+
+                    bw.write("\tstate_" + this.engine.id_ram + "_" + this.ContEngine.id_num + "_" +
+                            bt.id + " BS_" + this.engine.id_ram + "_" + this.ContEngine.id_num + "_" +
+                            bt.id + " (w" + bt.id + ",char_" + bt.acceptChar.id + ",clk,en,rst");
+                    for (int j = 0; j < bt.comming.size(); j++) {
+                        bw.write(",w" + bt.comming.get(j).id);
+                    }
+                    bw.write(");\n");
+
+
                }
             }
             bw.write("endmodule\n\n");
+
+            this.buildState(bw);
             this.buildCountCompUnit(bw);
+            bw.flush();
 			bw.close();
 
 		} catch (IOException e) {
@@ -187,10 +237,24 @@ public class BlockContraint extends BlockState{
 		}
     }
 
+    public void buildState(BufferedWriter bw) throws IOException{
+        for (int i = 0; i < this.ContEngine.listBlockState.size(); i++) {
+            if(this.ContEngine.listBlockState.get(i).isStart
+                    || this.ContEngine.listBlockState.get(i).isEnd){
+                continue;
+            }else if (this.ContEngine.listBlockState.get(i).isContraint) {
+                    //We don't support it, =.=".
+            }else {
+                this.ContEngine.listBlockState.get(i).buildHDL(bw);
+            }
+        }
+        
+    }
+
 
     public void buildCountCompUnit(BufferedWriter bw){
         try {
-            bw.write("module CountCompUnit_" + this.engine.id_num + "_" + this.id + "(out,clk,inc,en_in,rst,rst_inc);\n");
+            bw.write("module CountCompUnit_" + this.engine.id_ram + "_" + this.engine.id_num + "_" + this.id + "(out,clk,inc,en_in,rst,rst_inc);\n");
             bw.write("\t//Contraint repetition: " + this.acceptChar.value);
             bw.write("\n\tparameter\tK="+this.k+";\n");
             bw.write("\tparameter\tM="+this.m+";\n");
@@ -227,8 +291,6 @@ public class BlockContraint extends BlockState{
             bw.write("\t\t\tcReg <= cReg + 1;\n");
             bw.write("\tend\n");
             bw.write("endmodule\n\n");
-            bw.flush();
-            bw.close();
 
         } catch (IOException ex) {
             Logger.getLogger(BlockContraint.class.getName()).log(Level.SEVERE, null, ex);

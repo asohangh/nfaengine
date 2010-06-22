@@ -1,0 +1,11 @@
+#bram0#size10
+/USER\s[^\n]{49}/smi
+/GET[^s]{432}/sm
+/HEAD[^s]{432}/sm
+/PUT[^s]{432}/sm
+/POST[^s]{432}/sm
+/TRACE[^s]{432}/sm
+/DELETE[^s]{432}/sm
+/LOCK[^s]{432}/sm
+/MKCOL[^s]{432}/sm
+/COPY[^s]{432}/sm

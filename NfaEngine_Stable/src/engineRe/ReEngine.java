@@ -31,6 +31,12 @@ public class ReEngine {
     public int id_num;                              // many pcre rule, many engine? its responsibility
     public Document document = null;
     public int id_ram;
+
+    //public boolean isInsideConRep = false; // 'cause reengine can exist inside Constraint Block so..
+    //public BlockState ConRepBlock = null;  // isIn.. and ConRep.. is compatible with Bram ...
+
+    public LinkedList<BlockContraint> listConRep = new LinkedList<BlockContraint>();
+    // ^ use for ConRep Package
    
 
     public ReEngine() {
@@ -207,41 +213,45 @@ public class ReEngine {
                 BlockChar walk = this.listBlockChar.get(j);
                 if(this.compareBlockChar(temp, walk)){
                     for (int k = 0; k < walk.toState.size(); k++) {
-                    temp.toState.add(walk.toState.get(k));
-                    walk.toState.get(k).acceptChar = temp;
-                }
+                        temp.toState.add(walk.toState.get(k));
+                        walk.toState.get(k).acceptChar = temp;
+                    }
                     this.listBlockChar.remove(j);
                         j--; //just remove one char so ...
                 }
 
-               /*if (temp.code_id == walk.code_id) {
-                    if (temp.value.compareTo(walk.value) == 0) {
-                        for (int k = 0; k < walk.toState.size(); k++) {
-                            temp.toState.add(walk.toState.get(k));
-                            walk.toState.get(k).acceptChar = temp;
-                        }
-                        this.listBlockChar.remove(j);
-                        j--; //just remove one char so ...
-                    } else {
-                        if (this.rule.getModifier().indexOf("i") != -1 && temp.value.compareToIgnoreCase(walk.value) == 0) {// neu la case insensitive
-                            //chep toState tu walk vo temp;
-                            for (int k = 0; k < walk.toState.size(); k++) {
-                                temp.toState.add(walk.toState.get(k));
-                                walk.toState.get(k).acceptChar = temp;
-                            }
-                            this.listBlockChar.remove(j);
-                            j--;
-                        }
-                    }
-                }*/
             }
-
         }
+        this.synchonousBlockCharConRep();
         pcre.Refer.print("\n engine: " + this.id_num + " blockChar after reduce: ", this.document);
         for (int i = 0; i < this.listBlockChar.size(); i++) {
             pcre.Refer.print(" " + this.listBlockChar.get(i).value, this.document);
         }
         pcre.Refer.print("\n", this.document);
+
+
+    }
+
+    public void synchonousBlockCharConRep(){
+        //if there is contraint block -> synchonous listchar of Constraint block with this list char
+        if(!this.listConRep.isEmpty()){
+            for(int i = 0; i<this.listConRep.size(); i++){
+                ReEngine te = this.listConRep.get(i).ContEngine;
+                //fist need ensure no rep in listchar of ContEngine;
+                te.reduceBlockChar();
+                // now replace all charblock in contengine with of this.
+                for(int j =0; j<this.listBlockChar.size(); j++){
+                    BlockChar temp = this.listBlockChar.get(j);
+                    for(int k =0; k<te.listBlockChar.size();k++){
+                        BlockChar walk = te.listBlockChar.get(k);
+                        if(this.compareBlockChar(temp, walk)){
+                            te.listBlockChar.remove(k);
+                            te.listBlockChar.add(k,temp);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public boolean compareBlockChar(BlockChar temp, BlockChar walk) {
@@ -498,14 +508,21 @@ public class ReEngine {
                         bw.write(",w" + bt.comming.get(j).id);
                     }
                     bw.write(");\n");
-                } else if (bt.isContraint) {//???? tam thoi chua biet xu ly sao
+                } else if (bt.isContraint) {
                     //TODO
                     //module blockContraint_0_id (out, in, clk);
-                    bw.write("\tBlockContraint_" + this.id_num + "_" + bt.id + " BS_" + this.id_num + "_" + bt.id + "(w" + bt.id + ",char");
+                    BlockContraint btc = (BlockContraint) bt;
+                    bw.write("\tBlockConRep_" + this.id_ram + "_" + this.id_num + "_" + bt.id +  " BS_ConRep_" + this.id_ram + "_" + this.id_num +  "_" + bt.id + "(w" + bt.id );
+                    // need insert character
+                    for(int j =0; j<btc.ContEngine.listBlockChar.size(); j++){
+                        bw.write(",in_" + this.id_num + "_" + btc.ContEngine.listBlockChar.get(j).id);
+                    }
+                    
+                    bw.write(",clk,en,sod");
                     for (int j = 0; j < bt.comming.size(); j++) {
                         bw.write(",w" + bt.comming.get(j).id);
                     }
-                    bw.write(",clk,en,sod);\n");
+                    bw.write(");\n");
                 } else {
                     bw.write("\tstate_" + this.id_ram + "_" + this.id_num + "_" + bt.id + " BS_" + this.id_ram + "_" + this.id_num + "_" + bt.id + " (w" + bt.id + ",in_" + this.id_num + "_" + bt.acceptChar.id + ",clk,en,sod");
                     for (int j = 0; j < bt.comming.size(); j++) {

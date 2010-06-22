@@ -456,7 +456,7 @@ endNFA
         NFA nfa = new NFA(sStart);
 
         Node temp = Refer.processContraint(c);
-
+        
 
         nfa.insertExitState(sExit);
         nfa.insertEdge(sStart, sExit, temp);
