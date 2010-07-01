@@ -140,6 +140,17 @@ public class ReEngine {
         // Finish building engine, here.
         this.listBlockState.addFirst(this.start);
         this.listBlockState.addLast(this.end);
+        //include start state if have ^ and modifier m;
+       if (this.rule.getModifier().contains("t")) {
+           if(this.rule.getModifier().contains("m")){
+                NFAEdge ne = new NFAEdge(this.rule);
+                ne.code_id = Refer._ascii_hex;
+                ne.value = "\\x0A";
+                BlockChar bc = new BlockChar(ne, this);
+                this.start.acceptChar = bc;
+                this.listBlockChar.add(bc);
+           }
+       }
         this.updateId();
 
         // process BlockkContraint
@@ -154,6 +165,7 @@ public class ReEngine {
                 this.listBlockState.add(i, newBlock);
             }
         }
+        
     }
 
     public BlockState buildBlockRecusive(NFAState state) {
@@ -483,9 +495,9 @@ public class ReEngine {
             boolean start_n = false;
             if (this.rule.getModifier().contains("t")) { //???? this pcre contain ^
                 if (this.rule.getModifier().contains("m")) {
-                    bw.write("\n\tstate_" + this.id_ram + "_"+ this.id_num + "_" + "0 St_0 (y1,~y3,clk,en,sod);\n");
+                    bw.write("\n\tstate_" + this.id_ram + "_"+ this.id_num + "_" + "0 St_0 (y1,"+ "in_" + this.id_num + "_" + this.start.acceptChar.id + ",clk,en,sod);\n");
                     start_n = true;
-                    bw.write("\t charBlock_" + this.id_num + "_" + "100000" + " cB (y3,char);\n");
+                    //bw.write("\t charBlock_" + this.id_num + "_" + "100000" + " cB (y3,char);\n");
                 } else {
                     //TODO: need to replace it to new structure
                     // bw.write("\tassign w0 = ~y1;");

@@ -26,7 +26,7 @@ public class BlockChar {
         this.code_id = edge.code_id;
         this.toState = new LinkedList<BlockState>();
         this.listToState = new LinkedList<LinkedList>();
-        this.array_id = new int[50];
+        this.array_id = new int[200];
         for(int i = 0; i< this.array_id.length; i++){
             array_id[i] = -1;
         }

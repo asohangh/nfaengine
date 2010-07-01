@@ -151,6 +151,7 @@ public class BlockContraint extends BlockState{
      */
     public void buildHDLBlockContraint(){
         this.ContEngine.id_num = (this.engine.id_num+1) *100 + this.id;
+        this.ContEngine.id_ram = this.engine.id_ram;
         pcre.Refer.println("build block constraint " + this.engine._outputfolder,this.engine.document);
         try {
 			BufferedWriter bw=new BufferedWriter(new FileWriter(this.engine._outputfolder + System.getProperty("file.separator") +  "BlockConRep_" + this.engine.id_ram + "_" + this.engine.id_num + "_" + this.id +".v"));
@@ -266,7 +267,7 @@ public class BlockContraint extends BlockState{
             bw.write("\twire\tcompN, compM, en, mux_out;\n");
             bw.write("\twire\t[K-1:0]\tcReg;\n\n");
 
-            bw.write("\tcounter_Kbit_" + this.engine.id_num + "_" + this.id + " count1(cReg,clk,en,inc,rst,rst_inc);\n");
+            bw.write("\tcounter_Kbit_" + this.engine.id_ram + "_" + this.engine.id_num + "_" + this.id + " count1(cReg,clk,en,inc,rst,rst_inc);\n");
             bw.write("\tassign compN = (cReg >= N);\n");
             bw.write("\tassign compM = (cReg <= M);\n");
             bw.write("\tassign mux_out = (G==0)?compN:(G==1)?(compN && compM):compM;\n");
@@ -274,7 +275,7 @@ public class BlockContraint extends BlockState{
             bw.write("\tassign en = ((G==0)?!mux_out:1'b1) && en_in ;\n");
             bw.write("endmodule\n\n");
 
-            bw.write("module counter_Kbit_" + this.engine.id_num + "_" + this.id + " (cReg,clk,en,inc,rst,rst_inc);\n");
+            bw.write("module counter_Kbit_" + this.engine.id_ram + "_" + this.engine.id_num + "_" + this.id + " (cReg,clk,en,inc,rst,rst_inc);\n");
             bw.write("\tparameter\tK = "+this.k+";\n");
             bw.write("\tinput\tclk, inc, rst, rst_inc, en;\n");
             bw.write("\toutput\t[K-1:0] cReg;\n");

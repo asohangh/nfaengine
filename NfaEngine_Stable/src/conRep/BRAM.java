@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import pcre.Refer;
 
 /**
@@ -26,7 +28,13 @@ public class BRAM {
     int row = -1;
     int col = -1;
     public int width = -1;
-    public static final String _outputFolder = "GeneratedFiles";
+    public String _outputFolder = "GeneratedFiles";
+    //use for output result
+    public int noNFA;
+    public int noPCRE;
+    public int noBlockState;
+    public int noCRB; //number of  Constraint repetition Block;
+    //oki
 
 
 
@@ -232,6 +240,8 @@ public class BRAM {
 
 
 }
+
+    
 
     private void fillSingle(String value, String modifier) {
         //throw new UnsupportedOperationException("Not yet implemented");
@@ -511,6 +521,8 @@ public class BRAM {
             System.out.println();
         }
     }
+    
+
 
 
     /*
@@ -536,7 +548,7 @@ END;
      */
     public void buildMIF() {
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(BRAM._outputFolder + File.separator + "m4kRom_" + ID + ".mif" ));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(this._outputFolder + File.separator + "m4kRom_" + ID + ".mif" ));
             bw.write("-- ");
             for(int i = this.blockCharList.size() - 1; i >= 0; i--) {
                 bw.write(this.blockCharList.get(i).value + " ");
@@ -596,7 +608,7 @@ endmodule
     public void buildHDL() {
         try {
 
-            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(BRAM._outputFolder + File.separator + "BRAM_" + this.ID + ".v")));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(this._outputFolder + File.separator + "BRAM_" + this.ID + ".v")));
             bw.write("module BRAM_" + this.ID + "(out,clk,sod,en,char);\n");
             bw.write("\tinput clk, sod, en;\n");
             bw.write("\tinput [7:0] char;\n");
@@ -650,7 +662,7 @@ endmodule
 
     public void buildRomEntity(){
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(BRAM._outputFolder + File.separator + "m4kRom_" + this.ID + ".v")));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(this._outputFolder + File.separator + "m4kRom_" + this.ID + ".v")));
 
             // synopsys translate_off
             bw.write("`timescale 1 ps / 1 ps\n");
@@ -730,7 +742,7 @@ bw.write("endmodule\n");
 
     public void buildCORE_RAM_HDL() {
         try {
-        BufferedWriter bw = new BufferedWriter(new FileWriter(new File(BRAM._outputFolder + File.separator + "bram_entity_" + this.ID + ".v")));
+        BufferedWriter bw = new BufferedWriter(new FileWriter(new File(this._outputFolder + File.separator + "bram_entity_" + this.ID + ".v")));
         bw.write("`timescale 1ns/1ps\n" +
                     "module bram_entity_" + this.ID + "(\n" +
                     "addr,\n" + "clk,\n" + "dout,\n"  + "en);\n" +
@@ -803,7 +815,7 @@ bw.write("endmodule\n");
 
     public void buildTestBench() {
         try {
-             BufferedWriter bw = new BufferedWriter(new FileWriter(new File(BRAM._outputFolder + File.separator + "BRAM_" + this.ID + "_tb.v")));
+             BufferedWriter bw = new BufferedWriter(new FileWriter(new File(this._outputFolder + File.separator + "BRAM_" + this.ID + "_tb.v")));
              bw.write("`timescale 1ns/1ps\n" +
                        "module bram_test_tb_v;\n" +
                         "// Inputs\n" +
@@ -870,7 +882,8 @@ bw.write("endmodule\n");
         this.buildMIF();
         //this.buildCORE_RAM_HDL();
         this.buildRomEntity();
-        this.buildTestBench();
+        //this.buildTestBench();
+        
     }
 }
 

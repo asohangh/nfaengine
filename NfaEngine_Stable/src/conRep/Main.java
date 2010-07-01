@@ -29,14 +29,14 @@ public class Main {
         boolean fromfile = true;
         if(fromfile){
             //String filename = System.getProperty("user.dir") + System.getProperty("file.separator") + "pcre20.4.mip.1.pcre";
-            String filename = System.getProperty("user.dir") + System.getProperty("file.separator") + "conrep.pcre";
+            String filename = System.getProperty("user.dir") + System.getProperty("file.separator") + "tttn.pcre";
             Main.buildfromfile(filename);
             return;
         }
         String[] rule = new String[3];
          //String rule = "/(ga|at)((ag|aaa)*)/";
        rule[0] = "/(ga|at)((ag|aaa)*)cde/";
-       rule[2] = "/b*c(a|b)*[ac]#Adf+/";
+       rule[2] = "/^b*c(a|b)*[ac]#Adf+/smi  ";
        rule[1] = "/ab(abm){4,8}[\\x3A2a]/";
        //rule[3] = "/\\x2F(fn|s)\\x3F[\\r\\n]*si/smi";
         //rule[3] = "/^CSeq\\x3A[^\\r\\n]+[^\\x01-\\x08\\x0B1-8\\x0C\\128-\\011\\x0E-\\x1F\\126-\\127]/smi";
@@ -90,7 +90,7 @@ public class Main {
         BRAM bRam = new BRAM(0);
         LinkedList<ReEngine> engineList = new LinkedList<ReEngine>();
         //String folders = System.getProperty("user.dir") + System.getProperty("file.separator") + "test" + System.getProperty("file.separator");
-        String folders = BRAM._outputFolder + File.separator;
+        String folders = bRam._outputFolder + File.separator;
         for (int i = 0; i < rule.length; i++) {
             ParseTree tree = new ParseTree(rule[i]);
             System.out.println("pcre is: " + tree.rule.getPattern() + " -------- " + tree.rule.getModifier());
@@ -195,7 +195,8 @@ public class Main {
             bramlist.add(br);
         }
 
-        String folders = BRAM._outputFolder + File.separator;
+        String folders = new BRAM(0)._outputFolder + File.separator;
+        Main.outputResult(bramlist);
         Main.createTopEngineTogether(folders, bramlist);
     }
 
@@ -203,7 +204,9 @@ public class Main {
         BRAM bRam = new BRAM(index);
         LinkedList<ReEngine> engineList = new LinkedList<ReEngine>();
         //String folders = System.getProperty("user.dir") + System.getProperty("file.separator") + "test" + System.getProperty("file.separator");
-        String folders = BRAM._outputFolder + File.separator;
+        String folders = bRam._outputFolder + File.separator;
+        bRam.noBlockState = bRam.noPCRE = bRam.noCRB = bRam.noNFA = 0;
+        bRam.noPCRE = rule.length;
         for (int i = 0; i < rule.length; i++) {
             ParseTree tree = new ParseTree(rule[i]);
             System.out.println("pcre is: " + tree.rule.getPattern() + " -------- " + tree.rule.getModifier());
@@ -211,13 +214,22 @@ public class Main {
             nfa.tree2NFA(tree);
             nfa.updateID();
             nfa.deleteRedundantState();
-
+            bRam.noNFA += nfa.getSize();
+            
             ReEngine engine = new ReEngine();
             engine.createEngine(nfa);
             engine.id_ram = index;
+            bRam.noBlockState += engine.listBlockState.size();
+            //count crb block
+            int ncrb = 0;
+            for(int k =0; k< engine.listBlockState.size(); k++){
+                if(engine.listBlockState.get(k).isContraint)
+                    ncrb++;
+            }
+            bRam.noCRB += ncrb;
+
             bRam.addEngine(engine, i);
             engineList.add(engine);
-
             engine.buildHDL();
             engine.print();
         }
@@ -387,4 +399,31 @@ public class Main {
                bw.close();
     }
 
+       /**
+     * Need result for report :D,
+     * numofchar, noState, noCRB, noPCRE, noNFAState
+     */
+    public static void outputResult(LinkedList<BRAM> blist) {
+        try {
+            //hello;'
+            BufferedWriter bw = new BufferedWriter(new FileWriter("GeneratedFiles" + File.separator + "result.mip"));
+            
+
+            //general:
+            bw.write("<no>\t<noPCRE>\t<noNFA>\t<noState>\t<noCRB>\t<noChar>\n");
+            for(int i=0; i<blist.size(); i++){
+                BRAM br = blist.get(i);
+                bw.write("<BRAM" + i +">");
+                bw.write("\t" + br.noPCRE + "\t" + br.noNFA +"\t" + br.noBlockState +
+                        "\t" + br.noCRB + "\t" + br.blockCharList.size() + "\n");
+            }
+            bw.flush();
+            bw.close();
+
+
+        } catch (IOException ex) {
+        }
+        //this.blockCharList;
+
+    }
 }
