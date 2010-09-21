@@ -11,19 +11,24 @@ import java.util.LinkedList;
  */
 public class RuleOption {
 
-    String option;
-    String value;
-    boolean isContent = false;
-    boolean isPCRE = false;
-    boolean isContentModifier = false;
+    String option;          //option name
+    String value;           // value of option.
 
-    RuleOption() {
+    RuleComponent rule;     // rule which it belong to.
+
+    boolean isContent = false; // if option is OpContent
+    boolean isPCRE = false;    // if option is PCRE
+    boolean isContentModifier = false;  // if it is modifier for OpConent.
+
+    public RuleOption() {
         option = "";
         value = "";
+        this.rule = null;
     }
 
-    RuleOption(String sop) {
+    RuleOption(String sop, RuleComponent rule) {
         //System.out.println("parse Option: " + sop);
+        this.rule = rule;
         if (sop.indexOf(":") != -1) {
             String[] split = sop.split(":");
             this.option = split[0].trim();

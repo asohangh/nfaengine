@@ -20,13 +20,14 @@ public class RuleDatabase {
     String currentDir = System.getProperty("user.dir");
     String rulefolder = currentDir + File.separator + "rule_test" + File.separator;
     String outputfolder = currentDir + File.separator + "result" + File.separator;
-    LinkedList<RuleSet> lstSnortRuleSet;
+    public LinkedList<RuleSet> lstSnortRuleSet;
     RuleSet rsDeleted;
     RuleSet rsLocal;    //todo, current rslocal don't include in active or inactive rule.
-    LinkedList<RuleComponent> lstRuleAll;
-    LinkedList<RuleComponent> lstRuleInactive;
-    LinkedList<RuleComponent> lstRuleActive;
-    LinkedList<RuleComponent> lstRuleDeleted;
+    public LinkedList<RuleComponent> lstRuleAll;
+    public LinkedList<RuleComponent> lstRuleInactive;
+    public LinkedList<RuleComponent> lstRuleActive;
+    public LinkedList<RuleComponent> lstRuleDeleted;
+    
     public RuleDatabase() {
         lstSnortRuleSet = new LinkedList<RuleSet>();
 

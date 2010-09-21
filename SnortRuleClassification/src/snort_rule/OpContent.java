@@ -13,10 +13,11 @@ import java.util.LinkedList;
  */
 public class OpContent extends RuleOption {
 
-    LinkedList<RuleOption> lstOpModifier;
-    OpContent(String sop) {
-        
-        super(sop);
+    LinkedList<RuleOption> lstOpModifier;  // incase of existing modifier option for this OpConent, pack it here.
+
+
+    OpContent(String sop,RuleComponent rule) {
+        super(sop,rule);
         //System.out.println("Optioncontent: " +sop);
         this.lstOpModifier = new LinkedList<RuleOption>();
         this.isContent = true;

@@ -1,4 +1,4 @@
-package rule;
+package rule_v1;
 
 /**
  *

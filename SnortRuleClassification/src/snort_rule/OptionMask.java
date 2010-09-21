@@ -16,7 +16,7 @@ public class OptionMask {
     // 1 is have
     // -1 is don't have
 
-    OptionMask() {
+    public OptionMask() {
         opMark = new int[References._opAll.length];
         //set as don't care
         for (int i = 0; i < opMark.length; i++) {

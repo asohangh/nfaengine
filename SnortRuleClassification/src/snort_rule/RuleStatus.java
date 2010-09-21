@@ -20,7 +20,7 @@ public class RuleStatus {
 
     LinkedList<OptionStatus> lstOpStatus; //trade off between memory and speed , i choose memory.
 
-    RuleStatus() {
+   public RuleStatus() {
         this.lstOpStatus = new LinkedList<OptionStatus>();
     }
 
@@ -90,6 +90,11 @@ public class RuleStatus {
         return true;
     }
 
+    /*
+     * What is this class for ??
+     *      +, need to know how many option is existed in rule.
+     *      +, it also a counter for further statistic.
+     */
     public class OptionStatus {
 
         String opName; // todo in future it will be change to int, save memory and time to compare

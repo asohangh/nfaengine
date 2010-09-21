@@ -1,4 +1,4 @@
-package rule;
+package rule_v1;
 
 import java.io.IOException;
 import java.util.logging.Level;

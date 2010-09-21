@@ -17,12 +17,12 @@ import java.util.LinkedList;
  * @author heckarim
  */
 public class RuleSet {
-    String name;
-    LinkedList<RuleComponent> lstRuleAll;
-    LinkedList<RuleComponent> lstRuleInactive;
-    LinkedList<RuleComponent> lstRuleActive;
+    public String name;
+    public LinkedList<RuleComponent> lstRuleAll;
+    public LinkedList<RuleComponent> lstRuleInactive;
+    public LinkedList<RuleComponent> lstRuleActive;
 
-    RuleSet(File file) {
+    public RuleSet(File file) {
         lstRuleActive = new LinkedList<RuleComponent>();
         lstRuleInactive = new LinkedList<RuleComponent>();
         lstRuleAll = new LinkedList<RuleComponent>();

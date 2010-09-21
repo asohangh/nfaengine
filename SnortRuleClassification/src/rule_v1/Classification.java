@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package rule;
+package rule_v1;
 
 import java.io.*;
 import java.util.Hashtable;

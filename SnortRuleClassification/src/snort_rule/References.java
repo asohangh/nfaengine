@@ -4,19 +4,27 @@
  */
 package snort_rule;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.security.AuthProvider;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author heckarim
  */
 public class References {
-    
+
     public final static String _allModified = "nocase; rawbytes; depth; offset; distance; within; http_client_body; http_cookie; http_raw_cookie; http_header; http_raw_header; http_method; http_uri; http_raw_uri; http_stat_code; http_stat_msg; http_encode; fast_pattern";
     public final static String[] _opContentModifier = _allModified.split("; ");
     public final static String _alloption = "msg; reference; gid; sid; rev; classtype; priority; metadata; content; nocase; rawbytes; depth; offset; distance; within; http_client_body; http_cookie; http_raw_cookie; http_header; http_raw_header; http_method; http_uri; http_raw_uri; http_stat_code; http_stat_msg; http_encode; fast_pattern; uricontent; urilen; isdataat; file_data; byte_test; byte_jump; ftpbounce; asn1; cvs; dce_iface; dce_opnum; dce_stub_data; pcre";
@@ -24,21 +32,20 @@ public class References {
     //general option
     public final static String _allGeneralOption = "msg; reference; gid; sid; rev; classtype; priority; metadata";
     public final static String[] _opGeneral = _allGeneralOption.split("; ");
+    //PCRE modifier
+    public final static String _allPcreModifier = "i; s; m; x; A; E; G; R; U; I; P; H; D; M; C; K; S; Y; B; O";
+    public final static String [] _pcreModifier = _allPcreModifier.split("; ");
     //
-
-
     public Hashtable hashOpAll; //hash position for all option in _opAll; //this for furture using.
 
-
-    References(){
+    References() {
 
         //create hasttable
         this.hashOpAll = new Hashtable(References._opAll.length);
-        for(int i=0; i<References._opAll.length; i++){
+        for (int i = 0; i < References._opAll.length; i++) {
             this.hashOpAll.put(i, References._opAll[i].toLowerCase());
         }
     }
-
 
     /**
      *
@@ -68,29 +75,29 @@ public class References {
      * @param rule
      * @return true if pcre is simple
      */
-   /* public static boolean isSimplyPcre(RulePcre rule) {
+    /* public static boolean isSimplyPcre(RulePcre rule) {
 
-        //Remove contraint repetion rule
-        if (rule.pcre.indexOf("{") >= 0)// co the co chua contraint repetiton
-        {
-            return false;
-        }
-
-        //Remove back reference rule
-        int index = rule.pcre.indexOf("\\");
-        char chr = rule.pcre.charAt(index + 1);
-        if (chr > '0' && chr < '7') {
-            return false;
-        }
-        //Remove '^' or '$' rule
-        if (rule.pcre.startsWith("^") || rule.pcre.indexOf('$') >= 0) {
-            return false;
-        }
-
-
-        return true;
+    //Remove contraint repetion rule
+    if (rule.pcre.indexOf("{") >= 0)// co the co chua contraint repetiton
+    {
+    return false;
     }
-*/
+
+    //Remove back reference rule
+    int index = rule.pcre.indexOf("\\");
+    char chr = rule.pcre.charAt(index + 1);
+    if (chr > '0' && chr < '7') {
+    return false;
+    }
+    //Remove '^' or '$' rule
+    if (rule.pcre.startsWith("^") || rule.pcre.indexOf('$') >= 0) {
+    return false;
+    }
+
+
+    return true;
+    }
+     */
     /**
      *
      * @param rule
@@ -162,10 +169,74 @@ public class References {
     }
 
     static boolean CheckContentModifier(String option) {
-        for(int i = 0; i<_opContentModifier.length; i++){
-            if(option.compareToIgnoreCase(_opContentModifier[i]) == 0)
+        for (int i = 0; i < _opContentModifier.length; i++) {
+            if (option.compareToIgnoreCase(_opContentModifier[i]) == 0) {
                 return true;
+                
+            }
         }
         return false;
+    }
+
+
+    /*
+     * this function will write PCRE from LinkedList rulecomponent to file,
+     * @param rb
+     * @param filename
+     */
+    public static void WritePcreToFile(LinkedList<RuleComponent> lrc, String filename) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
+            for (int i = 0; i < lrc.size(); i++) {
+                if (lrc.get(i).isHavePCRE) {
+                    PCRE pcre = (PCRE) lrc.get(i).getOpPcre();
+                    bw.write(pcre.toString() +"\n");
+                    /*
+                    if(pcre.isReverse)
+                        bw.write("pcre:!\"/" + pcre.regex + "/" + pcre.modify  + "\"\n");
+                    else
+                        bw.write("pcre:\"/" + pcre.regex + "/" + pcre.modify  + "\"\n");
+
+                     */
+                }
+            }
+            bw.flush();
+            bw.close();
+
+        } catch (IOException ex) {
+            Logger.getLogger(References.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+
+    /*
+     * This function will read pcre from a file which is output by WritePcreToFile function.
+     */
+
+    public static LinkedList<PCRE> ReadPcreFromFile(String filename) {
+        LinkedList<PCRE> ret = new LinkedList<PCRE>();
+        String s;
+        BufferedReader br;
+        try {
+            br = new BufferedReader(new FileReader(filename));
+            while( (s=br.readLine() ) != null){
+                if(s.startsWith("#"))
+                    continue;
+                if(s.startsWith("!")){
+                    s = s.substring(1);
+                    s = "pcre:!\""+s+"\"";
+                }else
+                    s= "pcre:\""+s+"\"";
+                PCRE temp = new PCRE(s.trim(), null);
+                ret.add(temp);
+            }
+            br.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(References.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex){
+            System.err.println(ex);
+        }
+        
+        return ret;
     }
 }

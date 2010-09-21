@@ -12,11 +12,12 @@ import java.util.LinkedList;
  */
 public class RuleComponent {
 
-    RuleSet ruleSet;
-    RuleHeader header;
-    LinkedList<RuleOption> lstOption;
-    String value; //Content of Rule
-    RuleStatus ruleStatus;
+    public RuleSet ruleSet;
+    public RuleHeader header;
+    public LinkedList<RuleOption> lstOption;
+    public String value; //Content of Rule
+    public RuleStatus ruleStatus;
+    // public string sid; //indentifier of rule
 
     
     boolean isValid = false;
@@ -54,17 +55,17 @@ public class RuleComponent {
             if(sop.startsWith("uricontent"))
                 this.isHaveUriContent = true;
             if (sop.startsWith("content")) {
-                OpContent op = new OpContent(sop);
+                OpContent op = new OpContent(sop,this);
                 this.lstOption.add(op);
                 this.isHaveContent = true;
                 this.ruleStatus.SetOption(op.option);
             } else if (sop.startsWith("pcre")) {
-                PCRE op = new PCRE(sop);
+                PCRE op = new PCRE(sop,this);
                 this.lstOption.add(op);
                 this.isHavePCRE = true;
                 this.ruleStatus.SetOption(op.option);
             } else {
-                RuleOption op = new RuleOption(sop);
+                RuleOption op = new RuleOption(sop,this);
                 this.lstOption.add(op);
                 this.ruleStatus.SetOption(op.option);
             }  
@@ -97,6 +98,17 @@ public class RuleComponent {
             return null;
         else
             return lstRet;
+    }
+
+    public RuleOption getOpPcre(){
+        RuleOption op = null;
+        for(int i =0; i < this.lstOption.size(); i++){
+            if(lstOption.get(i).isPCRE){
+                op = (PCRE) lstOption.get(i);
+                break;
+            }
+        }
+        return op;
     }
 
     @Override
