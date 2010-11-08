@@ -1,0 +1,15 @@
+
+#bram0#size4
+/abcdef/smi
+/abmn/i 
+#prefix
+/abc/smi
+/x|y+z/smi
+/o(p|q)?/smi
+/mnp/smi
+/rtsu/smi
+#endprefix
+
+#bram1#size5
+/uvw/smi
+/u*vwzz/zmi
