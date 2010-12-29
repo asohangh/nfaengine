@@ -10,6 +10,7 @@ import ParseTree.ParseTree;
 import RegexEngine.BlockConRep;
 import RegexEngine.BlockState;
 import RegexEngine.ReEngine;
+import java.io.File;
 import java.util.LinkedList;
 
 /**
@@ -17,6 +18,7 @@ import java.util.LinkedList;
  * @author heckarim
  */
 public class TestBram {
+    public String genfolder = System.getProperty("user.dir") + File.separator + "GenHDL" + File.separator;
 
     public static void main(String[] args) {
         TestBram control = new TestBram();
@@ -34,9 +36,10 @@ public class TestBram {
         //String rule="/\\x3Ctitle\\x3ETroya\\s+\\x2D\\s+by\\s+Sma\\s+Soft\\x3C\\x2Ftitle\\x3E/smi";
         int size;
         String[] rule = new String[10];
-        rule[0] = "/abcdabe/smi";
-        rule[1] = "/ade/smi";
-        rule[2] = "/e*f/smi";
+        rule[0] = "/^ab\\xabdabe/smi";
+        //rule[1] = "/a(b|c)(b){6}e/smi";
+        rule[1] = "/a(b|c)(b(a|b)(c|d)){6}e/smi";
+        rule[2] = "/e*\\xab\\nf/smi";
         size = 3;
         LinkedList<ReEngine> lengine = new LinkedList<ReEngine>();
         //Creat Regexengine
@@ -65,5 +68,15 @@ public class TestBram {
         System.out.println("Begin to union charblock");
         bram.unionCharBlocks();
         bram.printBlockCharBram();
+
+        //generate each engien
+            for (int j = 0; j < bram.engineList.size(); j++) {
+                bram.engineList.get(j).buildHDL(genfolder);
+            }
+        bram._outputFolder = this.genfolder;
+        bram.fillEntryValue();
+        bram.buildHDL();
+        bram.buildCOE();
+        bram.buildXCO();
     }
 }

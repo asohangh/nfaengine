@@ -118,7 +118,6 @@ public class BlockContraint extends BlockState{
      */
     @Override
     public void buildHDL(){
-        
         //this.ContEngine.buildHDL(this.engine._outputfolder);
         //pcre.Refer.println("Build engine_"+this.ContEngine.id_num,this.engine.document);
         this.buildHDLBlockContraint();

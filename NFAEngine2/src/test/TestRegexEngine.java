@@ -24,7 +24,9 @@ public class TestRegexEngine {
     public void doTest() {
         //String rule = "/a*b?|c+(d|e)/smi";
         //String rule="/\\x3Ctitle\\x3ETroya\\s+\\x2D\\s+by\\s+Sma\\s+Soft\\x3C\\x2Ftitle\\x3E/smi";
-        String rule = "/abc(a|b|c){3,5}dabe/smi";
+        //String rule = "/abc(a|b|c){3,5}dabe/smi";
+        //String rule = "/(\\(\\s*(\\x27[^\\x27]{1075,}|\\x22[^\\x22]{1075,})|\\(\\s*(\\x27[^\\x27]*\\x27|\\x22[^\\x22]+\\x22)\\s*,\\s*(\\x27[^\\x27]{1075,}|\\x22[^\\x22]{1075,})|\\(\\s*((\\x27[^\\x27]*\\x27|\\x22[^\\x22]+\\x22)\\s*,\\s*){2}(\\x27[^\\x27]{1075,}|\\x22[^\\x22]{1075,}))/si";
+        String rule = "/InformixServerList=([^\\r\\n\\x3B]{,293}\\x3B)*[^\\r\\n\\x3B]{294}/i";
 
         ParseTree tree = new ParseTree(rule);
         System.out.println("pcre is: " + tree.rule.getPattern() + " -------- " + tree.rule.getModifier());

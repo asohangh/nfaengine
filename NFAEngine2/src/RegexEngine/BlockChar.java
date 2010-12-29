@@ -1,6 +1,7 @@
 package RegexEngine;
 
 import NFA.NFAEdge;
+import NFA.NFAState;
 import java.util.LinkedList;
 import java.io.BufferedWriter;
 import PCRE.Refer;
@@ -17,6 +18,14 @@ public class BlockChar {
         this.engine = engine;
         this.value = edge.value;
         this.id = edge.id;
+        this.lState = new LinkedList<BlockState>();
+        this.order = 0;
+    }
+
+    public BlockChar(String value,int id, ReEngine engine) {
+        this.engine = engine;
+        this.value = value;
+        this.id = id;
         this.lState = new LinkedList<BlockState>();
         this.order = 0;
     }

@@ -22,7 +22,10 @@ public class PcreRule {
     private int index;				//index of current element;
     private int nextIndex;			//index of next element, set after call getElement
     public String testPartten;
+    private String pcrerule;
 
+    private boolean isSupportabe = true;
+    
     public PcreRule() {
         regex = "";
         modifier = "";
@@ -36,8 +39,12 @@ public class PcreRule {
         modifier = "";
         index = 0;
         nextIndex = 0;
+        this.pcrerule = rule;
         parsePcre(rule.trim());
         formatPcre();
+    }
+    public String getRule(){
+        return pcrerule;
     }
 
     public void setPattern(String pattern) {

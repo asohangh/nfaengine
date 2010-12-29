@@ -196,6 +196,7 @@ public class Element {
                             break;
 
                         default:
+                            System.out.println("Errorxxx:\\" + chr);
                             this.id = Refer._ascii_hex;
                             this.value = "\\x" + Integer.toHexString(chr).toUpperCase();
                             this.isAtom = true;

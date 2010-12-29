@@ -82,7 +82,7 @@ public class BRAM {
                     for (int k = 0; k < walk.lState.size(); k++) {
                         BlockState bs = walk.lState.get(k);
                         //there is two type of block state
-                        //if it is conrep, it will have a list of block char
+                        //if it is conrep, it will have a list of block char to deal
                         if (bs.isConRep) {
                             BlockConRep bcr = ((BlockConRep) bs);
                             bcr.lChar.remove(walk);
@@ -107,11 +107,13 @@ public class BRAM {
             //System.out.print(this.blockCharList.get(i).value + " ");
             this.listBlockChar.get(i).order = i;
         }
-
+/*
         for (int i = 0; i < this.engineList.size(); i++) {
             System.out.println("print STATE " + i);
             this.engineList.get(i).printBlockChar();
         }
+ * 
+ */
     }
 
 
@@ -763,7 +765,7 @@ public class BRAM {
             this.engineList.get(i).order = i;
             this.engineList.get(i).updateBlockStateOrder();
         }
-        System.out.println("begin");
+        System.out.println("Print BRAM " + this.ID + " \n\tbegin");
         for (int i = 0; i < this.listBlockChar.size(); i++) {
             BlockChar bc = this.listBlockChar.get(i);
             System.out.print("[" + bc.order + ":" + bc.value + "] ");
@@ -772,7 +774,7 @@ public class BRAM {
             }
             System.out.print("\n");
         }
-        System.out.println("end");
+        System.out.println("\tend");
     }
 }
 

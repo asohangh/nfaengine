@@ -170,8 +170,9 @@ public class ReEngine {
 
     public BlockState buildBlockRecusive(NFAState state) {
         if (state.isVisited) {
-            BlockState ret = state.returnBlock;
-            return ret;
+            //BlockState ret = state.returnBlock;
+            
+            return null;
         }
 
         state.isVisited = true;
@@ -184,7 +185,7 @@ public class ReEngine {
             this.listBlockState.add(bState);
             bState.acceptChar = bChar;
             bChar.toState.add(bState);
-            state.returnBlock = bState;
+            //state.returnBlock = bState;
             NFAEdge eWalk = eTemp.dest.edge;        // don't expect edgeChar here
             while (eWalk != null) {
                 if (!eWalk.isEpsilon) {
@@ -203,7 +204,7 @@ public class ReEngine {
             return bState;
         } else if (state.isFinal) {
             state.isVisited = true;
-            state.returnBlock = this.end;
+           // state.returnBlock = this.end;
             return this.end;
         } else {
             PCRE.Refer.println("You will never come here =_=", this.document);

@@ -13,9 +13,9 @@ import java.util.LinkedList;
 public class BlockState {
     // essential attribute
 
-    LinkedList<BlockState> comming; //list cac block state toi no, day cung chinh la cac trang thai se OR lai voi nhau
+    public LinkedList<BlockState> comming; //list cac block state toi no, day cung chinh la cac trang thai se OR lai voi nhau
     public BlockChar acceptChar; // BlockChar su dung voi AND
-    LinkedList<BlockState> going; //list cac block state no se di toi
+    public LinkedList<BlockState> going; //list cac block state no se di toi
     // type of BlockState.
     public boolean isStart;// block start ko co acceptchar va khong co comming
     public boolean isEnd; // block end ko co going va khong co acceptchar.
@@ -71,8 +71,8 @@ public class BlockState {
         bw.write(";\n");
 
         bw.write("\toutput out1;\n");
-        //bw.write("\tmyDff Dff (out1,in1,clk,en,rst);\n");
-        bw.write("\tFDCE #(" +
+        bw.write("\tmyDff Dff (out1,in1,clk,en,rst);\n");
+        /*bw.write("\tFDCE #(" +
                 ".INIT(1'b0)" +
                 ") FDCE_inst (\n" +
                 "\t\t.Q(out1),\n" +
@@ -81,6 +81,8 @@ public class BlockState {
                 "\t\t.CLR(rst),\n" +
                 "\t\t.D(in1)\n" +
                 ");\n");
+         *
+         */
         bw.write("endmodule\n\n");
         bw.flush();
     }
@@ -116,8 +118,8 @@ public class BlockState {
         }else{
             bw.write("\tor(w1,out1,in0);\n");
         }
-        //bw.write("\tmyDff Dff (out1,w1,clk,en,rst);\n");
-        bw.write("\tFDCE #(" +
+        bw.write("\tmyDff Dff (out1,w1,clk,en,rst);\n");
+        /*bw.write("\tFDCE #(" +
                 ".INIT(1'b0)" +
                 ") FDCE_inst (\n" +
                 "\t\t.Q(out1),\n" +
@@ -126,6 +128,8 @@ public class BlockState {
                 "\t\t.CLR(rst),\n" +
                 "\t\t.D(w1)\n" +
                 ");\n");
+         *
+         */
         bw.write("endmodule\n\n");
         bw.flush();
     }
@@ -183,8 +187,8 @@ public class BlockState {
         }
 
         bw.write("\tand(w2,in_char,w1);\n");
-        //bw.write("\tmyDff Dff (out1,w2,clk,en,rst);\n");
-        bw.write("\tFDCE #(" +
+        bw.write("\tmyDff Dff (out1,w2,clk,en,rst);\n");
+        /*bw.write("\tFDCE #(" +
                 ".INIT(1'b0)" +
                 ") FDCE_inst (\n" +
                 "\t\t.Q(out1),\n" +
@@ -193,6 +197,8 @@ public class BlockState {
                 "\t\t.CLR(rst),\n" +
                 "\t\t.D(w2)\n" +
                 ");\n");
+         * 
+         */
         bw.write("endmodule\n\n");
         bw.flush();
     }
@@ -203,5 +209,4 @@ public class BlockState {
     public void buildHDL(){
             //This function exist in BlockConstraint
     }
-
 }

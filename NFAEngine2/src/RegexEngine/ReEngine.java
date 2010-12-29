@@ -7,9 +7,7 @@ import java.util.LinkedList;
 
 import NFA.*;
 import java.io.File;
-import javax.swing.text.Document;
 import PCRE.PcreRule;
-import PCRE.Refer;
 
 /**
  *
@@ -40,6 +38,15 @@ public class ReEngine {
 
     }
 
+    /**
+     * This function will build engine from given NFA
+     * +, firstly: add all possible block char and block state to linkedlists
+     * +, secondly : create route(incoming, outcoming) each state
+     * Note:
+     * +, \n character will be insert if modifier t is seen.
+     *
+     * @param nfa
+     */
     public void buildEngine(NFA nfa) {
         this.rule = nfa.getRule();
         //this variable for keep track of builded state.
@@ -68,12 +75,21 @@ public class ReEngine {
             }
             arr[enfa.srcState.order] = bs;
             arr[enfa.dstState.order] = bs;
-
         }
-        //block start and block end.
+        
+        //cause first edge and last edge is epsion so seperately need to add
+        //block start and block end 
         for (int i = 0; i < nfa.lState.size(); i++) {
             if (nfa.lState.get(i).isStart) {
                 BlockState bs = new BlockState(ReEngine._start, this);
+                //if there is operator ^ and modifier m
+                if(nfa.tree.rule.getModifier().contains("t") &&
+                        nfa.tree.rule.getModifier().contains("m")){
+                    BlockChar bc = new BlockChar("\\x0A", PCRE.Refer._ascii_hex, this);
+                    bs.acceptChar = bc;
+                    bc.lState.add(bs);
+                    this.listBlockChar.add(bc);
+                }
                 this.listBlockState.addFirst(bs);
                 arr[nfa.lState.get(i).order] = bs;
             }
@@ -83,7 +99,6 @@ public class ReEngine {
                 arr[nfa.lState.get(i).order] = bs;
             }
         }
-
         // Step 2: create route.
         for (int i = 0; i < nfa.lEdge.size(); i++) {
             NFAEdge enfa = nfa.lEdge.get(i);
@@ -371,13 +386,14 @@ public class ReEngine {
 
             //routing here
             //net connect block State
-            //Start State
+            //START STATE
             boolean start_n = false;
             if (this.rule.getModifier().contains("t")) { // this pcre contain ^
+                start_n = true;
                 if (this.rule.getModifier().contains("m")) {
                     //todo: if have m that mean start state will have incoming char is \n;
-                    bw.write("\n\tstate_" + this.ram_id + "_" + this.order + "_" + "0 St_0 (y1," + "in_" + this.order + "_" + this.getStartState().acceptChar.order + ",clk,en,sod);\n");
-                    start_n = true;
+                    bw.write("\n\tstate_" + this.ram_id + "_" + this.order + "_" + "0 St_0 (y1," + "~in_" + this.getStartState().acceptChar.order + ",clk,en,sod);\n");
+                    //start_n = true;
                     //bw.write("\t charBlock_" + this.id_num + "_" + "100000" + " cB (y3,char);\n");
                 } else {
                     //TODO: need to replace it to new structure
@@ -412,19 +428,29 @@ public class ReEngine {
                     //TODO
                     //module blockContraint_0_id (out, in, clk);
                     BlockConRep btc = (BlockConRep) bt;
-                    bw.write("\tBlockConRep_" + this.ram_id + "_" + this.order + "_" + bt.order + " BlockState_ConRep_" + this.ram_id + "_" + this.order + "_" + bt.order + "(w" + bt.order);
+                    //(out,i_char_1,i_char_2,i_clk,i_en,i_rst,in0);
+                    bw.write("\tBCR_state_" + this.ram_id + "_" + this.order + "_" + bt.order + " BlockState_ConRep_" + this.ram_id + "_" + this.order + "_" + bt.order +
+                            "(\n" +
+                            "\t\t.out(w" + bt.order +"),\n");
+
                     // need insert character
                     for (int j = 0; j < btc.lChar.size(); j++) {
-                        bw.write(",in_" + btc.lChar.get(j).order);
+                        bw.write("\t\t.i_char_" + btc.lChar.get(j).order +"(in_" + btc.lChar.get(j).order + "),\n");
                     }
 
-                    bw.write(",clk,en,sod");
+                    bw.write("\t\t.i_clk(clk),\n" +
+                            "\t\t.i_en(en),\n" +
+                            "\t\t.i_rst(sod)");
                     for (int j = 0; j < bt.comming.size(); j++) {
-                        bw.write(",w" + bt.comming.get(j).order);
+                        bw.write(",\n\t\t.in" + j +  "(w" + bt.comming.get(j).order +")");
                     }
                     bw.write(");\n");
-                } else {
-                    bw.write("\tstate_" + this.ram_id + "_" + this.order + "_" + bt.order + " BlockState_" + this.ram_id + "_" + this.order + "_" + bt.order + " (w" + bt.order + ",in_" + bt.acceptChar.order + ",clk,en,sod");
+                } else {//normal state.
+                    bw.write("\tstate_" + this.ram_id + "_" + this.order + "_" + bt.order + 
+                            " BlockState_" + this.ram_id + "_" + this.order + "_" + bt.order +
+                            " (w" + bt.order +
+                            ",in_" + bt.acceptChar.order +
+                            ",clk,en,sod");
                     for (int j = 0; j < bt.comming.size(); j++) {
                         bw.write(",w" + bt.comming.get(j).order);
                     }
@@ -436,8 +462,14 @@ public class ReEngine {
 
             //Build hdl block State
             for (int i = 0; i < this.listBlockState.size(); i++) {
+                //if not have ^ operator, first state is not need.
+                if(this.listBlockState.get(i).isStart){
+                    if(!start_n)
+                        continue;
+                }
+
                 if (this.listBlockState.get(i).isConRep) {
-                    this.listBlockState.get(i).buildHDL();
+                    ((BlockConRep)this.listBlockState.get(i)).buildHDL(folder);
                 } else {
                     this.listBlockState.get(i).buildHDL(bw);
                 }
@@ -451,6 +483,13 @@ public class ReEngine {
 
     }
 
+    /**
+     * This funciton will traverse listBlockState of this engine
+     *   - and look for state have isStart = true,
+     *  - the fist one will be return.
+     *  - null is ...
+     * @return
+     */
     private BlockState getStartState() {
         BlockState bs = null;
         for (int i = 0; i < this.listBlockState.size(); i++) {

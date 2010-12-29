@@ -1,0 +1,11 @@
+#bram
+/cid=tb\x2e(addr|sb)/Ui
+/st=(kwd|dns)/Ui
+/page=(messages|community)/Ui
+/Subject\x3A[^\r\n]*Windows\s+Supervisor\s+Report/smi
+/This\s*is\s*an\s*alert\s*notification\s*from\s*NetVizor/smi
+/Motion\s+detected\x21/smi
+/Please\x2C\s+find\s+the\s+log\s+file\s+\x28PKL\x29\s+attached\s+to\s+this\s+e\x2Dmail\x2E/smi
+/Attachment\s+contains\s+Spy\s+Lantern\s+Keylogger.*log\s+file\x2E/smi
+/filename\x3D\x22[^\r\n]*\x2Eltr\x22/smi
+/filename\s*\x3D\s*\x22as\x5Freport\x5F[^\x22]+\x2Ezip\x22/smi
