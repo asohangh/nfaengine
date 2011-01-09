@@ -31,6 +31,7 @@ public class ReEngine {
     //orther attribute
     public int order;                      // use in building a list of engine.
     public int ram_id;                     // use in rambuilding.
+   public  NFA nfa;
 
     public ReEngine() {
         this.listBlockChar = new LinkedList<BlockChar>();
@@ -48,6 +49,7 @@ public class ReEngine {
      * @param nfa
      */
     public void buildEngine(NFA nfa) {
+        this.nfa = nfa;
         this.rule = nfa.getRule();
         //this variable for keep track of builded state.
         BlockState[] arr = new BlockState[nfa.lState.size()];

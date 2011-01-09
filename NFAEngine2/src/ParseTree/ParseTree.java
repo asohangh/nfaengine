@@ -308,6 +308,13 @@ public class ParseTree {
                     ptern = ptern + (char) c;
                 }
                 break;
+                case Refer._class_notspace: {
+                    // cai nay lam an gian ti ^^
+                    int c = rand.nextInt(27);
+                    c = 'a' + c;
+                    ptern = ptern + (char) c;
+                }
+                break;
                 case Refer._class_dot: {
                     int c = rand.nextInt(256);
                     if (!this.rule.getModifier().contains("s")) {

@@ -176,6 +176,12 @@ public class Element {
                             this.isAtom = true;
                             this.retIndex = index + 1;
                             break;
+                        case 'S': // is not space
+                            this.id = Refer._class_notspace;
+                            this.value = "\\S";
+                            this.isAtom = true;
+                            this.retIndex = index + 1;
+                            break;
                         case 'n': // is LF
                             this.id = Refer._ascii_hex;
                             this.value = "\\x0A";

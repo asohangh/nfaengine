@@ -34,10 +34,12 @@ public class Refer {
     public static final int _op_parent = 20; 		//	Parenthesis 		()
     public static final int _op_backrefer = 21;			//  BackReference		\1, \2, ...\n
     public static final int _op_atMost = 22;
+    public static final int _class_notspace = 23;
     public static final String[] convert = {"Char", "Class", "NegC", "CRange", "NegCRange",
         "CDigit", "CWord", "CDot", "Hex", "START", "END",
         "AND", "OR", "STAR", "PLUS", "QUES", "CONTR",
-        "ATLEA", "BETW", "EXACT", "PAREN", "BACKRE", "ATMOS"};
+        "ATLEA", "BETW", "EXACT", "PAREN", "BACKRE", "ATMOS", "NotSpace"};
+
 
     /**
      * Get the index of the end of block String which indicated by bmark and emark.

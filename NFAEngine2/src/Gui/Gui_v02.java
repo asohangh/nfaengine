@@ -23,14 +23,15 @@ import javax.swing.JOptionPane;
  *
  * @author heckarim
  */
-public class Gui_v01 extends javax.swing.JFrame {
+public class Gui_v02 extends javax.swing.JFrame {
 
     private String GenFolder;
     private Generator Generator;
     private LinkedList<LinkedList<String>> listRule;
+    private boolean isfinishedprocesspcre=false;
 
     /** Creates new form Gui_v01 */
-    public Gui_v01() {
+    public Gui_v02() {
         initComponents();
         this.Generator = new Generator();
         this.setBounds(0, 0, 500, 500);
@@ -53,13 +54,10 @@ public class Gui_v01 extends javax.swing.JFrame {
         button2 = new java.awt.Button();
         textArea1 = new java.awt.TextArea();
         button3 = new java.awt.Button();
-        button4 = new java.awt.Button();
         button5 = new java.awt.Button();
-        button6 = new java.awt.Button();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("helloworld");
-        setAlwaysOnTop(true);
+        setTitle("PCRE2HDL");
         getContentPane().setLayout(null);
         getContentPane().add(textField1);
         textField1.setBounds(70, 20, 290, 19);
@@ -104,16 +102,7 @@ public class Gui_v01 extends javax.swing.JFrame {
             }
         });
         getContentPane().add(button3);
-        button3.setBounds(150, 400, 65, 23);
-
-        button4.setLabel("Gen testb");
-        button4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button4ActionPerformed(evt);
-            }
-        });
-        getContentPane().add(button4);
-        button4.setBounds(240, 400, 70, 23);
+        button3.setBounds(330, 400, 65, 23);
 
         button5.setLabel("Process PCRE");
         button5.addActionListener(new java.awt.event.ActionListener() {
@@ -122,16 +111,7 @@ public class Gui_v01 extends javax.swing.JFrame {
             }
         });
         getContentPane().add(button5);
-        button5.setBounds(20, 400, 110, 23);
-
-        button6.setLabel("GenCOE");
-        button6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button6ActionPerformed(evt);
-            }
-        });
-        getContentPane().add(button6);
-        button6.setBounds(340, 400, 66, 23);
+        button5.setBounds(50, 400, 110, 23);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -172,21 +152,26 @@ public class Gui_v01 extends javax.swing.JFrame {
     }//GEN-LAST:event_button2ActionPerformed
 
     private void button3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button3ActionPerformed
+        //check if finish process pcre?_?
+        if(!isfinishedprocesspcre){
+            JOptionPane.showMessageDialog(null, "Process PCRE step must be successfull before this step!", "HDL Builder", JOptionPane.ERROR_MESSAGE);
+        }
         //check output folder
         if (this.textField2.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Please specify Output floder!", "HDL Builder", JOptionPane.ERROR_MESSAGE);
             return;
         }
         if (!this.textField2.getText().trim().endsWith(File.separator)) {
-            this.GenFolder = this.textField2.getName().trim() + File.separator;
+            this.GenFolder = this.textField2.getText().trim() + File.separator;
         } else {
-            this.GenFolder = this.textField2.getName().trim();
+            this.GenFolder = this.textField2.getText().trim();
         }
         //update Genfolder
         this.Generator.genfolder = this.GenFolder;
         //update rule to gen.
         this.Generator.listRule = this.listRule;
         this.Generator.GenHDLv01();
+        JOptionPane.showMessageDialog(null, "Finish generate HDL!!!", "HDL Builder", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_button3ActionPerformed
 
     private void button5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button5ActionPerformed
@@ -196,24 +181,30 @@ public class Gui_v01 extends javax.swing.JFrame {
         String pcrelist = this.textArea1.getText();
         String[] split = pcrelist.split("\n");
         //check for suitable format
+        if(this.textArea1.getText().trim().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Please define pcre list!!", "PCRE Input", JOptionPane.INFORMATION_MESSAGE);
+            this.isfinishedprocesspcre = false;
+            return;
+        }
+
         for (int i = 0; i < split.length; i++) {
             s = split[i];
             s = s.trim();
             if (s.isEmpty()) {
                 continue;
             }
-            if (!s.startsWith("#bram")) {
-                JOptionPane.showMessageDialog(null, "the pcre list doesn't follow suitable format ! \n "
+            if (!s.startsWith("#bram")||i==split.length-1) {
+                JOptionPane.showMessageDialog(null, "the pcre list doesn't follow suitable format ! \n"
                         + "Try: \n\n"
                         + "#bram<i> (i is the order of BRAM\n"
                         + "pcre1\n"
                         + "pcre2\n"
-                        + "..."
+                        + "...\n"
                         + "#bram<i+1>\n"
                         + "pcre1\n"
-                        + "...", "PCRE Builder", JOptionPane.ERROR_MESSAGE);
+                        + "...\n", "PCRE Builder", JOptionPane.ERROR_MESSAGE);
+                this.isfinishedprocesspcre = false;
                 return;
-
             } else {
                 break;
             }
@@ -240,15 +231,8 @@ public class Gui_v01 extends javax.swing.JFrame {
             this.listRule.add(lpcre);
         }
         JOptionPane.showMessageDialog(null, "All pcres are processed!", "PCREs builder", JOptionPane.INFORMATION_MESSAGE);
+        this.isfinishedprocesspcre = true;
     }//GEN-LAST:event_button5ActionPerformed
-
-    private void button4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button4ActionPerformed
-        this.genTestBench();
-    }//GEN-LAST:event_button4ActionPerformed
-
-    private void button6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button6ActionPerformed
-        this.Generator.geCOEv01();
-    }//GEN-LAST:event_button6ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -257,7 +241,7 @@ public class Gui_v01 extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
-                new Gui_v01().setVisible(true);
+                new Gui_v02().setVisible(true);
             }
         });
     }
@@ -265,9 +249,7 @@ public class Gui_v01 extends javax.swing.JFrame {
     private java.awt.Button button1;
     private java.awt.Button button2;
     private java.awt.Button button3;
-    private java.awt.Button button4;
     private java.awt.Button button5;
-    private java.awt.Button button6;
     private java.awt.Label label1;
     private java.awt.Label label2;
     private java.awt.TextArea textArea1;

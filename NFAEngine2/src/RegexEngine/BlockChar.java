@@ -44,12 +44,21 @@ public class BlockChar {
     public boolean compareTo(BlockChar walk) {
         boolean res = false;
         if (this.id == walk.id) {
-            if (this.value.compareTo(walk.value) == 0) {
-                res = true;
-            } else {
-                if (this.engine.rule.getModifier().indexOf("i") != -1 && this.value.compareToIgnoreCase(walk.value) == 0) {// neu la case insensitive
-                    res = true;
+            if(this.id == Refer._char){
+                // if bothe case insentivie => ok
+                // if both no case inse   => ok
+                // it one case noe no case => no ok
+                if(this.engine.rule.getModifier().indexOf("i") ==-1 && walk.engine.rule.getModifier().indexOf("i")==-1){
+                    if(this.value.compareTo(walk.value) == 0)
+                        res =  true;
                 }
+                else if(this.engine.rule.getModifier().indexOf("i")!=-1 && walk.engine.rule.getModifier().indexOf("i")!=-1){
+                    if(this.value.compareToIgnoreCase(walk.value) == 0)
+                        res =  true;
+                }else
+                    res = false;
+            }else if (this.value.compareTo(walk.value) == 0) {
+                res = true;
             }
         }
         return res;

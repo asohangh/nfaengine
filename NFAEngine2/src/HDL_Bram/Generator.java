@@ -32,6 +32,7 @@ public class Generator {
     public LinkedList<LinkedList<String>> listRule;
     LinkedList<BRAM> listBram;
     public String genfolder = System.getProperty("user.dir") + File.separator + "GenHDL" + File.separator;
+    public String outputfolder = System.getProperty("user.dir") + File.separator + "output" + File.separator;
     public String pcrefile;
 
     public static void main(String[] args) throws Exception {
@@ -52,6 +53,7 @@ public class Generator {
         this.GenTestBenchv01();
         //this.generateTestbench(); //testcase ...
         //this.generateTestRam();
+        this.outputStatistic(this.outputfolder+"statistic.thesis.mip");
     }
 
     /**
@@ -78,7 +80,7 @@ public class Generator {
                     lpcre = new LinkedList<String>();
                     continue;
                 }
-                s = s + 'i'; //todo all is case sensitive
+                // s = s + 'i'; //todo all is case sensitive
                 lpcre.add(s);
             }
             if (lpcre != null) {
@@ -107,8 +109,8 @@ public class Generator {
             this.generateHDLBram(bram);
         }
         //Generate Top Engine;
-        Generator.doBuildInterfacer(genfolder);
-        Generator.createTopEngineTogether(genfolder, this.listBram);
+        //Generator.doBuildInterfacer(genfolder);
+        //Generator.createTopEngineTogether(genfolder, this.listBram);
     }
 
     public void generateBramTestBench() {
@@ -436,8 +438,9 @@ public class Generator {
         pcretestcase.generateSimpleTestcase(2);
         //generate two testcase, remember that each testcase contain n pattern corresponding to size of data.
         TestCase tc = pcretestcase.listTestCase.getFirst();
-        //this.genMzFile(this.genfolder+"pack.mz", tc);
-        this.gen4LongLoc(this.genfolder + "head.pay.draf", tc, bram);
+        this.genMzFile(this.genfolder + "pack." + bram.ID + ".mz", tc);
+        this.gen4LongLoc(this.genfolder + "head.pay." + bram.ID + ".draf", tc, bram);
+        this.genBoundarytb(this.genfolder + "tb_Boundary." + bram.ID + ".v", tc, bram);
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(new File(folder + File.separator + "BRAM_" + bram.ID + "_tb.v")));
             bw.write("`timescale 1ns/1ps\n"
@@ -675,8 +678,8 @@ public class Generator {
         for (int i = 0; i < this.listBram.size(); i++) {
             BRAM bram = this.listBram.get(i);
             //generate each engien
-            this.buildTestBench(genfolder, bram);
-            this.buildTestBench_1(genfolder, bram);
+            this.buildTestBench(genfolder, bram); //Build testbench BRam0_tb
+            //this.buildTestBench_1(genfolder, bram);//module top_nfa_one_rule_tb
         }
     }
 
@@ -845,6 +848,163 @@ public class Generator {
             bw.close();
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    private void genBoundarytb(String file, TestCase tc, BRAM bram) {
+        String samplefile = System.getProperty("user.dir") + File.separator + "sample" + File.separator + "tb_Boundary.v";
+        try {
+            //Read sample
+            String s;
+            String[] ss = new String[3];
+            ss[0] = ss[1] = ss[2] = "";
+            int k = 0;
+            BufferedReader br = new BufferedReader(new FileReader(samplefile));
+            while ((s = br.readLine()) != null) {
+                if (s.compareToIgnoreCase("//xxxtmip") == 0) {
+                    k++;
+                } else {
+                    ss[k] += "\n" + s;
+                }
+            }
+            br.close();
+            //wriet to file
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+
+            bw.write(ss[0] + bram.ID + ";\n" + ss[1] + "\n");
+
+            for (int i = 0; i < bram.engineList.size(); i++) {
+                ReEngine temp = bram.engineList.get(i);
+                bw.write("//" + temp.rule.getPattern() + "..." + temp.rule.getModifier() + ";\n");
+            }
+            bw.write("//---------------------------------------------------\n");
+
+            for (int i = 0; i < bram.engineList.size(); i++) {
+                ReEngine temp = bram.engineList.get(i);
+                Pattern pt = tc.listPattern.get(i);
+                System.out.println("Gen Pattern: " + pt.data);
+                bw.write("//" + temp.rule.getPattern() + "..." + temp.rule.getModifier() + ";\n");
+                bw.write("//Start\n"
+                        + "#50 	rx_ll_sof_in_n = 0;\n"
+                        + "rx_ll_src_rdy_n = 0;\n"
+                        + "rx_ll_data_in = 8'h1;\n"
+                        + "#10	rx_ll_sof_in_n = 1;\n"
+                        + "rx_ll_data_in = 8'h2;\n");
+                bw.write("//header\n"
+                        + "#10 rx_ll_data_in = 8'h03;\n"
+                        + "#10 rx_ll_data_in = 8'h04;\n"
+                        + "#10 rx_ll_data_in = 8'h05;\n"
+                        + "#10 rx_ll_data_in = 8'h06;\n"
+                        + "#10 rx_ll_data_in = 8'h07;\n"
+                        + "#10 rx_ll_data_in = 8'h08;\n"
+                        + "#10 rx_ll_data_in = 8'h09;\n"
+                        + "#10 rx_ll_data_in = 8'h0a;\n"
+                        + "#10 rx_ll_data_in = 8'h0b;\n"
+                        + "#10 rx_ll_data_in = 8'h0c;\n"
+                        + "#10 rx_ll_data_in = 8'h0d;\n"
+                        + "#10 rx_ll_data_in = 8'h0e;\n"
+                        + "#10 rx_ll_data_in = 8'h45;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h2e;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h40;\n"
+                        + "#10 rx_ll_data_in = 8'h06;\n"
+                        + "#10 rx_ll_data_in = 8'hf7;\n"
+                        + "#10 rx_ll_data_in = 8'h74;\n"
+                        + "#10 rx_ll_data_in = 8'hc0;\n"
+                        + "#10 rx_ll_data_in = 8'ha8;\n"
+                        + "#10 rx_ll_data_in = 8'h01;\n"
+                        + "#10 rx_ll_data_in = 8'h03;\n"
+                        + "#10 rx_ll_data_in = 8'hc0;\n"
+                        + "#10 rx_ll_data_in = 8'ha8;\n"
+                        + "#10 rx_ll_data_in = 8'h01;\n"
+                        + "#10 rx_ll_data_in = 8'h02;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h01;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h01;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h50;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h02;\n"
+                        + "#10 rx_ll_data_in = 8'h5a;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n"
+                        + "#10 rx_ll_data_in = 8'h00;\n");
+
+                for (int j = 0; j < pt.data.length(); j++) {
+
+                    bw.write("#10 rx_ll_data_in = " + ((int) pt.data.charAt(j)) + ";\n");
+                    if (j == (pt.data.length() - 1)) {
+                        bw.write("//end of packet\n"
+                                + "#10 rx_ll_data_in = " + ((int) pt.data.charAt(j)) + ";\n"
+                                + "rx_ll_eof_in_n = 0;\n");
+                    }
+                }
+
+                bw.write("rx_ll_eof_in_n = 0;\n"
+                        + "#10 rx_ll_sof_in_n = 1;\n"
+                        + "rx_ll_eof_in_n = 1;\n"
+                        + "rx_ll_src_rdy_n = 1;\n");
+            }
+
+            bw.write(ss[2]);
+            bw.flush();
+            bw.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void outputStatistic(String file) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+            bw.write("noPCRE\tnoChar\tnoNFA\tnoStateBlock\tnoCRB\n");
+            for (int i = 0; i < this.listBram.size(); i++) {
+                BRAM bram = this.listBram.get(i);
+                bw.write("#bram " + i);
+                bw.write(bram.engineList.size() + "\t");
+                bw.write(bram.listBlockChar.size() + "\t");
+                
+                //count nfa state
+                int nfa=0;
+                for (int j = 0; j < bram.engineList.size(); j++) {
+                    ReEngine re = bram.engineList.get(j);
+                    nfa += re.nfa.lState.size();
+                }
+                bw.write(nfa+"\t");
+                //count no state crb
+                int state = 0, crb = 0;
+                for (int j = 0; j < bram.engineList.size(); j++) {
+                    ReEngine re = bram.engineList.get(j);
+                    for (int k = 0; k < re.listBlockState.size(); k++) {
+                        if (re.listBlockState.get(k).isConRep) {
+                            crb++;
+                        } else {
+                            state++;
+                        }
+                    }
+                }
+
+                bw.write(state + "\t" + crb+"\n");
+            }
+
+            bw.flush();
+            bw.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Generator.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

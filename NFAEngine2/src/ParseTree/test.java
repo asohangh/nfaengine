@@ -27,16 +27,17 @@ public class test {
     public void doTest() {
        //String rule = "/a*b?|c+(d|e)/smi";
        //String rule = "/User-Agent\\x3A[^\\n\\r]+Google[^\\n\\r]+Desktop/smi";
-       String rule= "/(spray|return_address|payloadcode|shellcode|retaddr|retaddress|block|payload|agent|hspt)/smi";
+       //String rule= "/(spray|return_address|payloadcode|shellcode|retaddr|retaddress|block|payload|agent|hspt)/smi";
         //String rule = "/ab\\x3Ac/smi";
        //String rule = "/(a|b)|c*de/smi";
+        String rule = "/\\sLOGIN\\s[^\n]*?\\{/smi";
         ParseTree tree=new ParseTree(rule);
         System.out.println("pcre is: "+tree.rule.getPattern() +" -------- "+tree.rule.getModifier())	;
         tree.printTree();
         String s = "";
         s = tree.patternOfPCRE(tree.root);
         System.out.println(s);
-        //tree.generateDotFile(null, null);
+        tree.generateDotFile(null, null);
         Contructor con = new Contructor(tree);
         
         

@@ -79,6 +79,7 @@ public class BRAM {
                 //System.out.println(" " + i + "." + j);
                 BlockChar walk = this.listBlockChar.get(j);
                 if (temp.compareTo(walk)) {
+                    //replace it in block state level.
                     for (int k = 0; k < walk.lState.size(); k++) {
                         BlockState bs = walk.lState.get(k);
                         //there is two type of block state
@@ -92,7 +93,7 @@ public class BRAM {
                         }
                         temp.lState.add(bs);
                     }
-                    //replace it in engine
+                    //replace it in engine level
                     ReEngine en = walk.engine;
                     en.listBlockChar.remove(walk);
                     en.listBlockChar.add(temp);
@@ -107,13 +108,13 @@ public class BRAM {
             //System.out.print(this.blockCharList.get(i).value + " ");
             this.listBlockChar.get(i).order = i;
         }
-/*
+        /*
         for (int i = 0; i < this.engineList.size(); i++) {
-            System.out.println("print STATE " + i);
-            this.engineList.get(i).printBlockChar();
+        System.out.println("print STATE " + i);
+        this.engineList.get(i).printBlockChar();
         }
- * 
- */
+         *
+         */
     }
 
 
@@ -215,7 +216,8 @@ public class BRAM {
                 hexValue = 10;
                 this.buildHex(hexValue);
                 break;*/
-
+                case Refer._class_notspace:
+                    this.fillCharRangeNoSpace();
                 case Refer._class_word:
                     // \w
                     this.fillCharRange();
@@ -380,6 +382,14 @@ public class BRAM {
         for (int i = 123; i <= 255; i++) {
             BRam[i][col] = '0';
         }
+    }
+
+    private void fillCharRangeNoSpace() {
+        for (int i = 0; i <= 255; i++) {
+            BRam[i][col] = '1';
+        }
+        char ch = ' ';
+        BRam[(int)ch][col] = '0';
     }
 
     private void fillDigitRange() {
@@ -589,17 +599,16 @@ public class BRAM {
             //declare engine
             int index = 0;
             for (int i = 0; i < this.engineList.size(); i++) {
+                //currently, bram support engine with multi end state, so need to
                 //sperate upper index and lower index of ouput of each engine.
                 int lindex = index;
                 int uindex = index + this.engineList.get(i).listEndState.size() - 1;
-                index = uindex +1;
+                index = uindex + 1;
                 if (lindex == uindex) {
                     bw.write("\tengine_" + this.ID + "_" + this.engineList.get(i).order + " engine_" + this.ID + "_" + this.engineList.get(i).order + "(.out(out[" + uindex + "]), \n\t\t.clk(clk), .sod(sod), \n\t\t.en(en)"); // thieu char
                 } else {
                     bw.write("\tengine_" + this.ID + "_" + this.engineList.get(i).order + " engine_" + this.ID + "_" + this.engineList.get(i).order + "(.out(out[" + uindex + ":" + lindex + "]), \n\t\t.clk(clk), .sod(sod), \n\t\t.en(en)"); // thieu char
                 }
-
-
                 //routing to each engine
                 ReEngine te = this.engineList.get(i);
                 //routing to each engine

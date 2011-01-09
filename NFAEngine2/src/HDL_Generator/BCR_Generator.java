@@ -264,7 +264,7 @@ public class BCR_Generator {
         }
         bw.write(";\n");
         //assign Reset Unit
-        bw.write("\tassign o_rst = !(w1");
+        bw.write("\tassign o_rst = !(w0||w1");
         for (int i = 2; i < this.ContEngine.listBlockState.size(); i++) {
             BlockState bt = this.ContEngine.listBlockState.get(i);
             if (!(bt.isStart || bt.isEnd)) {
