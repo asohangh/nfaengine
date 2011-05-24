@@ -1,0 +1,46 @@
+digraph "parse Tree" {
+graph [ranksep=.2,rankdir=TD];
+node [shape=circle,fontname=Arial,fontsize=14];
+node [width=1,fixedsize=true];
+edge [fontname=Arial,fontsize=14];
+-1 [width=0.2,shape=point color=red];
+-1 -> 0 [ color=red];
+0 [label="[AND]" color=red];
+0 -> 1 [color=green];
+1 [label="[AND]" color=red];
+1 -> 2 [color=green];
+2 [label="[AND]" color=red];
+2 -> 3 [color=green];
+3 [label="[AND]" color=red];
+3 -> 4 [color=green];
+4 [label="[AND]" color=red];
+4 -> 5 [color=green];
+5 [label="[AND]" color=red];
+5 -> 6 [color=green];
+6 [label="[AND]" color=red];
+6 -> 7 [color=green];
+7 [label="[AND]" color=red];
+7 -> 8 [color=green];
+8 [label="\x20" color=blue];
+7 -> 9 [color=green];
+9 [label="L" color=blue];
+6 -> 10 [color=green];
+10 [label="O" color=blue];
+5 -> 11 [color=green];
+11 [label="G" color=blue];
+4 -> 12 [color=green];
+12 [label="I" color=blue];
+3 -> 13 [color=green];
+13 [label="N" color=blue];
+2 -> 14 [color=green];
+14 [label="\x20" color=blue];
+1 -> 15 [color=green];
+15 [label="[QUES]" color=red];
+15 -> 16 [color=green];
+16 [label="[STAR]" color=red];
+16 -> 17 [color=green];
+17 [label="[^
+]" color=blue];
+0 -> 18 [color=green];
+18 [label="\x7B" color=blue];
+}
