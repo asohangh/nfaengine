@@ -12,7 +12,6 @@ import java.util.LinkedList;
  * @author heckarim
  * this class in charge of
  *          +, storing information of option in RuleComponent.
- *
  */
 public class RuleStatus {
     //String alloption = "content; nocase; rawbytes; depth; offset; distance; within; http_client_body; http_cookie; http_raw_cookie; http_header; http_raw_header; http_method; http_uri; http_raw_uri; http_stat_code; http_stat_msg; http_encode; fast_pattern; uricontent; urilen; isdataat; file_data; byte_test; byte_jump; ftpbounce; asn1; cvs; dce_iface; dce_opnum; dce_stub_data";
@@ -27,6 +26,7 @@ public class RuleStatus {
     /**
      *
      * @param opname
+     * increase counter for dedicated option.
      * every time a option is appeared,this will be called.
      */
     public void SetOption(String opname) {
@@ -62,7 +62,7 @@ public class RuleStatus {
         }
     }
 
-    public OptionStatus GetOption(String opname) {
+    public OptionStatus GetOptionStatus(String opname) {
         int i;
         for (i = 0; i < lstOpStatus.size(); i++) {
             if (lstOpStatus.get(i).opName.compareToIgnoreCase(opname) == 0) {
@@ -91,15 +91,15 @@ public class RuleStatus {
     }
 
     /*
-     * What is this class for ??
+     * What is this class for ?_?
      *      +, need to know how many option is existed in rule.
      *      +, it also a counter for further statistic.
      */
     public class OptionStatus {
 
-        String opName; // todo in future it will be change to int, save memory and time to compare
+        public String opName; // todo in future it will be change to int, save memory and time to compare
         //boolean isExist = false;
-        int count = 0;
+        public int count = 0;
         ; //number of this status;
 
         private OptionStatus(String opname) {

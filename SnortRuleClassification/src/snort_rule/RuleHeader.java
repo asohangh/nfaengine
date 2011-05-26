@@ -10,18 +10,20 @@ package snort_rule;
  */
 public class RuleHeader {
 
-    String action;
-    String protocol;
-    String srcAddress;
-    String srcPort;
-    String dstAddress;
-    String dstPort;
-    String value;
-    String direction;
+    public String action;
+    public String protocol;
+    public String srcAddress;
+    public String srcPort;
+    public String dstAddress;
+    public String dstPort;
+    public String value;
+    public String direction;
+    RuleComponent rule;
 
-    RuleHeader(String s) {
+    RuleHeader(String s, RuleComponent rule) {
         this.value = s;
         ParseHeader(s);
+        this.rule = rule;
     }
 
     public void ParseHeader(String sheader) {
@@ -51,10 +53,22 @@ public class RuleHeader {
         dstPort = s[6];
     }
 
+    public RuleComponent getRule() {
+        return this.rule;
+    }
+
+    public String getSID() {
+        if (this.rule != null) {
+            return this.rule.sid;
+        } else {
+            return "0";
+        }
+    }
+
     @Override
     public String toString() {
         String ret;
-        ret = this.action + " " + this.srcAddress + " " + this.srcPort + " " + this.direction + " " + this.dstAddress + " " + this.dstPort;
+        ret = this.action + " " + this.protocol + " " + this.srcAddress + " " + this.srcPort + " " + this.direction + " " + this.dstAddress + " " + this.dstPort;
         return ret;
     }
 }

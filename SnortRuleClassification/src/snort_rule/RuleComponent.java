@@ -17,9 +17,8 @@ public class RuleComponent {
     public LinkedList<RuleOption> lstOption;
     public String value; //Content of Rule
     public RuleStatus ruleStatus;
-    // public string sid; //indentifier of rule
+    public String sid; //indentifier of rule
 
-    
     boolean isValid = false;
     boolean isHaveContent = false;
     boolean isHaveUriContent = false;
@@ -30,7 +29,6 @@ public class RuleComponent {
         this.value = s;
         this.ruleSet = ruleset;
         this.ruleStatus = new RuleStatus();
-
         ParseRuleComponent(this.value);
         this.isValid = true;
     }
@@ -43,7 +41,7 @@ public class RuleComponent {
         //System.out.println(rule);
         index = rule.indexOf("(");
         sheader = rule.substring(0, index);
-        this.header = new RuleHeader(sheader.trim());
+        this.header = new RuleHeader(sheader.trim(),this);
 
         //parse rule content
         // bo phan header cua rule va 2 dau ()
@@ -58,16 +56,17 @@ public class RuleComponent {
                 OpContent op = new OpContent(sop,this);
                 this.lstOption.add(op);
                 this.isHaveContent = true;
-                this.ruleStatus.SetOption(op.option);
+                //increase counter for this option.
+                this.ruleStatus.SetOption(op.optionName);
             } else if (sop.startsWith("pcre")) {
                 PCRE op = new PCRE(sop,this);
                 this.lstOption.add(op);
                 this.isHavePCRE = true;
-                this.ruleStatus.SetOption(op.option);
+                this.ruleStatus.SetOption(op.optionName);
             } else {
                 RuleOption op = new RuleOption(sop,this);
                 this.lstOption.add(op);
-                this.ruleStatus.SetOption(op.option);
+                this.ruleStatus.SetOption(op.optionName);
             }  
         }
         //need to cheeck and add modifier option in to OpContnet
@@ -86,6 +85,8 @@ public class RuleComponent {
                 i++;
             }
         }
+        //get SID
+        this.sid = this.getOpSID().value;
     }
 
     public LinkedList<OpContent> GetOpContent(){
@@ -100,7 +101,36 @@ public class RuleComponent {
             return lstRet;
     }
 
-    public RuleOption getOpPcre(){
+
+    private RuleOption getOpSID(){
+        RuleOption op = null;
+        for(int i =0; i < this.lstOption.size(); i++){
+            if(lstOption.get(i).optionName.compareToIgnoreCase("sid")==0){
+                op = lstOption.get(i);
+                break;
+            }
+        }
+        return op;
+    }
+
+    /**
+     *  this function just use for option which appear one time.
+     * @param option
+     * @return
+     */
+    public RuleOption getRuleOption(String option){
+        RuleOption ret = null;
+        for(int i =0; i < this.lstOption.size(); i++){
+            if(lstOption.get(i).optionName.compareToIgnoreCase(option) == 0){
+                ret = lstOption.get(i);
+                break;
+            }
+        }
+        return ret;
+    }
+
+
+    public RuleOption getFirstOpPcre(){
         RuleOption op = null;
         for(int i =0; i < this.lstOption.size(); i++){
             if(lstOption.get(i).isPCRE){
@@ -111,14 +141,28 @@ public class RuleComponent {
         return op;
     }
 
+    public LinkedList<PCRE> getOpPcre(){
+        LinkedList<PCRE> rPcre = new LinkedList<PCRE>();
+        for(int i=0; i<this.lstOption.size();i++){
+            if(lstOption.get(i).isPCRE){
+                rPcre.add((PCRE) lstOption.get(i));
+            }
+        }
+        return rPcre;
+    }
+    public boolean ApplyMask(OptionMask mask){
+        return this.ruleStatus.CompareMask(mask);
+    }
+
     @Override
     public String toString() {
         String ret;
-        ret = this.header.toString() + " ... ";
+        ret = this.header.toString() + " (";
         for (int i = 0; i < this.lstOption.size(); i++) {
             ret += lstOption.get(i).toString() + "; ";
         }
-
+        ret = ret + ")";
         return ret;
     }
+
 }

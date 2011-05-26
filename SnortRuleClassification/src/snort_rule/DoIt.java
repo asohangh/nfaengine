@@ -5,6 +5,8 @@
 
 package snort_rule;
 
+import java.io.File;
+
 /**
  *
  * @author heckarim
@@ -15,13 +17,14 @@ public class DoIt {
         new DoIt().action();
     }
 
-
     private void action() {
-        RuleDatabase rd = new RuleDatabase();
+        String basefolder = System.getProperty("user.dir") + File.separator + "rules.2.9" + File.separator;
+        //RuleDatabase rd = new RuleDatabase();
+        RuleDatabase rd = new RuleDatabase(basefolder);
+        
         rd.BuildDatabase();
         //rd.print4Test();
         Statistic0 st = new Statistic0(rd);
                 st.DoScript();
-
     }
 }

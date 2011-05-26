@@ -126,4 +126,22 @@ public class PCRE extends RuleOption {
             return "/" + regex + "/" + modify;
         }
     }
+
+    public String getOptionString(){
+        String ret = "pcre:";
+
+        if (this.isReverse) {
+            ret += "!\"/" + regex + "/" + modify + "\"";
+        } else {
+            ret += "\"/" + regex + "/" + modify+"\"";
+        }
+        return ret;
+    }
+    /**
+     *
+     * @return
+     */
+    public String getvalue(){
+        return this.value.substring(1, this.value.length()-1);
+    }
 }

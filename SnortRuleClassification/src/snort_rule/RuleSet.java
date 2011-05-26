@@ -26,7 +26,7 @@ public class RuleSet {
         lstRuleActive = new LinkedList<RuleComponent>();
         lstRuleInactive = new LinkedList<RuleComponent>();
         lstRuleAll = new LinkedList<RuleComponent>();
-        name = file.getName();
+        name = file.getName().replaceAll(".rules", "");
         ParseRuleFile(file);
     }
 

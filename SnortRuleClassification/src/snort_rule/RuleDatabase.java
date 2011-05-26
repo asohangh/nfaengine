@@ -16,11 +16,13 @@ import java.util.LinkedList;
  * @author heckarim
  */
 public class RuleDatabase {
-
+    // Configuration
+    int checkDeletedRule = 0;
+    //
     String currentDir = System.getProperty("user.dir");
-    String rulefolder = currentDir + File.separator + "rule_test" + File.separator;
-    String outputfolder = currentDir + File.separator + "result" + File.separator;
-    public LinkedList<RuleSet> lstSnortRuleSet;
+    public String rulefolder = currentDir + File.separator + "rules.2.9" + File.separator;
+    String outputfolder = currentDir + File.separator + "result.2.9" + File.separator;
+    public LinkedList<RuleSet> lstSnortRuleSet; // with exception of Deleted.rules and Local.rules.
     RuleSet rsDeleted;
     RuleSet rsLocal;    //todo, current rslocal don't include in active or inactive rule.
     public LinkedList<RuleComponent> lstRuleAll;
@@ -30,7 +32,6 @@ public class RuleDatabase {
     
     public RuleDatabase() {
         lstSnortRuleSet = new LinkedList<RuleSet>();
-
         lstRuleActive = new LinkedList<RuleComponent>();
         lstRuleInactive = new LinkedList<RuleComponent>();
         lstRuleAll = new LinkedList<RuleComponent>();
@@ -42,11 +43,18 @@ public class RuleDatabase {
         this.rulefolder = rulefolder;
 
         lstSnortRuleSet = new LinkedList<RuleSet>();
-
         lstRuleActive = new LinkedList<RuleComponent>();
         lstRuleInactive = new LinkedList<RuleComponent>();
         lstRuleAll = new LinkedList<RuleComponent>();
         lstRuleDeleted = new LinkedList<RuleComponent>();
+    }
+
+    public void setRuleFolder(String rulefolder){
+        this.rulefolder = rulefolder;
+    }
+
+    public void setOutputFolder(String outputfolder){
+        this.outputfolder = outputfolder;
     }
 
     public void BuildDatabase() {
@@ -55,7 +63,7 @@ public class RuleDatabase {
         for (int i = 0; i < arrayFile.length; i++) {
             System.out.println(arrayFile[i]);
             //parseRuleFile(arrayFile[i]);
-            if(arrayFile[i].getName().compareToIgnoreCase("deleted.rules") == 0)
+            if(!(this.checkDeletedRule==0) && arrayFile[i].getName().compareToIgnoreCase("deleted.rules") == 0)
             {
                 this.rsDeleted = new RuleSet(arrayFile[i]);
                 continue;

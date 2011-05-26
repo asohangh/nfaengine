@@ -55,12 +55,12 @@ public class OptionMask {
     }
 
     public void SetPermit(String mask) {
+        //TODO  if not belong to option sest => return error.
         for (int k = 0; k < References._opAll.length; k++) {
             if (References._opAll[k].compareToIgnoreCase(mask) == 0) {
                 this.opMark[k] = 1;
             }
         }
-
     }
 
      public void SetDontCare(String mask) {

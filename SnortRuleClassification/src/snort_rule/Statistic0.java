@@ -50,7 +50,7 @@ II,Content:
 public class Statistic0 {
 
     String currentDir = System.getProperty("user.dir");
-    String outputfolder = currentDir + File.separator + "Statistic0" + File.separator;
+    String outputfolder = currentDir + File.separator + "Statistic0_2.9" + File.separator;
     RuleDatabase db;
 
     Statistic0(RuleDatabase database) {
@@ -326,7 +326,7 @@ public class Statistic0 {
                     //        !rs.lstRuleAll.get(j).ruleStatus.isHaveOption("uricontent")) {
                     if (rs.lstRuleAll.get(j).ruleStatus.CompareMask(mask)) {
                         //have one content
-                        if (rs.lstRuleAll.get(j).ruleStatus.GetOption("content").count == 1) {
+                        if (rs.lstRuleAll.get(j).ruleStatus.GetOptionStatus("content").count == 1) {
                             bw.write(rs.lstRuleAll.get(j).value + "\n");
                             bw.write(rs.lstRuleAll.get(j).GetOpContent().get(0).toString() + "\n");
                             count++;
@@ -351,7 +351,9 @@ public class Statistic0 {
             mask.SetDontCare("nocase");
             mask.SetPermit("content");
             mask.SetForbid("uricontent");
+            mask.SetDontCare("fast_pattern");
             mask.SetDontCare("rawbytes");
+            
 
             bw = new BufferedWriter(new FileWriter(outputfolder + "SimpleRulewithPcre.st0"));
             String result3 = "\n Result: Rule just have 1 content and no uricontent\n";
@@ -366,7 +368,7 @@ public class Statistic0 {
                 for (int j = 0; j < rs.lstRuleAll.size(); j++) {
                     if (rs.lstRuleAll.get(j).ruleStatus.CompareMask(mask)) {
                         //have one content
-                        if (rs.lstRuleAll.get(j).ruleStatus.GetOption("content").count == 1) {
+                        if (rs.lstRuleAll.get(j).ruleStatus.GetOptionStatus("content").count == 1) {
                             if (rs.lstRuleAll.get(j).ruleStatus.isHaveOption("pcre")) {
                                 countPcre++;
                             }
@@ -418,7 +420,7 @@ public class Statistic0 {
                 for (int j = 0; j < rs.lstRuleAll.size(); j++) {
                     if (rs.lstRuleAll.get(j).ruleStatus.CompareMask(mask)) {
                         //have one content
-                        if (rs.lstRuleAll.get(j).ruleStatus.GetOption("content").count == 1) {
+                        if (rs.lstRuleAll.get(j).ruleStatus.GetOptionStatus("content").count == 1) {
                             if (rs.lstRuleAll.get(j).ruleStatus.isHaveOption("nocase")) {
                                 countNocase++;
                             }
@@ -458,27 +460,27 @@ public class Statistic0 {
             for (int i = 0; i < db.lstRuleActive.size(); i++) {
                 if (db.lstRuleActive.get(i).ruleStatus.isHaveOption("content")) {
                     conruleActive++;
-                    concountActive += db.lstRuleActive.get(i).ruleStatus.GetOption("content").count;
+                    concountActive += db.lstRuleActive.get(i).ruleStatus.GetOptionStatus("content").count;
                 }
                 for (int j = 0; j < References._opContentModifier.length; j++) {
 
                     if (db.lstRuleActive.get(i).ruleStatus.isHaveOption(References._opContentModifier[j])) {
                         opModRuleActive[j]++;
-                        opModCountActive[j] += db.lstRuleActive.get(i).ruleStatus.GetOption(References._opContentModifier[j]).count;
+                        opModCountActive[j] += db.lstRuleActive.get(i).ruleStatus.GetOptionStatus(References._opContentModifier[j]).count;
                     }
                 }
             }
             //now is inactive
             for (int i = 0; i < db.lstRuleInactive.size(); i++) {
-                if (db.lstRuleActive.get(i).ruleStatus.isHaveOption("content")) {
+                if (db.lstRuleInactive.get(i).ruleStatus.isHaveOption("content")) {
                     conruleIn++;
-                    concountIn += db.lstRuleActive.get(i).ruleStatus.GetOption("content").count;
+                    concountIn += db.lstRuleInactive.get(i).ruleStatus.GetOptionStatus("content").count;
                 }
                 for (int j = 0; j < References._opContentModifier.length; j++) {
 
                     if (db.lstRuleInactive.get(i).ruleStatus.isHaveOption(References._opContentModifier[j])) {
                         opModRuleIn[j]++;
-                        opModCountIn[j] += db.lstRuleInactive.get(i).ruleStatus.GetOption(References._opContentModifier[j]).count;
+                        opModCountIn[j] += db.lstRuleInactive.get(i).ruleStatus.GetOptionStatus(References._opContentModifier[j]).count;
                     }
                 }
             }
@@ -509,7 +511,7 @@ public class Statistic0 {
             //set value for noContent[]
             for (int i = 0; i < db.lstRuleAll.size(); i++) {
                 if (db.lstRuleAll.get(i).ruleStatus.isHaveOption("content")) {
-                    noContent[db.lstRuleAll.get(i).ruleStatus.GetOption("content").count]++;
+                    noContent[db.lstRuleAll.get(i).ruleStatus.GetOptionStatus("content").count]++;
                 }
             }
             bw = new BufferedWriter(new FileWriter(outputfolder + "ContentRuleCount.st0"));

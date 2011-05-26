@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.*;
 
 /**
  *
@@ -34,12 +35,17 @@ public class References {
     public final static String[] _opGeneral = _allGeneralOption.split("; ");
     //PCRE modifier
     public final static String _allPcreModifier = "i; s; m; x; A; E; G; R; U; I; P; H; D; M; C; K; S; Y; B; O";
-    public final static String [] _pcreModifier = _allPcreModifier.split("; ");
+    public final static String[] _pcreModifier = _allPcreModifier.split("; ");
+    public final static String _simplePcreModifier = "i; s; m; R; B";
+    public final static String[] _simplepcreModifer = _simplePcreModifier.split("; ");
+    public final static String _complexPcreModifier = "A; E; G; U; I; P; H; D; M; C; K; S; Y; O";
+    public final static String[] _complexpcreModifer = _complexPcreModifier.split("; ");
+
+
     //
     public Hashtable hashOpAll; //hash position for all option in _opAll; //this for furture using.
 
     References() {
-
         //create hasttable
         this.hashOpAll = new Hashtable(References._opAll.length);
         for (int i = 0; i < References._opAll.length; i++) {
@@ -168,15 +174,214 @@ public class References {
         return i;
     }
 
+    static boolean CheckHaveSpecialPCREModifier(String modifi) {
+        //_SpecialPCREModifier =
+
+        return true;
+
+    }
+
+    /**
+     *
+     * @param option
+     * @return
+     */
     static boolean CheckContentModifier(String option) {
         for (int i = 0; i < _opContentModifier.length; i++) {
             if (option.compareToIgnoreCase(_opContentModifier[i]) == 0) {
                 return true;
-                
+
             }
         }
         return false;
     }
+
+    /**
+     *
+     * @param rule
+     * @return true if pcre is simple
+     */
+    public static boolean isSimplyPcre(PCRE rule) {
+
+
+
+        //Remove contraint repetion rule
+        if (rule.regex.indexOf("{") >= 0)// co the co chua contraint repetiton
+        {
+            return false;
+        }
+        //(?
+        if (rule.regex.indexOf("(?") >= 0) {
+            return false;
+        }
+        //(|
+        if (rule.regex.indexOf("(|") >= 0) {
+            return false;
+        }
+        //Remove back reference rule
+        int index = rule.regex.indexOf("\\");
+        char chr = rule.regex.charAt(index + 1);
+        if (chr > '0' && chr < '7') {
+            return false;
+        }
+        //Remove back reference rule
+        for (int i = 0; i < rule.regex.length() - 1; i++) {
+            char ch = rule.regex.charAt(i);
+            if (ch == '\\') {
+                chr = rule.regex.charAt(i + 1);
+                if (chr > '0' && chr < '7') {
+                    return false;
+                }
+            }
+        }
+        //Remove '^' or '$' rule
+        if (rule.regex.startsWith("^") || rule.regex.indexOf('$') >= 0) {
+            return false;
+        }
+        return true;
+    }
+
+
+    public static boolean isConstraintPCRE(PCRE pcre){
+        return References.isHaveConstraint(pcre.regex);
+    }
+
+    /**
+     * 
+     * @param s
+     * @return  true if contain {
+     */
+    public static boolean isHaveConstraint(String s){
+        for (int i =1; i<s.length()-1;i ++){
+            char ch = s.charAt(i);
+            if (ch == '{') {
+                char ch0 = s.charAt(i - 1);
+                if (ch0 != '\\') {
+                    return true;
+                } else {
+                    continue;
+                }
+            }
+        }
+        return false;
+    }
+    /**
+     * 
+     * @param s
+     * @param c char
+     * @return  last position of char inside string
+     *    before this char don't have any \\
+     */
+    public static int getPreviousPosition(String s, char c){
+        for(int i = s.length() -1 ; i>=0; i--){
+            if(s.charAt(i) == c){
+                if(i ==0 || s.charAt(i-1) != '\\')
+                    return i;
+                else
+                    continue;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     *
+     * enhancement of issimple
+     * @param rule
+     * @return true if pcre is supportable
+     * Note:
+     *  +,! Contraint inside Constraint.
+     *  +,! Reverse rules.
+     *  +,! Rule assertion.
+     *  +,! /| or ^|
+     *  +,! backreference
+     *  +,! ^ not at the begining.
+     *  +,! complex modifier.
+     */
+    public static boolean isSupportablePCRE(PCRE rule) {
+        //Remove rule contraint inside constraint
+        if(References.isHaveConstraint(rule.regex)){
+            for(int i =rule.regex.length()-1; i>=1;i--){
+                char ch = rule.regex.charAt(i);
+                if(ch == '}' && rule.regex.charAt(i-1) != '\\'){
+                    int pi = References.getPreviousPosition(rule.regex.substring(0, i-1), '{');
+                    if(pi == -1) // there are error in rule
+                        return false;
+                    //if before it is (
+                    ch = rule.regex.charAt(pi -1);
+                    pi = pi-1;
+                    if(ch != ')' || pi==0 || rule.regex.charAt(pi-1) == '\\')
+                        continue;
+                    else{
+                        int ppi = References.getPreviousPosition(rule.regex.substring(0,pi), '(');
+                        //(s){..}
+                        String s = rule.regex.substring(ppi, pi);
+                        if(References.isHaveConstraint(s))
+                            return false;
+                    }
+                }
+            }
+        }
+        // reverse rule
+        if(rule.isReverse)
+            return false;
+        //(?
+        if (rule.regex.indexOf("(?") >= 0 || rule.regex.indexOf("?)") >= 0) {
+            return false;
+        }
+        //(| |)
+        if (rule.regex.indexOf("(|") >= 0 || rule.regex.indexOf("|)") >=0) {
+            return false;
+        }
+        // /| or /^|
+        if (rule.regex.startsWith("|") || rule.regex.startsWith("^|")) {
+            return false;
+        }
+
+        //Remove back reference rule
+        for (int i = 0; i < rule.regex.length() - 1; i++) {
+            char ch = rule.regex.charAt(i);
+            if (ch == '\\') {
+                char chr = rule.regex.charAt(i + 1);
+                if (chr > '0' && chr < '7') {
+                    return false;
+                }
+            }
+        }
+        
+        //rule with '^' but dont at beginning
+        for (int i = 1; i < rule.regex.length() - 1; i++) {
+            char ch = rule.regex.charAt(i);
+            if (ch == '^') {
+                char ch0 = rule.regex.charAt(i - 1);
+                if (ch0 != '\\' && ch0 != '[') {
+                    return false;
+                } else {
+                    continue;
+                }
+            }
+        }
+        //'$' rule
+        for (int i = 1; i < rule.regex.length(); i++) {
+            char ch = rule.regex.charAt(i);
+            if (ch == '$') {
+                char ch0 = rule.regex.charAt(i - 1);
+                if (ch0 != '\\') {
+                    return false;
+                } else {
+                    continue;
+                }
+            }
+        }
+        // dont containt complex modifier
+        for(int i=1; i< References._complexpcreModifer.length; i++){
+            String s = References._complexpcreModifer[i];
+            if(rule.modify.indexOf(s) != -1)
+                return false;
+        }
+        return true;
+    }
+
 
 
     /*
@@ -184,22 +389,21 @@ public class References {
      * @param rb
      * @param filename
      */
-    public static void WritePcreToFile(LinkedList<RuleComponent> lrc, String filename) {
+    public static void WritePcreToFile(LinkedList<PCRE> lrc, String filename) {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
             for (int i = 0; i < lrc.size(); i++) {
-                if (lrc.get(i).isHavePCRE) {
-                    PCRE pcre = (PCRE) lrc.get(i).getOpPcre();
-                    bw.write(pcre.toString() +"\n");
-                    /*
-                    if(pcre.isReverse)
-                        bw.write("pcre:!\"/" + pcre.regex + "/" + pcre.modify  + "\"\n");
-                    else
-                        bw.write("pcre:\"/" + pcre.regex + "/" + pcre.modify  + "\"\n");
+                PCRE pcre = (PCRE) lrc.get(i);
+                bw.write(pcre.toString() + "\n");
+                /*
+                if(pcre.isReverse)
+                bw.write("pcre:!\"/" + pcre.regex + "/" + pcre.modify  + "\"\n");
+                else
+                bw.write("pcre:\"/" + pcre.regex + "/" + pcre.modify  + "\"\n");
 
-                     */
-                }
+                 */
             }
+
             bw.flush();
             bw.close();
 
@@ -208,35 +412,185 @@ public class References {
         }
     }
 
+    /*
+     * this function will write PCRE from LinkedList rulecomponent to file,
+     * @param rb
+     * @param filename
+     */
+    public static void WritePcreToFileRuleComponent(LinkedList<RuleComponent> lrc, String filename) {
+        LinkedList<PCRE> lpcre = new LinkedList<PCRE>();
+        for (int i = 0; i < lrc.size(); i++) {
+            if (lrc.get(i).isHavePCRE) {
+                PCRE pcre = (PCRE) lrc.get(i).getFirstOpPcre();
+                lpcre.add(pcre);
+            }
+        }
+        References.WritePcreToFile(lpcre, filename);
+    }
+
 
     /*
      * This function will read pcre from a file which is output by WritePcreToFile function.
      */
-
     public static LinkedList<PCRE> ReadPcreFromFile(String filename) {
         LinkedList<PCRE> ret = new LinkedList<PCRE>();
         String s;
         BufferedReader br;
         try {
             br = new BufferedReader(new FileReader(filename));
-            while( (s=br.readLine() ) != null){
-                if(s.startsWith("#"))
+            while ((s = br.readLine()) != null) {
+                if (s.startsWith("#")) {
                     continue;
-                if(s.startsWith("!")){
+                }
+                /*int index = Integer.parseInt(s.split(".")[0]);
+                s = s.replaceFirst(index + ".", "").trim();
+                 *
+                 */
+                if (s.startsWith("!")) {
                     s = s.substring(1);
-                    s = "pcre:!\""+s+"\"";
-                }else
-                    s= "pcre:\""+s+"\"";
+                    s = "pcre:!\"" + s + "\"";
+                } else {
+                    s = "pcre:\"" + s + "\"";
+                }
                 PCRE temp = new PCRE(s.trim(), null);
                 ret.add(temp);
             }
             br.close();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(References.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex){
+        } catch (IOException ex) {
             System.err.println(ex);
         }
-        
         return ret;
+    }
+
+    /**
+     *
+     */
+    public static LinkedList<PCRE> doReducePcre(LinkedList<PCRE> lpcre) {
+        LinkedList<PCRE> rpcre = new LinkedList<PCRE>();
+        for (int i = 0; i < lpcre.size(); i++) {
+            boolean same = false;
+            PCRE temp = lpcre.get(i);
+            for (int j = 0; j < rpcre.size(); j++) {
+                if (temp.CompareTo(rpcre.get(j))) {
+                    same = true;
+                    break;
+                }
+            }
+            if (!same) {
+                rpcre.add(temp);
+            }
+        }
+        return rpcre;
+    }
+
+           /**
+     * Count the number of element seperate by and operator
+     * @return number of element
+     * note:
+     *      - come from formatPCRE
+     *      - need modify to enhance
+     *      
+     */
+    public static int countPcreElement(PCRE pcre) {
+        //This function just add char_and in to pcre pattern
+        int i = 0;
+        int count =0;
+        boolean cando = false;
+        while (i < pcre.regex.length()) {
+            char chr = pcre.regex.charAt(i);
+            //System.out.println(chr);
+            switch (chr) {
+                case Refer._char_and:
+                case '|':
+                    cando = false;
+                    i++;
+                    break;
+                case '*':
+                case '+':
+                case '?':
+                case ')':
+                    cando = true;
+                    i++;
+                    break;
+                case '{':
+                    int last = Refer.getIndexOBlock(pcre.regex.substring(i), '{', '}');
+                    cando = true;
+                    i = i + last + 1;
+                    break;
+                case '[':
+                    if (cando) {
+                        count++;
+                        i = i + 1;
+                        cando = false;
+                    }
+                    last = Refer.getIndexOBlock(pcre.regex.substring(i), '[', ']');
+                    //System.out.println(last);
+                    //return;
+                    cando = true;
+                    i = i + last + 1;
+                    break;
+                case '(':
+                    if (cando) {
+                        count++;
+                        i = i + 2;
+                        cando = false;
+                    } else {
+                        i++;
+                    }
+                    break;
+                case '\\':
+                    if (pcre.regex.charAt(i + 1) == 'x' || pcre.regex.charAt(i + 1) == 'X') {  // \xFF
+                        if (cando) {
+                            count++;
+                            i = i + 5;
+                        } else {
+                            i = i + 4;
+                        }
+                        cando = true;
+                    } else if (pcre.regex.charAt(i + 1) >= '0' && pcre.regex.charAt(i + 1) <= '9') {	// \000
+                        if (cando) {
+                            count++;
+                            i = i + 5;
+                        } else {
+                            i = i + 4;
+                        }
+                        cando = true;
+                    } else {	// \?
+                        if (cando) {
+                            count++;
+                            i = i + 3;
+                        } else {
+                            i = i + 2;
+                        }
+                        cando = true;
+
+                    }
+                    break;
+                case '.':
+                default://is character;
+                    if (cando) {
+                        count++;
+                        i = i + 2;
+                    } else {
+                        i++;
+                    }
+                    cando = true;
+                    break;
+            }
+        }
+        //System.out.println("After: " + pcre.regex);
+        return count;
+    }
+     /**
+     * Insert and character (176) into specific position
+     * @param index
+     */
+    public static void insertAnd(PCRE pcre, int index) {
+        //String temp2 = pcre.regex.substring(index);
+        //String temp1 = pcre.regex.substring(0, index);
+        //System.out.println("insert:"+ temp1+ "..."+temp2);
+        //pcre.regex = temp1 + Refer._char_and + temp2;
     }
 }
