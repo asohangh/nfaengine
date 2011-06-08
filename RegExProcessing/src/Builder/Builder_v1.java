@@ -63,7 +63,7 @@ public class Builder_v1 {
     }
 
     public void doAction() throws Exception {
-        String filename = "bram.input.11.pcre";
+        String filename = "/rules.test/cr.test";
         String inputfile = System.getProperty("user.dir") + File.separator + filename;
         //Read from file
         this.readFromFile(inputfile);
@@ -76,9 +76,9 @@ public class Builder_v1 {
         this.hdlGen.setGenerateFolder(genfolder);
         this.hdlGen.genHDL();
         //Generate Testbench
-        this.hdlGen.genTestBench();
-        this.hdlGen.outputExcelStatistic();
-        this.hdlGen.genMZInstructionFile();
+        //this.hdlGen.genTestBench();
+        //this.hdlGen.outputExcelStatistic();
+        //this.hdlGen.genMZInstructionFile();
         //Generate Testbench.
         //this.GenTestBenchv01();
         //this.generateTestbench(); //testcase ...
@@ -137,7 +137,6 @@ public class Builder_v1 {
                 this.rtlCreator.addPcreBRam(i, lpcre.get(j));
             }
         }
-        
         //build RTL Structure.
         this.rtlCreator.createRTLStructure();
         return 0;

@@ -14,10 +14,6 @@ import Builder.Builder_v1;
 import RuleDatabase.Extractor_21_12_2010;
 import RuleDatabase.RuleDatabase;
 import RuleDatabase.RuleSet;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Insets;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -30,7 +26,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.Border;
 import jxl.write.WriteException;
 
 /**

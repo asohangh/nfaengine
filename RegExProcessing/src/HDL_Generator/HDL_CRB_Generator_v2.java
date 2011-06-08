@@ -13,24 +13,36 @@ import RegexEngine.ReEngine;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-
-
+import java.util.logging.Level;
 /**
  *
  * @author heckarim
  */
-public class HDL_CRB_Generator_v1 {
+
+/*
+ *
+ *  this fuction will generate CRB depend on its value.
+ *
+ * +, only one character. num of repet is small, <=8.
+ *
+ */
+public class HDL_CRB_Generator_v2 {
 
     BlockConRep blockConRep;
     ReEngine ContEngine;
-    public HDL_CRB_Generator_v1(BlockConRep bcr) {
+
+    public HDL_CRB_Generator_v2(BlockConRep bcr) {
         this.blockConRep = bcr;
     }
 
     public void genHDL(String folder) throws IOException {
         String filename = "BCR_state_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + ".v";
         BufferedWriter bw = new BufferedWriter(new FileWriter(folder + filename));
-        this.genHDL(bw);
+
+        this.genHDL_CounterBased(bw);
+        //TODO
+        //...
+
     }
 
     /**
@@ -53,12 +65,13 @@ public class HDL_CRB_Generator_v1 {
     .rst_inc(w_rst));
     endmodule
      */
-    public void genHDL(BufferedWriter bw) throws IOException {
+    public void genHDL_CounterBased(BufferedWriter bw) throws IOException {
         int inputsize = this.blockConRep.comming.size();
         bw.write("module BCR_state_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + "(out,");
         for (int j = 0; j < this.blockConRep.lChar.size(); j++) {
             bw.write("i_char_" + this.blockConRep.lChar.get(j).order + ",");
         }
+        
         bw.write("i_clk,i_en,i_rst");
         for (int i = 0; i < inputsize; i++) {
             bw.write(",in" + i);
@@ -156,15 +169,15 @@ public class HDL_CRB_Generator_v1 {
             } else {
                 BlockState bt = this.ContEngine.listBlockState.get(i);
                 int inputsize = bt.comming.size();
-                bw.write("module state_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + "_" + bt.order +
-                        "(out1,in_char,clk,en,rst");
+                bw.write("module state_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + "_" + bt.order
+                        + "(out1,in_char,clk,en,rst");
                 for (int j = 0; j < inputsize; j++) {
                     bw.write(",in" + j);
                 }
 
                 bw.write(");\n");
                 bw.write("\tinput in_char,clk,en,rst");
-                for (int j= 0; j < inputsize; j++) {
+                for (int j = 0; j < inputsize; j++) {
                     bw.write(",in" + j);
                 }
                 bw.write(";\n");
@@ -193,7 +206,7 @@ public class HDL_CRB_Generator_v1 {
     /**
      * +, create BCRengine
      * +, Change order of each block char to order of blockchar in lchar of block Conrep
-     * 
+     *
      */
     private void createBCREngine() {
         String rule = this.blockConRep.pattern;
@@ -245,20 +258,22 @@ public class HDL_CRB_Generator_v1 {
             }
         }
         bw.write("\t wire w0");
-        for(int i=0; i<this.ContEngine.listBlockState.size();i++){
+        for (int i = 0; i < this.ContEngine.listBlockState.size(); i++) {
             BlockState bt = this.ContEngine.listBlockState.get(i);
 
-            if(bt.isStart || bt.isEnd )
+            if (bt.isStart || bt.isEnd) {
                 continue;
-            bw.write(",w"+bt.order);
+            }
+            bw.write(",w" + bt.order);
         }
-        for(int i =0; i<blockend.comming.size();i++)
-            bw.write(",wb_"+ blockend.comming.get(i).order);
+        for (int i = 0; i < blockend.comming.size(); i++) {
+            bw.write(",wb_" + blockend.comming.get(i).order);
+        }
         bw.write(";\n\n");
 
         //assign input from other block state
         bw.write("\tassign w0 = i_state");
-        for(int i =0; i<blockend.comming.size(); i++){
+        for (int i = 0; i < blockend.comming.size(); i++) {
             bw.write("||w" + blockend.comming.get(i).order);
         }
         bw.write(";\n");
@@ -272,7 +287,7 @@ public class HDL_CRB_Generator_v1 {
         }
         bw.write(");\n");
         //assign output from subregexengine
-        
+
         for (int i = 0; i < blockend.comming.size(); i++) {
             BlockState tbt = blockend.comming.get(i);
             bw.write("\t assign wb_" + tbt.order + " = (w" + tbt.comming.getFirst().order);
@@ -296,13 +311,13 @@ public class HDL_CRB_Generator_v1 {
             } else if (bt.isStart) {
                 //todo
             } else {//normal state.
-                try{
-                bw.write("\tstate_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + "_" + bt.order
-                        + " BlockState_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + "_" + bt.order
-                        + " (w" + bt.order
-                        + ",i_char_" + bt.acceptChar.order
-                        + ",i_clk,i_en,i_rst");
-                }catch(NullPointerException ex){
+                try {
+                    bw.write("\tstate_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + "_" + bt.order
+                            + " BlockState_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + "_" + bt.order
+                            + " (w" + bt.order
+                            + ",i_char_" + bt.acceptChar.order
+                            + ",i_clk,i_en,i_rst");
+                } catch (NullPointerException ex) {
                     System.out.println("Nullpoint");
                     System.exit(0);
                 }

@@ -15,7 +15,7 @@ import java.util.LinkedList;
 
 /**
  *
- * @author Hoang Long Le
+ * @author Hoang Long Le & Heckarim
  */
 public class NFA {
     // Each NFA must have Start and End state.
@@ -124,117 +124,6 @@ public class NFA {
 
     }
 
-    /**
-     *
-     * @param filepath
-     *
-     *
-     * NFAroot:stateID
-    ---
-    stateID0
-    onEpsilon:	next_state_ID1	next_state_ID2 ....
-    onChar:number	next_state_ID1	next_state_ID2 ....
-    is_final:1/0
-    ---
-    stateID1
-    onEpsilon:	next_state_ID1	next_state_ID2 ....
-    onChar:number	next_state_ID1	next_state_ID2 ....
-    is_final:1/0
-    ---
-    .....................................................
-    ---
-    stateIDn
-    onEpsilon:	next_state_ID1	next_state_ID2 ....
-    onChar:number	next_state_ID1	next_state_ID2 ....
-    is_final:1/0
-    ---
-    endNFA
-     */
-    /*
-    public void print2file(String filepath) {
-    File f = new File(filepath);
-    try {
-    BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-
-    bw.write("NFAroot: 0\n");
-    NFAState p = this.start;
-    while (p != null) {
-    bw.write(p.order + "\n");
-    bw.write("onEpsilon:");
-    NFAEdge q = p.edge;
-    while (q != null) {
-    if (q.value.compareToIgnoreCase("null") == 0) {
-    bw.write(" " + q.dest.order);
-    }
-    q = q.nextEdge;
-    }
-
-
-    //Mo hinh nfa nay chi co duy nha mot nextsate for ...
-    q = p.edge;
-    while (q != null) {
-    q.convert2Array();
-    if (q.value.compareToIgnoreCase("null") != 0) {
-    for (int i = 0; i < 256; i++) {
-    if (q.onChar[i]) {
-    bw.write("\nonChar:" + i + " " + q.dest.order);
-    }
-    }
-    }
-    q = q.nextEdge;
-    }
-
-    if (p.isFinal) {
-    bw.write("\nis_final: 1");
-    } else {
-    bw.write("\nis_final: 0");
-    }
-    p = p.nextState;
-    bw.write("\n");
-    }
-
-    bw.flush();
-    bw.close();
-
-    } catch (IOException ex) {
-    Logger.getLogger(NFA.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    }
-
-
-    public int getSize() {
-    this.updateID();
-    NFAState p = start;
-    while (p.nextState != null) {
-    p = p.nextState;
-    }
-    return p.order + 1;
-    }
-
-    public void print() {
-    //this.updateID();
-    this.print(null);
-    }
-
-    public void print(Document doc) {
-    //this.updateID();
-
-    NFAState p = this.start;
-    while (p != null) {
-    PCRE.Refer.print(p.order + ":", doc);
-    NFAEdge q = p.edge;
-    while (q != null) {
-    PCRE.Refer.print("[" + q.dest.order + "," + q.value + "," + Refer.convert[q.code_id] + "]->", doc);
-    q = q.nextEdge;
-    }
-    if (p.isFinal) {
-    PCRE.Refer.println("Is Final", doc);
-    }
-    p = p.nextState;
-    PCRE.Refer.print("\n", doc);
-    }
-    }
-     */
     public void generateDotFile(String name, String folder) {
         this.updateList();
         BufferedWriter bw = null;
@@ -487,19 +376,56 @@ public class NFA {
         this.lEdge = temp.lEdge;
         this.start = temp.start;
         this.end = temp.end;
+
+        NFAState sStart = new NFAState();
+        sStart.isStart = true;
+        NFAState sExit = new NFAState();
+        sExit.isFinal = true;
+        this.insertStartState(sStart);
+       this.insertEndState(sExit);
+ 
+    }
+    public void buildNFA(String pcre){
+        ParseTree ps = new ParseTree(pcre);
+        this.buildNFA(ps);
+    }
+
+    /**
+     * in NFA full form 
+     */
+    public void convertToNFAfullForm(){
+
+    }
+
+    public void buildNFA(LinkedList<String> lpcre){
+        LinkedList<NFA> lnfa = new LinkedList<NFA>();
+        //create list of nfa
+        for (int i =0; i<lpcre.size(); i++){
+            String pcre = lpcre.get(i);
+            ParseTree ps = new ParseTree(pcre);
+            NFA nfa = this.tree2NFA(ps);
+            //reduce nfa
+            nfa.reduceRedundantState();
+            lnfa.add(nfa);
+        }
+        //link all nfa in to new nfa.
         NFAState sStart = new NFAState();
         sStart.isStart = true;
         NFAState sExit = new NFAState();
         sExit.isFinal = true;
         this.insertStartState(sStart);
         this.insertEndState(sExit);
+
+
     }
 
     public NFA tree2NFA(ParseTree tree) {
         Node root = tree.root;
         PCRE.Refer.println("Begin to convert tree 2 NFA :");
+        this.tree = tree;
         NFA ret = this.buildNFA(root);
         ret.tree = tree;
+        ret.updateModifier();
         return ret;
         /*
         //Create it own start and end state
@@ -559,6 +485,21 @@ public class NFA {
         if(this.tree != null)
             return this.tree.rule;
         return null;
+    }
+
+    /**
+     * using to conver to DFA.
+     */
+    public void convertTo256() {
+        for(int i =0; i<this.lEdge.size(); i++){
+            this.lEdge.get(i).converto256();
+        }
+    }
+
+    private void updateModifier() {
+        for(int i =0; i<this.lEdge.size(); i++){
+            this.lEdge.get(i).modifier = this.tree.rule.getModifier();
+        }
     }
 }
 

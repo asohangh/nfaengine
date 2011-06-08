@@ -1,5 +1,6 @@
 package PCRE;
 
+import DFA.DFA;
 import NFA.NFA;
 import ParseTree.ParseTree;
 
@@ -11,9 +12,9 @@ public class Main {
 
     public static void main(String[] args) {
         Main control = new Main();
-        //control.action();
+        control.action();
         //control.doOutput();
-        control.doTest();
+        //control.doTest();
     }
 
     public void doTest() {
@@ -59,7 +60,7 @@ public class Main {
         //String rule = "/[\\?\\x20\\x3b\\x26]module=[a-zA-Z0-9]*[^\\x3b\\x26]/";
         //String rule = "/\\w\\d\\x3Fmodule=[ab]*[^\\x3b\\x26]/";
         //String rule = "/goaway\\?message=[^\\sno]{10,30}/smi";
-        String rule = "/^.{20}([a-z]|0x00[a-z]|\\x00{2}[a-z]|\\x00{2}\\x01[a-z])/smi";
+        //String rule = "/^.{20}([a-z]|0x00[a-z]|\\x00{2}[a-z]|\\x00{2}\\x01[a-z])/smi";
         //System.out.print (rule);
         //String rule = "/^<window\\s+version\\s*=\\s*(\\?!(1\\.(0|2|4|5|6)))/smi";
 
@@ -76,7 +77,13 @@ public class Main {
         //String rule = "/^CSeq\\x3A[^\\r\\n]+[^\\x01-\\x08\\x0B1-8\\x0C\\128-\\011\\x0E-\\x1F\\126-\\127]/smi";
         //String rule = "/abc[aA-G]";
         //String rule = "/ab{3}c/smi";
-
+        //String rule = "/(abcdefghijkl.123456789(n|p)zt*uv)|(a\\010[abc\\x3a]*b)|(abdsefgijkl.12e3s4e.*56789(n|p)zt*uv)/smi";
+        //String rule = "/(ab|cd)xyz/smi";
+        String rule = "/(ab*c|cd+e)xyz/smi";
+        //String rule = "/(abc){4}/smi";
+        //String rule = "/(ldap\\x3A\\x2F\\x2F[^\\x0A]*(%3f|\\x3F)[^\\x0A]*(%3f|\\x3F)[^\\x0A]*(%3f|\\x3F)[^\\x0A]*(%3f|\\x3F)[^\\x0A]*(%3f|\\x3F))|(abcdefghijkl.123456789(n|p)zt*uv)|(a\\010[abc\\x3a]*b)|(abdsefgijkl.12e3s4e.*56789(n|p)zt*uv)" +
+        //        "|762e426f64793d225468697320636f6e666964656e7469616c20646f63756d65*656e762e4174746163686d656e74732e4164642822433a5c4d7920446f63756d656e74735c6d676f61743030332e646f632229" +
+        //        "|4600a772082bc63b7570ac1e4406e8628a6103dec255e5643d93d833070403a90a670a0b255a3ebff8b0d824a8027576135df364375865f2460883168323e7a4c7b3b0974b09c68e03194d9608d8b0b990a745826559614b65e803888da0372bd1a9ff7f43d5f8ce7c7dc67dc5f1f47d14b2de5d01054f166f277424fb05eb115f14eafff24690246fb227ac/smi";
         ParseTree tree = new ParseTree(rule);
         System.out.println("pcre is: " + tree.rule.getPattern() + " -------- " + tree.rule.getModifier());
         tree.printTree();
@@ -86,16 +93,21 @@ public class Main {
         tree.generateDotFile(null, null);
 
         NFA nfa = new NFA();
-        nfa.tree2NFA(tree);
+        nfa = nfa.tree2NFA(tree);
 
 
         System.out.println("Original NFA:");
-
         nfa.generateDotFile("nfa_origin.dot", null);
-
+        nfa.reduceRedundantState();
         System.out.println("Modified NFA:");
         nfa.generateDotFile("nfa_reduce.dot", null);
-
+        //create dfa
+        System.out.println("Create DFA:");
+        DFA dfa = new DFA();
+        dfa.constructDFA(nfa);
+        //frint test
+        System.out.println("Print DFA:");
+        dfa.printTest();
         /* System.out.println("Building Regular Expression Engine....:");
 
         ReEngine engine=new ReEngine();
