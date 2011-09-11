@@ -36,10 +36,12 @@ public class References {
     //PCRE modifier
     public final static String _allPcreModifier = "i; s; m; x; A; E; G; R; U; I; P; H; D; M; C; K; S; Y; B; O";
     public final static String[] _pcreModifier = _allPcreModifier.split("; ");
-    public final static String _simplePcreModifier = "i; s; m; R; B";
+    public final static String _simplePcreModifier = "i; s; m; R; B; H";
     public final static String[] _simplepcreModifer = _simplePcreModifier.split("; ");
     public final static String _complexPcreModifier = "A; E; G; U; I; P; H; D; M; C; K; S; Y; O";
     public final static String[] _complexpcreModifer = _complexPcreModifier.split("; ");
+
+
 
 
     //
@@ -265,6 +267,27 @@ public class References {
         }
         return false;
     }
+
+    /**
+     *
+     * @param s
+     * @return  true if have stat or plus
+     */
+    public static boolean isHaveStarPlus(String s){
+        for (int i =1; i<s.length()-1;i ++){
+            char ch = s.charAt(i);
+            if (ch == '*' || ch == '+') {
+                char ch0 = s.charAt(i - 1);
+                if (ch0 != '\\') {
+                    return true;
+                } else {
+                    continue;
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * 
      * @param s
@@ -373,13 +396,33 @@ public class References {
                 }
             }
         }
+        /*
         // dont containt complex modifier
         for(int i=1; i< References._complexpcreModifer.length; i++){
             String s = References._complexpcreModifer[i];
             if(rule.modify.indexOf(s) != -1)
                 return false;
         }
+         * */
+         
         return true;
+    }
+
+
+    public static boolean isSupportableAndSimplePCRE(PCRE pcre) {
+
+        if(!References.isSupportablePCRE(pcre))
+            return false;
+
+        int max = 64;
+        if(pcre.regex.length() > max)
+            return false;
+        if(References.isHaveConstraint(pcre.regex))
+            return false;
+       // if(References.isHaveStarPlus(pcre.regex))
+       //     return false;
+        return true;
+
     }
 
 

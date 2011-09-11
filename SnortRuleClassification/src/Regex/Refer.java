@@ -1,4 +1,4 @@
-package snort_rule;
+package Regex;
 
 
 import java.io.File;
@@ -10,7 +10,7 @@ import javax.swing.text.Document;
 public class Refer {
     // Constant
 
-    public static final char _char_and = (char) 176;
+     public static final char _char_and = (char) 176;
     public static final int _char = 0;			//
     public static final int _class = 1;			// [...]
     public static final int _neg_class = 2;			// [^...]
@@ -34,10 +34,17 @@ public class Refer {
     public static final int _op_parent = 20; 		//	Parenthesis 		()
     public static final int _op_backrefer = 21;			//  BackReference		\1, \2, ...\n
     public static final int _op_atMost = 22;
+    public static final int _class_notspace = 23;
+    public static final int _prefix = 24;
+    public static final int _infix = 25;
     public static final String[] convert = {"Char", "Class", "NegC", "CRange", "NegCRange",
         "CDigit", "CWord", "CDot", "Hex", "START", "END",
         "AND", "OR", "STAR", "PLUS", "QUES", "CONTR",
-        "ATLEA", "BETW", "EXACT", "PAREN", "BACKRE", "ATMOS"};
+        "ATLEA", "BETW", "EXACT", "PAREN", "BACKRE", "ATMOS", "NotSpace",
+        "Prefix", "Infix"};
+    //define mode for process constraint repetion opeartion
+    public static final int _mode_with_CR = 0;
+    public static final int _mode_no_CR = 1;
 
     /**
      * Get the index of the end of block String which indicated by bmark and emark.
@@ -73,7 +80,21 @@ public class Refer {
         return i;
     }
 
-    
+
+
+    public boolean createFloder(String path, Document doc) {
+        boolean success = false;
+        File folder = new File(path);
+        if (folder.exists()) {
+            Regex.Refer.println("Create folder: " + path + " existed", doc);
+        } else {
+            success = (new File(path)).mkdirs();
+        }
+        if (success) {
+            Regex.Refer.println("Create folder: " + path + " is created", doc);
+        }
+        return success;
+    }
 
     public static boolean isOperator(int id) {
         return (id >= 11 && id <= 21);
@@ -124,18 +145,5 @@ public class Refer {
                 Logger.getLogger(Refer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }
-
-    public static boolean isHaveConstraint(String pe) {
-        boolean ret = false;
-        for(int i=1; i<pe.length(); i++){
-            char ch = pe.charAt(i);
-            if(ch == '{')
-                if(pe.charAt(i-1) != '\\'){
-                    ret = true;
-                    break;
-                }
-        }
-        return ret;
     }
 }

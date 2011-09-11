@@ -35,7 +35,8 @@ import snort_rule.*;
 public class Parser_16_05_2011 {
 
     private String inputfolder = System.getProperty("user.dir") + File.separator + "output.2.9" + File.separator;
-    private String outputfolder = inputfolder;
+    private String outputfolder = System.getProperty("user.dir") + File.separator
+            + "output.2.9" + File.separator + "extract" + File.separator;
     private String excelfile;
     private RuleDatabase db;
     LinkedList<PCRE> lpcre;
@@ -47,12 +48,10 @@ public class Parser_16_05_2011 {
         ex.Action();
     }
 
-    
     Parser_16_05_2011(String file) {
         try {
             this.excelfile = file;
             this.workbook = Workbook.getWorkbook(new File(excelfile));
-
         } catch (IOException ex) {
             Logger.getLogger(Parser_16_05_2011.class.getName()).log(Level.SEVERE, null, ex);
         } catch (BiffException ex) {
@@ -61,29 +60,44 @@ public class Parser_16_05_2011 {
     }
 
     private Parser_16_05_2011() {
-        
     }
 
     public LinkedList<String> getPCREbyRuleset(String rulename, int support) {
         if (workbook == null) {
             return null;
-        }
-        else
+        } else {
             return this.getPCREbyRuleset(this.workbook, rulename, support);
+        }
     }
 
     private void Action() throws IOException, WriteException, BiffException {
         excelfile = this.inputfolder + "snort2.9.extraction.xls";
         Workbook workbook = Workbook.getWorkbook(new File(excelfile));
+        String rule = "allPcre";
+        //LinkedList<String> lpcre = this.getPCREbyRuleset(workbook, rule, 1);
+        String rules = "backdoor;exploit;web-misc;oracle;web-client;spyware-put";
+        LinkedList<String> lpcre = this.getPCREbyListRuleset(workbook, rules, 1);
+        System.out.println("Pcre size " + lpcre.size());
 
-        LinkedList<String> lpcre = this.getPCREbyRuleset(workbook, "voip", 1);
+        LinkedList<String> lreduce = this.reduceSamePCRE(lpcre);
+        LinkedList<String> lnoconstraint = this.reduceConstraint(lreduce);
+        LinkedList<String> lnosimple = this.reduceNoSimple(lnoconstraint);
+        System.out.println("Pcre size reduce " + lreduce.size());
+        System.out.println("Pcre size no constraint " + lnoconstraint.size());
+        System.out.println("Pcre size no simple " + lnosimple.size());
+
+        //this.outputofile(this.outputfolder + rule + ".ns.ncr.pcre", lnosimple);
+        this.outputofile(this.outputfolder + "icnc.pcre", lnosimple);
+        /*
         if (lpcre == null) {
-            System.out.println("null");
+        System.out.println("null");
         } else {
-            for (int i = 0; i < lpcre.size(); i++) {
-                System.out.println(lpcre.get(i));
-            }
+        for (int i = 0; i < lpcre.size(); i++) {
+        System.out.println(lpcre.get(i));
         }
+        }
+         *
+         */
     }
 
     /**
@@ -120,5 +134,75 @@ public class Parser_16_05_2011 {
             index++;
         }
         return lpcre;
+    }
+
+    private void outputofile(String string, LinkedList<String> lstring) throws IOException {
+        BufferedWriter bw = new BufferedWriter(new FileWriter(string));
+
+        for (int i = 0; i < lstring.size(); i++) {
+            bw.write(lstring.get(i) + "\n");
+        }
+
+
+        bw.flush();
+        bw.close();
+    }
+
+    private LinkedList<String> reduceSamePCRE(LinkedList<String> lpcre) {
+        LinkedList<String> ret = new LinkedList<String>();
+        if (!lpcre.isEmpty()) {
+            ret.add(lpcre.getFirst());
+        }
+        for (int i = 1; i < lpcre.size(); i++) {
+            String pe = lpcre.get(i);
+            boolean same = false;
+            for (int j = 0; j < ret.size(); j++) {
+                if (ret.get(j).compareTo(pe) == 0) {//the same
+                    same = true;
+                    break;
+                }
+            }
+            if (!same) {
+                ret.addLast(pe);
+            }
+        }
+        return ret;
+    }
+
+    private LinkedList<String> reduceConstraint(LinkedList<String> lpcre) {
+        LinkedList<String> ret = new LinkedList<String>();
+        for (int i = 0; i < lpcre.size(); i++) {
+            String pe = lpcre.get(i);
+            if(Refer.isHaveConstraint(pe)){
+                continue;
+            }
+           ret.add(pe);
+        }
+        return ret;
+    }
+
+    private LinkedList<String> reduceNoSimple(LinkedList<String> lpcre) {
+        LinkedList<String> ret = new LinkedList<String>();
+        for (int i = 0; i < lpcre.size(); i++) {
+            String pe = lpcre.get(i);
+            if(pe.length() < 40 || pe.length() >120){
+                continue;
+            }
+            if(pe.startsWith("/<OBJEC"))
+                continue;
+           ret.add(pe);
+        }
+        return ret;
+    }
+
+    private LinkedList<String> getPCREbyListRuleset(Workbook workbook, String rules, int type) {
+        String[] array = rules.split(";");
+        LinkedList<String> lret = new LinkedList<String>();
+        for(int i =0; i<array.length; i++){
+            lret.addAll(this.getPCREbyRuleset(workbook, array[i], type));
+        }
+
+
+        return lret;
     }
 }

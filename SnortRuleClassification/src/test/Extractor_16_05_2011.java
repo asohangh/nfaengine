@@ -159,7 +159,7 @@ public class Extractor_16_05_2011 {
             nb = new Number(3, i + 1,  support);
             sheet.addCell(nb);
             //PCRE
-            lb = new Label(4, i + 1, pcre.getvalue());
+            lb = new Label(4, i + 1, pcre.toString());
             sheet.addCell(lb);
 
         }
@@ -260,7 +260,7 @@ public class Extractor_16_05_2011 {
             nb = new Number(3, i + 1,  support);
             sheet.addCell(nb);
             //PCRE
-            lb = new Label(4, i + 1, pcre.getvalue());
+            lb = new Label(4, i + 1, pcre.toString());
             sheet.addCell(lb);
             //Rule
             if (exportRule) {
