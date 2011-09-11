@@ -7,12 +7,20 @@ import java.util.LinkedList;
 
 import NFA.*;
 import java.io.File;
-import PCRE.PcreRule;
+import PCREv2.PcreRule;
+import PCREv2.Refer;
 
 /**
  *
  * @author heckarim
  *	This class is in charge of managing RegEx engine Structure and generating Verilog HDL code.
+ */
+
+/*
+ * notes:
+ *      +, Each ReEngine stands for pcre matching unit
+ *      +, it can contain more than 1 pcre, and more than 1 end state.
+ *      +, it has only one start state.
  */
 public class ReEngine {
     //Declare constant
@@ -30,8 +38,8 @@ public class ReEngine {
     public LinkedList<BlockState> listEndState;     // it use for prefix share and generate hdl.
     //orther attribute
     public int order;                      // use in building a list of engine.
-    public int ram_id;                     // use in rambuilding.
-   public  NFA nfa;
+    public int groupID;                     // use in rambuilding.
+    public NFA nfa;
 
     public ReEngine() {
         this.listBlockChar = new LinkedList<BlockChar>();
@@ -44,14 +52,14 @@ public class ReEngine {
      * +, firstly: add all possible block char and block state to linkedlists
      * +, secondly : create route(incoming, outcoming) each state
      * Note:
-     * +, \n character will be insert if modifier t is seen.
+     * +, third: update
      *
      * @param nfa
      */
     public void buildEngine(NFA nfa) {
         this.nfa = nfa;
         this.rule = nfa.getRule();
-        //this variable for keep track of builded state.
+        //this variable for keep track of builded states.
         BlockState[] arr = new BlockState[nfa.lState.size()];
         //  update order in each nfastate
         nfa.updateList();
@@ -64,11 +72,17 @@ public class ReEngine {
             }
             //other edge
             BlockState bs;
-            if (enfa.isConRep) {
+            if (enfa.isConRep()) {
                 bs = new BlockConRep(enfa, this);
                 this.listBlockState.add(bs);
+            } else if (enfa.isPrefix()) {
+                bs = new BlockPrefix(enfa, this);
+                this.listBlockState.add(bs);
+            } else if (enfa.isInfix()) {
+                bs = new BlockInfix(enfa, this);
+                this.listBlockState.add(bs);
             } else {
-                bs = new BlockState(ReEngine._normal, this);
+                bs = new BlockState(this);
                 BlockChar bc = new BlockChar(enfa, this);
                 bs.acceptChar = bc;
                 bc.lState.add(bs);
@@ -78,25 +92,17 @@ public class ReEngine {
             arr[enfa.srcState.order] = bs;
             arr[enfa.dstState.order] = bs;
         }
-        
-        //cause first edge and last edge is epsion so seperately need to add
-        //block start and block end 
+
+        // insert block start and block end
         for (int i = 0; i < nfa.lState.size(); i++) {
             if (nfa.lState.get(i).isStart) {
-                BlockState bs = new BlockState(ReEngine._start, this);
-                //if there is operator ^ and modifier m
-                if(nfa.tree.rule.getModifier().contains("t") &&
-                        nfa.tree.rule.getModifier().contains("m")){
-                    BlockChar bc = new BlockChar("\\x0A", PCRE.Refer._ascii_hex, this);
-                    bs.acceptChar = bc;
-                    bc.lState.add(bs);
-                    this.listBlockChar.add(bc);
-                }
+                BlockState bs = new BlockStart(this);
                 this.listBlockState.addFirst(bs);
                 arr[nfa.lState.get(i).order] = bs;
+                //System.out.println("insert start state" + nfa.lState.get(i).order);
             }
             if (nfa.lState.get(i).isFinal) {
-                BlockState bs = new BlockState(ReEngine._end, this);
+                BlockState bs = new BlockEnd(this);
                 this.listBlockState.addLast(bs);
                 arr[nfa.lState.get(i).order] = bs;
             }
@@ -107,13 +113,17 @@ public class ReEngine {
             if (!enfa.isEpsilon) {
                 continue;
             }
+            //System.out.println(enfa.srcState.order + " " + enfa.dstState.order);
             this.addRoute(arr[enfa.srcState.order], arr[enfa.dstState.order]);
         }
+
+        //Step 3: update order and relate value.F
+        // update endstate
+        this.updateBlockStateEndList();
+        this.formatEngine();
         // update blockstate and blockchar order
         this.updateBlockCharOrder();
         this.updateBlockStateOrder();
-        // update endstate
-        this.updateBlockStateEndList();
     }
 
     public void generateDotFile(String name, String folder) {
@@ -226,10 +236,10 @@ public class ReEngine {
     }
 
     private void addRoute(BlockState src, BlockState dst) {
+        //System.out.println(src.order);
         src.going.add(dst);
         dst.comming.add(src);
     }
-
 
     public void printBlockChar() {
         this.updateBlockStateOrder();
@@ -243,8 +253,6 @@ public class ReEngine {
             System.out.print("\n");
         }
     }
-
-  
 
     /**
      * This funciton will traverse listBlockState of this engine
@@ -262,5 +270,77 @@ public class ReEngine {
             }
         }
         return null;
+    }
+
+    /**
+     *   check state, char
+     *   handle CR block, Prefix, Infix.
+     */
+    public void formatEngine() {
+        //check prefix, repalce start state with prefix
+        BlockState bs = null;
+        for (int i = 0; i < this.listBlockState.size(); i++) {
+            if (this.listBlockState.get(i).isPrefix) {
+                bs = this.listBlockState.get(i);
+                break;
+            }
+        }
+        if (bs != null) {
+            //replace bstart
+            this.listBlockState.remove(bs);
+            BlockState bstart = this.listBlockState.removeFirst();
+            if (!bstart.isStart) {//error
+                System.out.println("format engine Error: State Start");
+            } else {
+                this.listBlockState.addFirst(bs);
+            }
+        }
+        // check Constraint repetition block for list char
+        LinkedList<BlockConRep> lstcon = this.getConstraintRepetitionBlock();
+        if (lstcon != null) {
+            for (int i = 0; i < lstcon.size(); i++) {
+                BlockConRep con = lstcon.get(i);
+                this.listBlockChar.addAll(con.lChar);
+            }
+        }
+    }
+
+    private LinkedList<BlockConRep> getConstraintRepetitionBlock() {
+        LinkedList<BlockConRep> ret = new LinkedList<BlockConRep>();
+        for (int i = 0; i < this.listBlockState.size(); i++) {
+            if (this.listBlockState.get(i).isConRep) {
+                ret.add((BlockConRep) this.listBlockState.get(i));
+            }
+        }
+        if (ret.isEmpty()) {
+            return null;
+        } else {
+            return ret;
+        }
+    }
+
+    public void print() {
+        System.out.println("ReEngine " + order);
+        //print blockstate
+        System.out.println("ReEngine " + order + " : BlockState size" + this.listBlockState.size());
+        for (int i = 0; i < this.listBlockState.size(); i++) {
+            this.listBlockState.get(i).print();
+        }
+        //print blockchar
+        System.out.println("ReEngine " + order + " : BlockChar size" + this.listBlockState.size());
+        for (int i = 0; i < this.listBlockChar.size(); i++) {
+            this.listBlockChar.get(i).print();
+        }
+    }
+
+    public LinkedList<BlockInfix> getInfix() {
+        LinkedList<BlockInfix> ret = new LinkedList<BlockInfix>();
+        for (int i = 0; i < this.listBlockState.size(); i++) {
+            BlockState bs = this.listBlockState.get(i);
+            if (bs.isInfix) {
+                ret.add((BlockInfix) bs);
+            }
+        }
+        return ret;
     }
 }

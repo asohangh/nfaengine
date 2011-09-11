@@ -80,6 +80,8 @@ public class Refer {
     public static Node processContraint(Node node) {
         Node temp = new Node(null, 0);
         String s = node.value.substring(1, node.value.length() - 1);
+        //process inside pattern;
+
         if (s.indexOf(",") == -1) {
             temp.id = Refer._op_exactly;
             temp.value = s + "," + s + "," + node.left.value;

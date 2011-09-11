@@ -6,6 +6,7 @@ package HDL_Generator;
 
 import NFA.NFA;
 import ParseTree.ParseTree;
+import ParseTree.RegexTree;
 import RegexEngine.BlockChar;
 import RegexEngine.BlockConRep;
 import RegexEngine.BlockState;
@@ -197,7 +198,8 @@ public class HDL_CRB_Generator_v1 {
      */
     private void createBCREngine() {
         String rule = this.blockConRep.pattern;
-        ParseTree tTree = new ParseTree(rule);
+        RegexTree tTree = new RegexTree(rule);
+        tTree.parseTree();
         NFA tnfa = new NFA();
         tnfa.buildNFA(tTree);
         tnfa.reduceRedundantState();

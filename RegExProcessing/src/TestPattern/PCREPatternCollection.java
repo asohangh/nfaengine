@@ -5,6 +5,7 @@
 package TestPattern;
 
 import ParseTree.ParseTree;
+import ParseTree.RegexTree;
 import java.util.LinkedList;
 
 /**
@@ -17,14 +18,14 @@ import java.util.LinkedList;
  */
 public class PCREPatternCollection {
 
-    ParseTree pTree;
+    RegexTree pTree;
     String pcre;
     int index = -1; //index of rule.
     LinkedList<Pattern> matchPattern = new LinkedList<Pattern>();
     LinkedList<Pattern> missPattern = new LinkedList<Pattern>();
     Contructor contructor;
 
-    public PCREPatternCollection(ParseTree pTree,int index) {
+    public PCREPatternCollection(RegexTree pTree,int index) {
         this.index = index;
         this.pTree = pTree;
         this.contructor = new Contructor(pTree);
@@ -32,7 +33,7 @@ public class PCREPatternCollection {
 
     PCREPatternCollection(String pcre, int index) {
         this.pcre = pcre;
-        this.pTree = new ParseTree(pcre);
+        this.pTree = new RegexTree(pcre);
         this.index = index;
         this.contructor = new Contructor(this.pTree);
     }

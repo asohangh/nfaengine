@@ -6,14 +6,16 @@ package HDL_Generator;
 
 import NFA.NFA;
 import ParseTree.ParseTree;
-import RegexEngine.BlockChar;
-import RegexEngine.BlockConRep;
-import RegexEngine.BlockState;
-import RegexEngine.ReEngine;
+import ParseTree.RegexTree;
+import RegexEnginev2.BlockChar;
+import RegexEnginev2.BlockConRep;
+import RegexEnginev2.BlockState;
+import RegexEnginev2.ReEngine;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
+
 /**
  *
  * @author heckarim
@@ -35,11 +37,11 @@ public class HDL_CRB_Generator_v2 {
         this.blockConRep = bcr;
     }
 
-    public void genHDL(String folder) throws IOException {
-        String filename = "BCR_state_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + ".v";
+    public void genHDL(String folder, String prefix) throws IOException {
+        String filename = prefix + "BCR_state_" + this.blockConRep.engine.groupID + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + ".v";
         BufferedWriter bw = new BufferedWriter(new FileWriter(folder + filename));
 
-        this.genHDL_CounterBased(bw);
+        this.genHDL_CounterBased(bw, prefix);
         //TODO
         //...
 
@@ -65,13 +67,13 @@ public class HDL_CRB_Generator_v2 {
     .rst_inc(w_rst));
     endmodule
      */
-    public void genHDL_CounterBased(BufferedWriter bw) throws IOException {
+    public void genHDL_CounterBased(BufferedWriter bw, String prefix) throws IOException {
         int inputsize = this.blockConRep.comming.size();
-        bw.write("module BCR_state_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + "(out,");
+        bw.write("module " + prefix + "BCR_state_" + this.blockConRep.engine.groupID + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + "(out,");
         for (int j = 0; j < this.blockConRep.lChar.size(); j++) {
             bw.write("i_char_" + this.blockConRep.lChar.get(j).order + ",");
         }
-        
+
         bw.write("i_clk,i_en,i_rst");
         for (int i = 0; i < inputsize; i++) {
             bw.write(",in" + i);
@@ -100,7 +102,7 @@ public class HDL_CRB_Generator_v2 {
         }
         bw.write(";\n");
 
-        bw.write("\tSubRegex_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + " BCREngine "
+        bw.write("\t" + prefix + "SubRegex_" + this.blockConRep.engine.groupID + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + " BCREngine "
                 + "(\n"
                 + "\t\t.o_sub(w_sub),\n"
                 + "\t\t.o_rst(w_rst),\n"
@@ -115,7 +117,7 @@ public class HDL_CRB_Generator_v2 {
 
         bw.write(");\n");
 
-        bw.write("\tCountCompUnit_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + " Counter "
+        bw.write("\t" + prefix + "CountCompUnit_" + this.blockConRep.engine.groupID + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + " Counter "
                 + "(\n\t\t.out(out),\n"
                 + "\t\t.i_clk(i_clk),\n"
                 + "\t\t.i_inc(w_sub),\n"
@@ -127,10 +129,8 @@ public class HDL_CRB_Generator_v2 {
         bw.write("\nendmodule\n\n");
 
         //bulid subregexengine
-        this.genHDLSubRegex(bw);
-        this.genHDLCountComp(bw);
-
-
+        this.genHDLSubRegex(bw, prefix);
+        this.genHDLCountComp(bw, prefix);
         bw.flush();
         bw.close();
 
@@ -159,7 +159,7 @@ public class HDL_CRB_Generator_v2 {
     //state_0_4 (out,clk,w3);
     endmodule
      */
-    public void buildState(BufferedWriter bw) throws IOException {
+    public void buildState(BufferedWriter bw, String prefix) throws IOException {
         for (int i = 0; i < this.ContEngine.listBlockState.size(); i++) {
             if (this.ContEngine.listBlockState.get(i).isStart
                     || this.ContEngine.listBlockState.get(i).isEnd) {
@@ -169,7 +169,7 @@ public class HDL_CRB_Generator_v2 {
             } else {
                 BlockState bt = this.ContEngine.listBlockState.get(i);
                 int inputsize = bt.comming.size();
-                bw.write("module state_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + "_" + bt.order
+                bw.write("module " + prefix + "state_" + this.blockConRep.engine.groupID + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + "_" + bt.order
                         + "(out1,in_char,clk,en,rst");
                 for (int j = 0; j < inputsize; j++) {
                     bw.write(",in" + j);
@@ -206,11 +206,12 @@ public class HDL_CRB_Generator_v2 {
     /**
      * +, create BCRengine
      * +, Change order of each block char to order of blockchar in lchar of block Conrep
-     *
      */
     private void createBCREngine() {
-        String rule = this.blockConRep.pattern;
-        ParseTree tTree = new ParseTree(rule);
+        String rule = "/" + this.blockConRep.pattern + "/" + this.blockConRep.modifier;
+        //"/" + this.pattern + "/" + this.modifier;
+        RegexTree tTree = new RegexTree(rule);
+        tTree.parseTree();
         NFA tnfa = new NFA();
         tnfa.buildNFA(tTree);
         tnfa.reduceRedundantState();
@@ -222,7 +223,7 @@ public class HDL_CRB_Generator_v2 {
             BlockChar bc = tengine.listBlockChar.get(i);
             for (int j = 0; j < this.blockConRep.lChar.size(); j++) {
                 BlockChar nbc = this.blockConRep.lChar.get(j);
-                if (nbc.id == bc.id && nbc.value.compareToIgnoreCase(bc.value) == 0) {
+                if (nbc.compareTo(bc)) {
                     //nbc.engine = this.engine;
                     bc.order = nbc.order;
                 }
@@ -236,8 +237,8 @@ public class HDL_CRB_Generator_v2 {
         this.ContEngine = tengine;
     }
 
-    private void genHDLSubRegex(BufferedWriter bw) throws IOException {
-        bw.write("\nmodule SubRegex_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order
+    private void genHDLSubRegex(BufferedWriter bw, String prefix) throws IOException {
+        bw.write("\nmodule " + prefix + "SubRegex_" + this.blockConRep.engine.groupID + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order
                 + "(o_sub,o_rst,i_clk,i_rst,i_en,i_state");
         for (int j = 0; j < this.blockConRep.lChar.size(); j++) {
             bw.write(",i_char_" + this.blockConRep.lChar.get(j).order);
@@ -312,8 +313,8 @@ public class HDL_CRB_Generator_v2 {
                 //todo
             } else {//normal state.
                 try {
-                    bw.write("\tstate_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + "_" + bt.order
-                            + " BlockState_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + "_" + bt.order
+                    bw.write("\t" + prefix + "state_" + this.blockConRep.engine.groupID + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + "_" + bt.order
+                            + " BlockState_" + this.blockConRep.engine.groupID + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order + "_" + bt.order
                             + " (w" + bt.order
                             + ",i_char_" + bt.acceptChar.order
                             + ",i_clk,i_en,i_rst");
@@ -328,11 +329,11 @@ public class HDL_CRB_Generator_v2 {
             }
         }
         bw.write("\nendmodule\n\n");
-        this.buildState(bw);
+        this.buildState(bw, prefix);
     }
 
-    private void genHDLCountComp(BufferedWriter bw) throws IOException {
-        bw.write("\nmodule CountCompUnit_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order
+    private void genHDLCountComp(BufferedWriter bw, String prefix) throws IOException {
+        bw.write("\nmodule " + prefix + "CountCompUnit_" + this.blockConRep.engine.groupID + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order
                 + "(out,i_rst_inc,i_inc,i_clk,i_rst,i_en);\n");
         bw.write("\t//Contraint repetition: " + this.blockConRep.pattern);
         bw.write("\n\tparameter\tK=" + this.blockConRep.k + ";\n");
@@ -344,7 +345,7 @@ public class HDL_CRB_Generator_v2 {
         bw.write("\toutput\t\tout;\n");
         bw.write("\twire\tcompN, compM, en, mux_out;\n");
         bw.write("\twire\t[K-1:0]\tcReg;\n\n");
-        bw.write("\tcounter_Kbit_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order
+        bw.write("\t" + prefix + "counter_Kbit_" + this.blockConRep.engine.groupID + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order
                 + " count1 (cReg,i_clk,en,i_inc,i_rst,~i_rst_inc);\n");
         bw.write("\tassign compN = (cReg >= N);\n");
         bw.write("\tassign compM = (cReg <= M);\n");
@@ -353,12 +354,14 @@ public class HDL_CRB_Generator_v2 {
         bw.write("\tassign en = ((G==0)?!mux_out:1'b1) && i_en ;\n");
         bw.write("endmodule\n\n");
 
-        bw.write("module counter_Kbit_" + this.blockConRep.engine.ram_id + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order
+        bw.write("module " + prefix + "counter_Kbit_" + this.blockConRep.engine.groupID + "_" + this.blockConRep.engine.order + "_" + this.blockConRep.order
                 + " (cReg,clk,en,inc,rst,rst_inc);\n");
         bw.write("\tparameter\tK = " + this.blockConRep.k + ";\n");
         bw.write("\tinput\tclk, inc, rst, rst_inc, en;\n");
         bw.write("\toutput\t[K-1:0] cReg;\n");
         bw.write("\treg\t\t[K-1:0] cReg;\n");
+        bw.write("\tinitial\n"
+                + "\t\tcReg = 0;\n");
         bw.write("\n\talways @(posedge clk)\n");// or posedge rst or posedge rst_inc)\n");
         bw.write("\tbegin\n");
         bw.write("\t\tif(rst == 1'b1)\n");

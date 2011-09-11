@@ -4,13 +4,13 @@
  */
 package NFA;
 
-import PCRE.PcreRule;
+import PCREv2.PcreRule;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import ParseTree.Node;
-import ParseTree.ParseTree;
-import PCRE.Refer;
+import PCREv2.Refer;
+import ParseTree.RegexTree;
 import java.util.LinkedList;
 
 /**
@@ -26,7 +26,7 @@ public class NFA {
     public LinkedList<NFAState> lState;
     public LinkedList<NFAEdge> lEdge;
     //Parse tree it is costructed from;
-    public ParseTree tree = null;
+    public RegexTree tree = null;
     // other information
     public static String _default_folder = System.getProperty("user.dir") + System.getProperty("file.separator");
     public static String _default_file_name = "nfa.dot";
@@ -98,6 +98,7 @@ public class NFA {
         this.lEdge.add(newEdge);
         return newEdge;
     }
+
 
     public void insertStartState(NFAState startState) {
         NFAState temp = this.start;
@@ -193,7 +194,7 @@ public class NFA {
                 }
             }
         }
-        for(int i =0; i<this.lState.size(); i++){
+        for (int i = 0; i < this.lState.size(); i++) {
             this.lState.get(i).order = i;
         }
     }
@@ -313,7 +314,7 @@ public class NFA {
         nfa.insertEdgeEpsilon(nfa.end, nfa.start);
         nfa.insertStartState(sStart);
         nfa.insertEndState(sExit);
-        
+
 
         return nfa;
     }
@@ -363,11 +364,11 @@ public class NFA {
         //process ... todo
         Node temp = Refer.processContraint(c);
         //create edge;
-        nfa.insertEdge(sStart, sExit, temp).isConRep = true;
+        nfa.insertEdge(sStart, sExit, temp);
         return nfa;
     }
 
-    public void buildNFA(ParseTree tree) {
+    public void buildNFA(RegexTree tree) {
         NFA temp = this.tree2NFA(tree);
         //copy to this
         //todo : need start and end state to cover return nfa.
@@ -382,27 +383,36 @@ public class NFA {
         NFAState sExit = new NFAState();
         sExit.isFinal = true;
         this.insertStartState(sStart);
-       this.insertEndState(sExit);
- 
+        this.insertEndState(sExit);
+
+        //insert modifier to all edge
+        for (int i = 0; i < this.lEdge.size(); i++) {
+            this.lEdge.get(i).modifier = tree.rule.getModifier();
+        }
+        //reduce redundant
+        this.reduceRedundantState();
+
     }
-    public void buildNFA(String pcre){
-        ParseTree ps = new ParseTree(pcre);
+
+    public void buildNFA(String pcre) {
+        RegexTree ps = new RegexTree(pcre);
+        ps.parseTree();
         this.buildNFA(ps);
     }
 
     /**
      * in NFA full form 
      */
-    public void convertToNFAfullForm(){
-
+    public void convertToNFAfullForm() {
     }
 
-    public void buildNFA(LinkedList<String> lpcre){
+    public void buildNFA(LinkedList<String> lpcre) {
         LinkedList<NFA> lnfa = new LinkedList<NFA>();
         //create list of nfa
-        for (int i =0; i<lpcre.size(); i++){
+        for (int i = 0; i < lpcre.size(); i++) {
             String pcre = lpcre.get(i);
-            ParseTree ps = new ParseTree(pcre);
+            RegexTree ps = new RegexTree(pcre);
+            ps.parseTree();
             NFA nfa = this.tree2NFA(ps);
             //reduce nfa
             nfa.reduceRedundantState();
@@ -419,7 +429,7 @@ public class NFA {
 
     }
 
-    public NFA tree2NFA(ParseTree tree) {
+    public NFA tree2NFA(RegexTree tree) {
         Node root = tree.root;
         PCRE.Refer.println("Begin to convert tree 2 NFA :");
         this.tree = tree;
@@ -450,21 +460,30 @@ public class NFA {
     }
 
     public NFA buildNFA(Node r) {
-        if (r.id == Refer._op_star) {
-            return this.buildStart(buildNFA(r.left));
-        } else if (r.id == Refer._op_plus) {
-            return this.buildPlus(buildNFA(r.left));
-        } else if (r.id == Refer._op_ques) {
-            return this.buildQuestion(buildNFA(r.left));
-        } else if (r.id == Refer._op_or) {
-            return this.buildUnion(buildNFA(r.left), buildNFA(r.right));
-        } else if (r.id == Refer._op_and) {
-            return this.buildConcat(buildNFA(r.left), buildNFA(r.right));
-        } else if (r.id == Refer._op_constraint) {
-            return this.buildContraint(r);
-        } else {
-            return this.buildChar(r);
+        NFA ret;
+        switch (r.id) {
+            case Refer._op_star:
+                ret = this.buildStart(buildNFA(r.left));
+                break;
+            case Refer._op_plus:
+                ret = this.buildPlus(buildNFA(r.left));
+                break;
+            case Refer._op_ques:
+                ret = this.buildQuestion(buildNFA(r.left));
+                break;
+            case Refer._op_or:
+                ret = this.buildUnion(buildNFA(r.left), buildNFA(r.right));
+                break;
+            case Refer._op_and:
+                ret = this.buildConcat(buildNFA(r.left), buildNFA(r.right));
+                break;
+            case Refer._op_constraint:
+                ret = this.buildContraint(r);
+                break;
+            default:
+                ret = this.buildChar(r);
         }
+        return ret;
     }
 
     private void combineto(NFAState state, NFAState dst) {
@@ -482,8 +501,9 @@ public class NFA {
     }
 
     public PcreRule getRule() {
-        if(this.tree != null)
+        if (this.tree != null) {
             return this.tree.rule;
+        }
         return null;
     }
 
@@ -491,13 +511,13 @@ public class NFA {
      * using to conver to DFA.
      */
     public void convertTo256() {
-        for(int i =0; i<this.lEdge.size(); i++){
+        for (int i = 0; i < this.lEdge.size(); i++) {
             this.lEdge.get(i).converto256();
         }
     }
 
     private void updateModifier() {
-        for(int i =0; i<this.lEdge.size(); i++){
+        for (int i = 0; i < this.lEdge.size(); i++) {
             this.lEdge.get(i).modifier = this.tree.rule.getModifier();
         }
     }

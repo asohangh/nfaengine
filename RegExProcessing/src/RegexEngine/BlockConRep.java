@@ -9,6 +9,7 @@ import NFA.NFAEdge;
 import NFA.NFA;
 import ParseTree.ParseTree;
 import PCRE.Refer;
+import ParseTree.RegexTree;
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -66,7 +67,8 @@ public class BlockConRep extends BlockState {
         this.pattern = edge.value.replaceFirst(n + "," + m + ",", "");
         // extract list of Char from pattern and insert to lChar.
         String rule = this.pattern;
-        ParseTree tTree = new ParseTree(rule);
+        RegexTree tTree = new RegexTree(rule);
+        tTree.parseTree();
         NFA tnfa = new NFA();
         tnfa.buildNFA(tTree);
         tnfa.reduceRedundantState();

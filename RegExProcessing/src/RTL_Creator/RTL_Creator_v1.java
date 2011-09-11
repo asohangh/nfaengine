@@ -7,17 +7,16 @@ package RTL_Creator;
 import BRAM.BRAM;
 import NFA.NFA;
 import ParseTree.ParseTree;
+import ParseTree.RegexTree;
 import RegexEngine.BlockConRep;
 import RegexEngine.ReEngine;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.String;
 import java.util.LinkedList;
 
 /**
  * 1. BRam structure
- *
  *
  */
 /**
@@ -76,7 +75,8 @@ public class RTL_Creator_v1 {
         System.out.println("\n\n RTL_Creator_v1: Process BRAM " + i + "\n");
         for (int j = 0; j < lpcre.size(); j++) {
             System.out.println("" + lpcre.get(j));
-            ParseTree tree = new ParseTree(lpcre.get(j), no_CRB);
+            RegexTree tree = new RegexTree(lpcre.get(j), no_CRB);
+            tree.parseTree();
             NFA nfa = new NFA();
             nfa.buildNFA(tree);
             nfa.reduceRedundantState();
@@ -98,7 +98,7 @@ public class RTL_Creator_v1 {
             for (int i = 0; i < this.arrayBRam.length; i++) {
                 System.out.println("\n\n RTL_Creator_v1: OutputStatistic BRAM " + i + "\n");
                 BRAM bram = this.arrayBRam[i];
-                bw.write("#bram " + i +"\t");
+                bw.write("#bram " + i + "\t");
                 bw.write(bram.engineList.size() + "\t");
                 bw.write(bram.listBlockChar.size() + "\t");
 
@@ -117,7 +117,7 @@ public class RTL_Creator_v1 {
                         if (re.listBlockState.get(k).isConRep) {
                             crb++;
                             BlockConRep bcr = (BlockConRep) re.listBlockState.get(k);
-                            
+
                         } else {
                             state++;
                         }

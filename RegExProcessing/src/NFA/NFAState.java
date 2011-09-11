@@ -6,6 +6,7 @@ import java.util.LinkedList;
  *
  * @author Jeffrey W Roberts & Heckarim
  */
+
 public class NFAState {
     // List of Edges keep its next State.
     LinkedList<NFAEdge> lEdge;

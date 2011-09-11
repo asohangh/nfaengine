@@ -3,6 +3,7 @@ package PCRE;
 import DFA.DFA;
 import NFA.NFA;
 import ParseTree.ParseTree;
+import ParseTree.RegexTree;
 
 /**
  *
@@ -84,12 +85,13 @@ public class Main {
         //String rule = "/(ldap\\x3A\\x2F\\x2F[^\\x0A]*(%3f|\\x3F)[^\\x0A]*(%3f|\\x3F)[^\\x0A]*(%3f|\\x3F)[^\\x0A]*(%3f|\\x3F)[^\\x0A]*(%3f|\\x3F))|(abcdefghijkl.123456789(n|p)zt*uv)|(a\\010[abc\\x3a]*b)|(abdsefgijkl.12e3s4e.*56789(n|p)zt*uv)" +
         //        "|762e426f64793d225468697320636f6e666964656e7469616c20646f63756d65*656e762e4174746163686d656e74732e4164642822433a5c4d7920446f63756d656e74735c6d676f61743030332e646f632229" +
         //        "|4600a772082bc63b7570ac1e4406e8628a6103dec255e5643d93d833070403a90a670a0b255a3ebff8b0d824a8027576135df364375865f2460883168323e7a4c7b3b0974b09c68e03194d9608d8b0b990a745826559614b65e803888da0372bd1a9ff7f43d5f8ce7c7dc67dc5f1f47d14b2de5d01054f166f277424fb05eb115f14eafff24690246fb227ac/smi";
-        ParseTree tree = new ParseTree(rule);
+        RegexTree tree = new RegexTree(rule);
+        tree.parseTree();
         System.out.println("pcre is: " + tree.rule.getPattern() + " -------- " + tree.rule.getModifier());
         tree.printTree();
         String s = "e";
-        s = tree.patternOfPCRE(tree.root);
-        System.out.println(s);
+      //  s = tree.patternOfPCRE(tree.root);
+      //  System.out.println(s);
         tree.generateDotFile(null, null);
 
         NFA nfa = new NFA();

@@ -6,7 +6,7 @@ package TestPattern;
 
 import PCRE.Refer;
 import ParseTree.Node;
-import ParseTree.ParseTree;
+import ParseTree.RegexTree;
 import java.util.Random;
 
 /**
@@ -15,11 +15,11 @@ import java.util.Random;
  */
 public class Contructor {
 
-    ParseTree pTree;
+    RegexTree pTree;
     boolean match = true;
     Random rand;
 
-    public Contructor(ParseTree pTree) {
+    public Contructor(RegexTree pTree) {
         this.pTree = pTree;
         this.rand = new Random();
     }
@@ -505,7 +505,8 @@ public class Contructor {
             }
         }
         //Generate repetition pcre
-        Contructor con = new Contructor(new ParseTree(root.left.value));
+        RegexTree tree = new RegexTree(root.left.value);
+        Contructor con = new Contructor(tree);
         Pattern pt = con.BuildPattern(true);
 
         //Base on type of constraint make a repetition

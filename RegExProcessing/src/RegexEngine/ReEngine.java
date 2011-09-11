@@ -7,7 +7,7 @@ import java.util.LinkedList;
 
 import NFA.*;
 import java.io.File;
-import PCRE.PcreRule;
+import PCREv2.PcreRule;
 
 /**
  *
@@ -64,7 +64,7 @@ public class ReEngine {
             }
             //other edge
             BlockState bs;
-            if (enfa.isConRep) {
+            if (enfa.isConRep()) {
                 bs = new BlockConRep(enfa, this);
                 this.listBlockState.add(bs);
             } else {

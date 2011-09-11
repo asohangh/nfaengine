@@ -13,49 +13,78 @@ import java.util.LinkedList;
 public class BlockState {
     // essential attribute
 
-    public LinkedList<BlockState> comming; //list cac block state toi no, day cung chinh la cac trang thai se OR lai voi nhau
-    public BlockChar acceptChar; // BlockChar su dung voi AND
-    public LinkedList<BlockState> going; //list cac block state no se di toi
+    public LinkedList<BlockState> comming; // blockstates which reach by this state
+    public BlockChar acceptChar; // each state has an accepted char
+    public LinkedList<BlockState> going; // blockstates which is reached by this state.
     // type of BlockState.
-    public boolean isStart;// block start ko co acceptchar va khong co comming
-    public boolean isEnd; // block end ko co going va khong co acceptchar.
-    public boolean isConRep; // is constraint repetition operator block.
+    //Since we handle many types of blockstate via extends mechanism
+    public boolean isStart = false;// for Block Start
+    public boolean isEnd = false; // for Block End
+    public boolean isConRep = false; // for block constraint repetition handling
+    public boolean isPrefix = false; // for Prefix block handling
+    public boolean isInfix = false; // for Infix block handling.
+    
     // orther attribute
     public ReEngine engine;
     public int order;
 
     public BlockState() {
-        this.isStart = false;
-        this.isEnd = false;
+        this.engine = null;
+        this.order = 0;
         this.acceptChar = null;
         this.comming = null;
         this.going = null;
     }
 
-    BlockState(int type, ReEngine engine) {
+    BlockState(ReEngine engine) {
         this.engine = engine;
-        if (type == ReEngine._start) {
-            this.isStart = true;
-            this.isEnd = false;
-            this.acceptChar = null;
-            this.going = new LinkedList<BlockState>();
-            this.comming = null;
-        } else if (type == ReEngine._end) {
-            this.isStart = false;
-            this.isEnd = true;
-            this.acceptChar = null;
-            this.going = null;
-            this.comming = new LinkedList<BlockState>();
-        } else if (type == ReEngine._normal) {
-            this.isStart = false;
-            this.isEnd = false;
-            this.acceptChar = null;
-            this.comming = new LinkedList<BlockState>();
-            this.going = new LinkedList<BlockState>();
-        }
+//
+        this.acceptChar = null;
+        this.comming = new LinkedList<BlockState>();
+        this.going = new LinkedList<BlockState>();
+
     }
 
-    public void printTest(){
+    public void printTest() {
         System.out.println("this is BlockState");
+    }
+
+    /**
+     * 
+     * @param old   : to be replaced
+     * @param mew   : replace
+     */
+    public void replaceChar(BlockChar old, BlockChar mew) {
+        if (this.acceptChar != old) {
+            System.out.println("BlockState: Error replace char ");
+            return;
+        }
+        this.acceptChar = mew;
+        mew.addState(this);
+
+    }
+
+    public void print() {
+        System.out.println("BlockState engine: " + this.engine.order + " - oder: " + order);
+        //accpethar
+        if (this.acceptChar == null) {
+            System.out.println("Accept Char: null");
+        } else {
+            System.out.println("Accept Char: " + this.acceptChar.order + " " + this.acceptChar.value + " - modifier: " + this.acceptChar.modifier);
+        }
+        //comming state:
+        if (comming != null) {
+            System.out.print("Coming : ");
+            for (int i = 0; i < this.comming.size(); i++) {
+                System.out.print(this.comming.get(i).order + " - ");
+            }System.out.print("\n");
+        }
+        // going state:
+        if (this.going != null) {
+            System.out.print("Going : ");
+            for (int i = 0; i < this.going.size(); i++) {
+                System.out.print(this.going.get(i).order + " - ");
+            }System.out.print("\n");
+        }
     }
 }
