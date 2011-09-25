@@ -33,7 +33,7 @@ public class extract_23_05_11 {
 
     public static void main(String[] args) throws IOException, WriteException {
         extract_23_05_11 ex = new extract_23_05_11();
-        ex.temp();
+       // ex.temp();
         ex.Action();
 
     }
@@ -45,20 +45,22 @@ public class extract_23_05_11 {
      *
      */
     private void Action() throws IOException, WriteException {
-        String rulefolder = System.getProperty("user.dir") + File.separator + "rules.2.9" + File.separator;
+        String rulefolder = System.getProperty("user.dir") + File.separator + "rules.2.9.test" + File.separator;
         String outfolder = System.getProperty("user.dir") + File.separator + "output.2.9" + File.separator;
         db = new RuleDatabase(rulefolder);
         db.BuildDatabase();
-        this.outputSupportedRules();
-        //this.outputHeader(outfolder + "allactive.header");
+        //this.outputSupportedRules();
+        this.outputHeader(outfolder + "all.header");
+        
         //this.outputTestingRulesFile("simple.nids.1.rules");
         //this.outputRules(this.outputfolder + "nids.rules");
     }
 
     private void outputSupportedRules() throws IOException {
         //rule actives
-        LinkedList<RuleComponent> lscomp = this.getOnlyRuleWithPcre(db.lstRuleActive);
-        BufferedWriter bw = new BufferedWriter(new FileWriter(new File(this.outputfolder + "PCRE.active.rules")));
+        //LinkedList<RuleComponent> lscomp = this.getOnlyRuleWithPcre(db.lstRuleActive);
+        LinkedList<RuleComponent> lscomp = this.getAllRuleWithPcre(db.lstRuleActive);
+        BufferedWriter bw = new BufferedWriter(new FileWriter(new File(this.outputfolder + "rule.active.rules")));
 
         for (int i = 0; i < lscomp.size(); i++) {
             RuleComponent rcomp = lscomp.get(i);
@@ -68,8 +70,9 @@ public class extract_23_05_11 {
         bw.flush();
         bw.close();
 
-        lscomp = this.getOnlyRuleWithPcre(db.lstRuleInactive);
-        bw = new BufferedWriter(new FileWriter(new File(this.outputfolder + "PCRE.inactive.rules")));
+        //lscomp = this.getOnlyRuleWithPcre(db.lstRuleInactive);
+        lscomp = this.getAllRuleWithPcre(db.lstRuleInactive);
+        bw = new BufferedWriter(new FileWriter(new File(this.outputfolder + "rule.inactive.rules")));
 
         for (int i = 0; i < lscomp.size(); i++) {
             RuleComponent rcomp = lscomp.get(i);
@@ -103,7 +106,7 @@ public class extract_23_05_11 {
                 //bw.write(rs.lstRuleAll.get(j).value + "\n");
                 LinkedList<PCRE> tPcre = rlst.get(i).getOpPcre();
                 for (int j = 0; j < tPcre.size(); j++) {
-                    if (!References.isSupportablePCRE(tPcre.get(j))) {
+                    if (!References.isSupportableAndSimplePCRE(tPcre.get(j))) {
                         sup = false;
                         break;
                     }
@@ -159,9 +162,10 @@ public class extract_23_05_11 {
 
     private void outputHeader(String file) throws IOException {
         BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-        for (int i=0 ;i<db.lstRuleActive.size(); i++){
-            RuleHeader hd = db.lstRuleActive.get(i).header;
-            bw.write(hd.toString()+"\n");
+        LinkedList<String> ruleheader = this.reduceHeader(db.lstRuleAll);
+        for (int i=0 ;i<ruleheader.size(); i++){
+            String hd = ruleheader.get(i);
+            bw.write(hd+"\n");
         }
         bw.flush();
         bw.close();
@@ -169,5 +173,24 @@ public class extract_23_05_11 {
 
     private void temp() {
         System.out.println(this.outputfolder);
+    }
+
+    private LinkedList<String> reduceHeader(LinkedList<RuleComponent> lstRuleAll) {
+        LinkedList<String> ret = new LinkedList<String>();
+        ret.add(lstRuleAll.getFirst().header.value);
+        for(int i =1; i<lstRuleAll.size(); i++){
+            String t= lstRuleAll.get(i).header.value;
+            boolean same = false;
+            for(int j=0; j<ret.size(); j++){
+                if(ret.get(j).compareToIgnoreCase(t) == 0){
+                    same = true;
+                    break;
+                }
+
+            }
+            if(!same)
+                ret.add(t);
+        }
+        return ret;
     }
 }

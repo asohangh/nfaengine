@@ -413,7 +413,6 @@ public class References {
 
         if(!References.isSupportablePCRE(pcre))
             return false;
-
         int max = 64;
         if(pcre.regex.length() > max)
             return false;

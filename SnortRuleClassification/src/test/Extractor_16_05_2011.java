@@ -39,8 +39,6 @@ public class Extractor_16_05_2011 {
     /**
      *
      *
-     *
-     *
      */
     private void Action() throws IOException, WriteException {
         String rulefolder = System.getProperty("user.dir") + File.separator + "rules.2.9" + File.separator;
