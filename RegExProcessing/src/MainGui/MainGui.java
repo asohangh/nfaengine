@@ -625,7 +625,7 @@ public class MainGui extends javax.swing.JFrame {
             this.GenFolder = this.jTextField2.getText().trim();
         }
         //update Genfolder
-        this.Generator.genfolder = this.GenFolder;
+        this.Generator.genDir = this.GenFolder;
         //update rule to gen.
         //conver lisst bramto listrule
         this.listRule.clear();
@@ -657,7 +657,7 @@ public class MainGui extends javax.swing.JFrame {
             if (file.exists() && file.isDirectory()) {
                 this.jTextField2.setText(file.getAbsolutePath());
                 this.GenFolder = file.getAbsolutePath() + File.separator;
-                this.Generator.genfolder = this.GenFolder;
+                this.Generator.genDir = this.GenFolder;
             }
         } else {
             file = null;

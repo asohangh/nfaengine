@@ -43,6 +43,7 @@ public class PCRETestCase {
         if (index < 0) {
             index = this.listCollection.size() + 1;
         }
+       // System.out.println("PCRETestcase.java: add pcre: " + pcre + " .. " + index);
         PCREPatternCollection collec = new PCREPatternCollection(pcre, index);
         this.listCollection.add(collec);
     }
@@ -61,7 +62,7 @@ public class PCRETestCase {
         for(int i =0; i<this.listCollection.size();i++){
             PCREPatternCollection pc = this.listCollection.get(i);
             for(int j =0; j< pc.matchPattern.size(); j++){
-                System.out.println(pc.matchPattern.get(j));
+                System.out.println(pc.matchPattern.get(j).data);
             }
         }
 

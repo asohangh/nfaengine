@@ -32,7 +32,7 @@ public class MzInstructionBuilder_v1 {
     }
 
     /**
-     * Each testcase will be generat into seperate file
+     * Each testcase will be generate into seperated file
      */
     public void GenerateSeperateTestCase() {
         for (int i = 0; i < this.listTestCase.size(); i++) {

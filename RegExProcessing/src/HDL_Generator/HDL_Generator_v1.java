@@ -47,6 +47,14 @@ public class HDL_Generator_v1 {
 
     public void setGenerateFolder(String genfolder) {
         this.genfolder = genfolder;
+        
+    }
+    public void setGenerateFolderDefault(String genfolder) {
+        this.genfolder = genfolder;
+        this.genfolder_IPCore = genfolder;
+        this.genfolder_packet = genfolder;
+        this.genfolder_testbench = genfolder;
+        this.genfolder_verilog = genfolder;
     }
 
     public void setRTLCreator(RTL_Creator_v1 rtlCreator) {
@@ -442,7 +450,9 @@ public class HDL_Generator_v1 {
         pcretestcase.generateSimpleTestcase(2);
         //generate two testcase, remember that each testcase contain n pattern corresponding to size of data.
         TestCase tc = pcretestcase.listTestCase.getFirst();
+        
         this.listTestCase.add(tc);
+            
 
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(new File(this.genfolder_testbench + File.separator + "BRAM_" + bram.ID + "_tb.v")));
@@ -546,6 +556,7 @@ public class HDL_Generator_v1 {
             bw.flush();
             bw.close();
         } catch (Exception ex) {
+            System.out.println("hdl_generator_v1.java: exception: ");
             ex.printStackTrace();
         }
     }

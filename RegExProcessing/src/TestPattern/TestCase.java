@@ -26,6 +26,11 @@ public class TestCase {
         if(pat.isMatch)
             this.listMatchIndex.add(index);
     }
-
+    public void print(){
+        System.out.println("testcase.java: ");
+        for(int i =0; i<this.listPattern.size();i++){
+            System.out.println(this.listPattern.get(i).data);
+        }
+    }
 
 }

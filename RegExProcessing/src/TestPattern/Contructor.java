@@ -34,6 +34,7 @@ public class Contructor {
         Pattern ret;
         this.match = match;
         String pat = this.buildNode(pTree.root);
+       // System.out.println("contructor.java: buildpattern:  " + pat);
         if (match) {
         } else {
             //todo: currently, strangh forward strategy: insert random character at some position.
@@ -352,6 +353,8 @@ public class Contructor {
         String s = "";
         //if node is null so EMPTY String is return.
         if (root == null) {
+            
+          //  System.out.println("Contructor.java: root null");
             return s;
         }
         if (root.left == null && root.right == null) {

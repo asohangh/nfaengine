@@ -4,6 +4,7 @@
  */
 package HDL_Generator;
 
+import Builder.MzInstructionBuilder_v1;
 import RTL_Creator.RTL_Creator_v2;
 import RegexEnginev2.BlockChar;
 import RegexEnginev2.BlockConRep;
@@ -15,6 +16,8 @@ import RegexEnginev2.Infix;
 import RegexEnginev2.Prefix;
 import RegexEnginev2.ReEngine;
 import RegexEnginev2.ReEngineGroup;
+import TestPattern.PCRETestCase;
+import TestPattern.Pattern;
 import TestPattern.TestCase;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -59,14 +62,13 @@ public class HDL_Generator_v2 {
         //Generate top Module
         // this.genSimpleTopModule();
     }
-    /*
+
     public void genTestBench() {
-    //Generate Each BRAM TestBench
-    for (int i = 0; i < this.rtlCreator.arrayBRam.length; i++) {
-    this.bram_buildTestBench(this.rtlCreator.arrayBRam[i]);
+        //Generate Each BRAM TestBench
+        for (int i = 0; i < this.rtlCreator.lsGroup.size(); i++) {
+            this.bram_buildTestBench(this.rtlCreator.lsGroup.get(i));
+        }
     }
-    }
-     */
 
     private void genHDLGroup(int i) {
         ReEngineGroup group = this.rtlCreator.lsGroup.get(i);
@@ -98,6 +100,17 @@ public class HDL_Generator_v2 {
         //  this.bram_buildXCO(bram);
     }
 
+    public void genMZInstructionFile() {
+        MzInstructionBuilder_v1 mzbuilder = new MzInstructionBuilder_v1();
+        mzbuilder.setTestCaseList(listTestCase);
+        mzbuilder.setOutputFolder(this.genfolder_packet);
+        //generate testcase for each bram
+        mzbuilder.GenerateSeperateTestCase();
+        //generate testcase for all will differet load
+        mzbuilder.GenerateVariousTestcase();
+
+    }
+
 
     /*Example:
     module BRAM_0(out,clk,sod,en,char);
@@ -125,6 +138,7 @@ public class HDL_Generator_v2 {
             memory.BRam = new char[256][memory.width];
             BufferedWriter bw = new BufferedWriter(new FileWriter(this.genfolder_IPCore + "BRAM_" + group.id + ".coe"));
             bw.write(";");
+            System.out.println("bram_buildCOE: memorywidth " + memory.width + " char size " + memory.lchar.size());
             for (int i = memory.lchar.size() - 1; i >= 0; i--) {
                 bw.write(memory.lchar.get(i).value + " ");
                 for (int j = 0; j < 256; j++) {
@@ -173,7 +187,7 @@ public class HDL_Generator_v2 {
                     + "SET implementationfiletype = Edif\n"
                     + "SET busformat = BusFormatAngleBracketNotRipped\n"
                     + "SET foundationsym = False\n"
-                    + "SET package = ff1148\n"
+                    + "SET package = ff1152\n"
                     + "SET createndf = False\n"
                     + "SET designentry = VHDL\n"
                     + "SET devicefamily = virtex2p\n"
@@ -448,7 +462,7 @@ public class HDL_Generator_v2 {
     q_o <= d_i;
     end
     endmodule
-
+    
      */
     public void buildDflipflop() {
         try {
@@ -472,122 +486,122 @@ public class HDL_Generator_v2 {
             e.printStackTrace();
         }
     }
-    /*
+
     public void bram_buildTestBench(ReEngineGroup group) {
-    //firstly, create testcase
-    PCRETestCase pcretestcase = new PCRETestCase();
-    for (int i = 0; i < group.lengine.size(); i++) {
-    pcretestcase.addPCRE(group.engineList.get(i).rule.getRule(), i);
-    }
-    pcretestcase.generateSimpleTestcase(2);
-    //generate two testcase, remember that each testcase contain n pattern corresponding to size of data.
-    TestCase tc = pcretestcase.listTestCase.getFirst();
-    this.listTestCase.add(tc);
+        //firstly, create testcase
+        PCRETestCase pcretestcase = new PCRETestCase();
+        for (int i = 0; i < group.lengine.size(); i++) {
+            pcretestcase.addPCRE(group.lengine.get(i).rule.getRule(), i);
+        }
+        pcretestcase.generateSimpleTestcase(2);
+        //generate two testcase, remember that each testcase contain n pattern corresponding to size of data.
+        TestCase tc = pcretestcase.listTestCase.getFirst();
+        this.listTestCase.add(tc);
 
-    try {
-    BufferedWriter bw = new BufferedWriter(new FileWriter(new File(this.genfolder_testbench + File.separator + "BRAM_" + group.ID + "_tb.v")));
-    bw.write("`timescale 1ns/1ps\n"
-    + "module bram_test_" + group.ID + "_tb_v;\n"
-    + "// Inputs\n"
-    + "\treg clk;\n"
-    + "\treg sod;\n"
-    + "\treg en;\n"
-    + "\treg [7:0] char;\n"
-    + "// Outputs\n"
-    + "\twire [" + (group.engineList.size() - 1) + ":0] out;\n"
-    + "\tinteger fd,i,index;\n"
-    + "// Instantiate the Unit Under Test (UUT)\n"
-    + "\tBRAM_" + group.ID + " uut (\n"
-    + "\t\t.out(out),\n"
-    + "\t\t.clk(clk),\n"
-    + "\t\t.sod(sod),\n"
-    + "\t\t.en(en),\n"
-    + "\t\t.char(char)\n"
-    + "\t\t);\n"
-    + "\talways @(out) begin\n"
-    + "\t\tindex = 0;\n"
-    + "\t\tfor(i = 0; i <= " + (group.engineList.size() - 1) + "; i=i+1 )\n"
-    + "\t\t\tif (out[i] == 1)\n"
-    + "\t\t\tbegin\n"
-    + "\t\t\t\tindex = i + 1;\n"
-    + "\t\t\t\t$display(\"%d\",index);\n"
-    + "\t\t\tend\n"
-    + "\t\tif (index == 0)\n"
-    + "\t\t\t$display(\"%d\",index);\n"
-    + "\tend\n"
-    + "\tinitial begin\n"
-    + "\t\tfd = $fopen(\"bram_test_" + group.ID + "_tb.out\",\"w\");\n"
-    + "\t\t$fmonitor(fd,\"%g %b\", $time, out);\n"
-    + "\tend\n"
-    + "\tinitial begin\n"
-    + "       // Initialize Inputs\n"
-    + "\t\tclk = 0;\n"
-    + "\t\tsod = 1;\n"
-    + "\t\ten = 1;\n"
-    + "\t\tchar = 0;"
-    + "\t// Wait 100 ns for global reset to finish\n"
-    + "\t\t#100;\n"
-    + "\t// Add stimulus here\n"
-    + "\t\tend\n"
-    + "\tinitial begin\n"
-    + "\t\t#100;\n");
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(this.genfolder_testbench + File.separator + "BRAM_" + group.id + "_tb.v")));
+            bw.write("`timescale 1ns/1ps\n"
+                    + "module bram_test_" + group.id + "_tb_v;\n"
+                    + "// Inputs\n"
+                    + "\treg clk;\n"
+                    + "\treg sod;\n"
+                    + "\treg en;\n"
+                    + "\treg [7:0] char;\n"
+                    + "// Outputs\n"
+                    + "\twire [" + (group.lengine.size() - 1) + ":0] out;\n"
+                    + "\tinteger fd,i,index;\n"
+                    + "// Instantiate the Unit Under Test (UUT)\n"
+                    + "\tBRAM_" + group.id + " uut (\n"
+                    + "\t\t.out(out),\n"
+                    + "\t\t.clk(clk),\n"
+                    + "\t\t.sod(sod),\n"
+                    + "\t\t.en(en),\n"
+                    + "\t\t.char(char)\n"
+                    + "\t\t);\n"
+                    + "\talways @(out) begin\n"
+                    + "\t\tindex = 0;\n"
+                    + "\t\tfor(i = 0; i <= " + (group.lengine.size() - 1) + "; i=i+1 )\n"
+                    + "\t\t\tif (out[i] == 1)\n"
+                    + "\t\t\tbegin\n"
+                    + "\t\t\t\tindex = i + 1;\n"
+                    + "\t\t\t\t$display(\"%d\",index);\n"
+                    + "\t\t\tend\n"
+                    + "\t\tif (index == 0)\n"
+                    + "\t\t\t$display(\"%d\",index);\n"
+                    + "\tend\n"
+                    + "\tinitial begin\n"
+                    + "\t\tfd = $fopen(\"bram_test_" + group.id + "_tb.out\",\"w\");\n"
+                    + "\t\t$fmonitor(fd,\"%g %b\", $time, out);\n"
+                    + "\tend\n"
+                    + "\tinitial begin\n"
+                    + "       // Initialize Inputs\n"
+                    + "\t\tclk = 0;\n"
+                    + "\t\tsod = 1;\n"
+                    + "\t\ten = 1;\n"
+                    + "\t\tchar = 0;"
+                    + "\t// Wait 100 ns for global reset to finish\n"
+                    + "\t\t#100;\n"
+                    + "\t// Add stimulus here\n"
+                    + "\t\tend\n"
+                    + "\tinitial begin\n"
+                    + "\t\t#100;\n");
 
-    for (int i = 0; i < group.engineList.size(); i++) {
-    ReEngine temp = group.engineList.get(i);
-    bw.write("//" + (i + 1) + "." + temp.rule.getPattern() + "..." + temp.rule.getModifier() + ";\n");
-    }
+            for (int i = 0; i < group.lengine.size(); i++) {
+                ReEngine temp = group.lengine.get(i);
+                bw.write("//" + (i + 1) + "." + temp.rule.getPattern() + "..." + temp.rule.getModifier() + ";\n");
+            }
 
-    bw.write("//---------------------------------------------------\n");
-    for (int i = 0; i < group.engineList.size(); i++) {
-    ReEngine temp = group.engineList.get(i);
-    Pattern pt = tc.listPattern.get(i);
-    System.out.println("Gen Pattern: " + pt.data);
-    bw.write("//" + temp.rule.getPattern() + "..." + temp.rule.getModifier() + ";\n");
+            bw.write("//---------------------------------------------------\n");
+            for (int i = 0; i < group.lengine.size(); i++) {
+                ReEngine temp = group.lengine.get(i);
+                Pattern pt = tc.listPattern.get(i);
+                System.out.println("Gen Pattern: " + pt.data);
+                bw.write("//" + temp.rule.getPattern() + "..." + temp.rule.getModifier() + ";\n");
 
-    //firstly, sod =1
-    bw.write("\t\t#20 sod = 1;\n");
-    char cshow = ' ';
-    if (Character.isLetterOrDigit(pt.data.charAt(0))) {
-    cshow = pt.data.charAt(0);
-    } else {
-    cshow = ' ';
-    }
-    bw.write("\t\t#20 char = " + ((int) pt.data.charAt(0)) + ";//" + cshow + "\n");
-    if (Character.isLetterOrDigit(pt.data.charAt(1))) {
-    cshow = pt.data.charAt(1);
-    } else {
-    cshow = ' ';
-    }
-    bw.write("\t\t#20 sod = 0;\n"
-    + "\t\t char=" + ((int) pt.data.charAt(1)) + ";//" + cshow + "\n");
+                //firstly, sod =1
+                bw.write("\t\t#20 sod = 1;\n");
+                char cshow = ' ';
+                if (Character.isLetterOrDigit(pt.data.charAt(0))) {
+                    cshow = pt.data.charAt(0);
+                } else {
+                    cshow = ' ';
+                }
+                bw.write("\t\t#20 char = " + ((int) pt.data.charAt(0)) + ";//" + cshow + "\n");
+                if (Character.isLetterOrDigit(pt.data.charAt(1))) {
+                    cshow = pt.data.charAt(1);
+                } else {
+                    cshow = ' ';
+                }
+                bw.write("\t\t#20 sod = 0;\n"
+                        + "\t\t char=" + ((int) pt.data.charAt(1)) + ";//" + cshow + "\n");
 
-    for (int j = 2; j < pt.data.length(); j++) {
-    if (Character.isLetterOrDigit(pt.data.charAt(j))) {
-    cshow = pt.data.charAt(j);
-    } else {
-    cshow = ' ';
-    }
-    bw.write("\t\t#20 char = " + ((int) pt.data.charAt(j)) + ";//" + cshow + "\n");
-    //bw.write("\t\t#10 i_data = {8'd" + ((int) temp.rule.testPartten.charAt(j)) + ",1'b0,1'b1,1'b0};//" + temp.rule.testPartten.charAt(j) + "\n");
-    }
-    if (i != group.engineList.size() - 1) {
-    bw.write("\t\t#60\n");
-    }
-    }
+                for (int j = 2; j < pt.data.length(); j++) {
+                    if (Character.isLetterOrDigit(pt.data.charAt(j))) {
+                        cshow = pt.data.charAt(j);
+                    } else {
+                        cshow = ' ';
+                    }
+                    bw.write("\t\t#20 char = " + ((int) pt.data.charAt(j)) + ";//" + cshow + "\n");
+                    //bw.write("\t\t#10 i_data = {8'd" + ((int) temp.rule.testPartten.charAt(j)) + ",1'b0,1'b1,1'b0};//" + temp.rule.testPartten.charAt(j) + "\n");
+                }
+                if (i != group.lengine.size() - 1) {
+                    bw.write("\t\t#60\n");
+                }
+            }
 
-    bw.write("\tend\n"
-    + "\tinitial begin\n"
-    + "\t\t#10 clk = ~clk;\n"
-    + "\t\tforever #10 clk = ~clk;\n"
-    + "\tend\n"
-    + "\t//initial #100000 $finish;\n"
-    + "endmodule\n");
+            bw.write("\tend\n"
+                    + "\tinitial begin\n"
+                    + "\t\t#10 clk = ~clk;\n"
+                    + "\t\tforever #10 clk = ~clk;\n"
+                    + "\tend\n"
+                    + "\t//initial #100000 $finish;\n"
+                    + "endmodule\n");
 
-    bw.flush();
-    bw.close();
-    } catch (Exception ex) {
-    ex.printStackTrace();
-    }
+            bw.flush();
+            bw.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
     //block state
 
@@ -596,7 +610,6 @@ public class HDL_Generator_v2 {
      * @param bw
      * @throws java.io.IOException
      */
-
     public void state_buildHDL_start(BufferedWriter bw, BlockState bt, String prefix) throws IOException {
         bw.write("module " + prefix + "state_" + bt.engine.groupID + "_" + bt.engine.order + "_" + bt.order + "(out1,in1,clk,en,rst");
         bw.write(");\n");
@@ -862,12 +875,24 @@ public class HDL_Generator_v2 {
                     + "\t\t.dout(o_ram),\n"
                     + "\t\t.en(en));\n");
             // hadle ^ and $
+            bw.write("\talways@(posedge clk)\n"
+                    + "\tbegin\n"
+                    + "\t\tif(sod)\n"
+                    + "\t\t\tsod_trigger <= 1;\n"
+                    + "\t\telse\n"
+                    + "\t\t\tsod_trigger <= 0;\n"
+                    + "\t\tif(eod)\n"
+                    + "\t\t\teod_trigger <=1;\n"
+                    + "\t\telse\n"
+                    + "\t\t\teod_trigger <=0;\n"
+                    + "\tend\n");
+
             for (int i = 0; i < group.memory.lchar.size(); i++) {
                 BlockChar ch = group.memory.lchar.get(i);
                 if (ch.isStartChar()) {
-                    bw.write("\tassign o_match[" + ch.order + "] = sod & o_ram[" + ch.order + "];\n");
+                    bw.write("\tassign o_match[" + ch.order + "] = sod_trigger | o_ram[" + ch.order + "];\n");
                 } else if (ch.isEndChar()) {
-                    bw.write("\tassign o_match[" + ch.order + "] = eod & o_ram[" + ch.order + "];\n");
+                    bw.write("\tassign o_match[" + ch.order + "] = eod_trigger | o_ram[" + ch.order + "];\n");
                 } else {
                     bw.write("\tassign o_match[" + ch.order + "] = o_ram[" + ch.order + "];\n");
                 }
@@ -884,8 +909,8 @@ public class HDL_Generator_v2 {
 
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(new File(this.genfolder_verilog + "Group_" + group.id + ".v")));
-            bw.write("module Group_" + group.id + "(out,clk,sod,eod,en,char);\n");
-            bw.write("\tinput clk, sod, en, eod;\n");
+            bw.write("module Group_" + group.id + "(out,clk,sod,eod,en,char,rst);\n");
+            bw.write("\tinput clk, sod, en, eod,rst;\n");
             bw.write("\tinput [7:0] char;\n");
 
             //get real number of pcre on Bram
@@ -1099,9 +1124,9 @@ public class HDL_Generator_v2 {
         output out
         );
         parameter [15:0] a = 16'b0000_0000_1111_0000;
-
+        
         assign out = a[in];
-
+        
         endmodule*/
         bw.write("\nmodule blockchar_" + get.order + " ( \n"
                 + "\tinput [7:0] in,\n"
@@ -1503,11 +1528,17 @@ public class HDL_Generator_v2 {
             System.out.println("\n\n HDL_Generator_v2: GenHDL REGroup " + i + "\n");
             this.genHDLGroup(i, chartype);
         }
+        //Generate top engine
+        this.genHDLPCREMatchingEngine();
     }
 
     private void genHDLGroup(int i, int chartype) {
         ReEngineGroup group = this.rtlCreator.lsGroup.get(i);
 
+        System.out.println("genHDLGroup " + i + " " + group.id + ": \n"
+                + "\t\tno prefix: " + group.lprefix.size() + "\n"
+                + "\t\tno infix : " + group.linfix.size() + "\n"
+                + "\t\tno engine: " + group.lengine.size() + "\n");
         //generate prefix
 
         for (int j = 0; j < group.lprefix.size(); j++) {
@@ -1594,16 +1625,51 @@ public class HDL_Generator_v2 {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(this.genfolder_verilog + "Decoder8_256.v"));
 
-            bw.write("module Decoder8_256 (\n" +
-                    "\t\tinput [7:0] i_char,\n" +
-                    "\t\toutput [255:0] o_decoder);\n" +
-                    "\tassign o_decoder = 1<< i_char;\n" +
-                    "endmodule\n");
+            bw.write("module Decoder8_256 (\n"
+                    + "\t\tinput [7:0] i_char,\n"
+                    + "\t\toutput [255:0] o_decoder);\n"
+                    + "\tassign o_decoder = 1<< i_char;\n"
+                    + "endmodule\n");
 
             bw.flush();
             bw.close();
         } catch (IOException ex) {
             Logger.getLogger(HDL_Generator_v2.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private void genHDLPCREMatchingEngine() {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(this.genfolder_verilog + "PCRE_Engine_Matching.v"));
+
+            bw.write(" module PCRE_Engine_Matching\n"
+                    + "\t#(\n"
+                    + "\tparameter NO_PCRE = 215\n"
+                    + "\t)\n"
+                    + "\t(\n"
+                    + "\t//input\n"
+                    + "\tinput clk, iEn, iSod, iEod,iRst,\n"
+                    + "\tinput [7:0] iData,\n"
+                    + "\t//output\n"
+                    + "\toutput [NO_PCRE -1 : 0 ] oPcre\n"
+                    + "\t);\n");
+            //todo
+            bw.write("\tGroup_0 group0(\n"
+                    + "\t.clk(clk),\n"
+                    + "\t.rst(iRst),\n"
+                    + ".sod(iSod),\n"
+                    + ".eod(iEod),\n"
+                    + ".en(iEn),\n"
+                    + ".char(iData),\n"
+                    + ".out(oPcre)\n"
+                    + ");\n"
+                    + "endmodule\n");
+            bw.flush();
+            bw.close();
+        } catch (IOException ex) {
+            Logger.getLogger(HDL_Generator_v2.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
     }
 }

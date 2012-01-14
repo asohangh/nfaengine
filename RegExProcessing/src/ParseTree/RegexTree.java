@@ -31,12 +31,14 @@ public class RegexTree {
         this.rule = new PcreRule(rule);
     }
 
-    public RegexTree(String get, boolean no_CRB) {
+    public RegexTree(String rule, boolean no_CRB) {
         this.no_CRB = no_CRB;
+        this.rule = new PcreRule(rule);
     }
 
     public void parseTree() {
         ParseTree parser = new ParseTree(rule);
+        System.out.println("parseTree: " + rule);
         this.root = parser.parsePcre();
     }
 

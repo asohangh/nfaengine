@@ -27,6 +27,7 @@ public class PcreRule {
     }
 
     public PcreRule(String rule) {
+        System.out.println("PcreRule.java: " + rule);
         regex = "";
         modifier = "";
         this.pcrerule = rule;

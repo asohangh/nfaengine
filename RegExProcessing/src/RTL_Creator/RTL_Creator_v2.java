@@ -4,7 +4,6 @@
  */
 package RTL_Creator;
 
-import BRAM.BRAM;
 import RegexEnginev2.Infix;
 import RegexEnginev2.ReEngineGroup;
 import java.util.LinkedList;
@@ -43,7 +42,7 @@ public class RTL_Creator_v2 {
         group.print();
     }
 
-    void reduceChar(int id) {
+    public void reduceChar(int id) {
         this.lsGroup.get(id).memory.reduceBlockChar();
     }
 

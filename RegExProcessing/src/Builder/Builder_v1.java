@@ -6,24 +6,13 @@ package Builder;
 
 import BRAM.BRAM;
 import HDL_Generator.HDL_Generator_v1;
-import NFA.NFA;
-import ParseTree.ParseTree;
 import RTL_Creator.RTL_Creator_v1;
-import RegexEngine.ReEngine;
-import TestPattern.PCRETestCase;
-import TestPattern.Pattern;
-import TestPattern.TestCase;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.String;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -33,7 +22,9 @@ public class Builder_v1 {
 
     public LinkedList<LinkedList<String>> listRule;
     public LinkedList<BRAM> listBram;
-    public String genfolder = System.getProperty("user.dir") + File.separator + "GenHDL" + File.separator;
+    //public String genfolder = System.getProperty("user.dir") + File.separator + "GenHDL" + File.separator;
+    public String genDir = "~/NetBeansProjects/pcreengine/generate" + File.separator;
+    public String inputDir = "~/NetBeansProjects/pcreengine/pcre" + File.separator; 
     public String outputfolder = System.getProperty("user.dir") + File.separator + "output" + File.separator;
     public String pcrefile;
     RTL_Creator_v1 rtlCreator = new RTL_Creator_v1();
@@ -52,9 +43,17 @@ public class Builder_v1 {
         this.createRTLStructure();
         this.hdlGen.setRTLCreator(rtlCreator);
     }
-
+    public void genTestBench(){
+        //this.hdlGen.setGenerateFolder(genDir);
+        this.hdlGen.setGenerateFolderDefault(genDir);
+        //this.hdlGen.genHDL();
+        //Generate Testbench
+        this.hdlGen.genTestBench();
+        //this.hdlGen.outputExcelStatistic();
+        this.hdlGen.genMZInstructionFile();
+    }
     public void genHDL() {
-        this.hdlGen.setGenerateFolder(genfolder);
+        this.hdlGen.setGenerateFolder(genDir);
         this.hdlGen.genHDL();
         //Generate Testbench
         this.hdlGen.genTestBench();
@@ -63,8 +62,10 @@ public class Builder_v1 {
     }
 
     public void doAction() throws Exception {
-        String filename = "/rules.test/cr.test";
-        String inputfile = System.getProperty("user.dir") + File.separator + filename;
+        String filename = "rules.test/cr.test";
+        //String inputfile = System.getProperty("user.dir") + File.separator + filename;
+        String inputfile = "/home/heckarim/NetBeansProjects/nfaengine/test/extract/oh";
+        this.genDir = "/home/heckarim/NetBeansProjects/nfaengine/test/";
         //Read from file
         this.readFromFile(inputfile);
 
@@ -73,8 +74,8 @@ public class Builder_v1 {
         this.createRTLStructure();
         //Generate HDL.
         this.hdlGen.setRTLCreator(rtlCreator);
-        this.hdlGen.setGenerateFolder(genfolder);
-        this.hdlGen.genHDL();
+        this.hdlGen.setGenerateFolderDefault(genDir);
+        this.hdlGen.genTestBench();
         //Generate Testbench
         //this.hdlGen.genTestBench();
         //this.hdlGen.outputExcelStatistic();
@@ -90,7 +91,7 @@ public class Builder_v1 {
      * After this step listrule will contain all pcre from the file
      * @param filename
      */
-    public void readFromFile(String filename) {
+    public boolean readFromFile(String filename) {
         this.listRule = new LinkedList<LinkedList<String>>();
         try {
             BufferedReader br = new BufferedReader(new FileReader(filename));
@@ -118,9 +119,14 @@ public class Builder_v1 {
             }
         } catch (FileNotFoundException ex) {
             System.out.println(ex);
+            return false;
         } catch (IOException ex) {
             System.out.println(ex);
+            return false;
+        }catch (Exception ex){
+            return false;
         }
+        return true;
     }
 
     /**

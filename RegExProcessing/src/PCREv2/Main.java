@@ -21,9 +21,10 @@ public class Main {
     public void doTest() {
         String rule1 = "/^.{20}([a-z]|0x00[a-z]|\\x00{2}[a-z]|\\x00{2}\\x01[a-z])/smi";
         String rule2 = "/a[bc]{,3}c/smi";
+        String rule3= "/User-Agent\\x3a[^\\r\\n]*winssco\\x2eexe/iH";
 
-        PcreRule rule = new PcreRule(rule1);
-        rule.formatConvenientCR(Refer._mode_no_CR);
+        PcreRule rule = new PcreRule(rule3);
+        //rule.formatConvenientCR(Refer._mode_no_CR);
         System.out.println("After format CRB :" + rule.getPattern());
 
         //buildHDLMain  builder = new buildHDLMain(null);
@@ -81,7 +82,7 @@ public class Main {
         //String rule = "/(abcdefghijkl.123456789(n|p)zt*uv)|(a\\010[abc\\x3a]*b)|(abdsefgijkl.12e3s4e.*56789(n|p)zt*uv)/smi";
         //String rule = "/(!p0001)(ab|(!i0002))xyz/smi";
         //String rule = "/(ab*c|cd+(ef+))xyz/smi";
-        String rule = "/(^ab*c|((n|p)zt*uv)|(a\\010[abc\\x3a]*b)|(abd)){11}d+(ef+))xyz/rsik";
+        String rule = "/User-Agent\\x3a[^\\r\\n]*winssco\\x2eexe/iH";
         //String rule = "/(abc){4}/smi";
         //String rule = "/(ldap\\x3A\\x2F\\x2F[^\\x0A]*(%3f|\\x3F)[^\\x0A]*(%3f|\\x3F)[^\\x0A]*(%3f|\\x3F)[^\\x0A]*(%3f|\\x3F)[^\\x0A]*(%3f|\\x3F))|(abcdefghijkl.123456789(n|p)zt*uv)|(a\\010[abc\\x3a]*b)|(abdsefgijkl.12e3s4e.*56789(n|p)zt*uv)" +
         //        "|762e426f64793d225468697320636f6e666964656e7469616c20646f63756d65*656e762e4174746163686d656e74732e4164642822433a5c4d7920446f63756d656e74735c6d676f61743030332e646f632229" +

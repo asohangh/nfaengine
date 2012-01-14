@@ -343,4 +343,8 @@ public class ReEngine {
         }
         return ret;
     }
+
+    void updateGroupID(int id) {
+        this.groupID = id;
+    }
 }

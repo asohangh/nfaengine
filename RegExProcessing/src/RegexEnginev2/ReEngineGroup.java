@@ -118,6 +118,7 @@ public class ReEngineGroup {
             nfa.buildNFA(tree);
             ReEngine engine = new ReEngine();
             engine.buildEngine(nfa);
+            engine.updateGroupID(this.id);
             lengine.add(engine);
         }
         //update order
@@ -174,4 +175,6 @@ public class ReEngineGroup {
         }
         return ret;
     }
+
+   
 }

@@ -34,6 +34,7 @@ public class PCREPatternCollection {
     PCREPatternCollection(String pcre, int index) {
         this.pcre = pcre;
         this.pTree = new RegexTree(pcre);
+        pTree.parseTree();
         this.index = index;
         this.contructor = new Contructor(this.pTree);
     }
