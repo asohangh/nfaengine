@@ -15,11 +15,11 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jxl.write.WriteException;
-import snort_rule.OpContent;
-import snort_rule.OptionMask;
-import snort_rule.PCRE;
-import snort_rule.References;
-import snort_rule.RuleDatabase;
+import VRTSignature.OpContent;
+import VRTSignature.OptionMask;
+import VRTSignature.PCRE;
+import VRTSignature.References;
+import VRTSignature.RuleDatabase;
 
 /**
  *
@@ -48,8 +48,9 @@ public class MaliciousPacketGen {
 
     private void action() {
         db = new RuleDatabase();
-        db.rulefolder = System.getProperty("user.dir") + File.separator + "rules.2.9.t" + File.separator;
-        db.BuildDatabase();
+        String ruleDir = System.getProperty("user.dir") + File.separator + "rules.2.9.t" + File.separator;
+        db.setRuleDir(ruleDir);
+        db.buildDatabase();
         this.lcontent = this.getContent();
         this.lpcre = this.getPCRE();
 

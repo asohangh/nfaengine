@@ -18,8 +18,8 @@ import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
-import snort_rule.*;
-import snort_rule.PCRE;
+import VRTSignature.*;
+import VRTSignature.PCRE;
 
 /**
  *
@@ -50,7 +50,7 @@ public class pcreStatistic1 {
         //outputfolder = System.getProperty("user.dir") + File.separator + "output" + File.separator;
         outputfolder = System.getProperty("user.dir") + File.separator + "output" + File.separator;
         db = new RuleDatabase();
-        db.BuildDatabase();
+        db.buildDatabase();
 
         this.outputOperatorCount(outputfolder + "all.pcre.rule29.operator.count");
         this.statisticSupportableSoftware(this.outputfolder + "StatisticPcreSuported.xls");
@@ -590,7 +590,7 @@ public class pcreStatistic1 {
                 //wire suported rule
                 for (int j = 0; j < ruleset.lpcre.size(); j++) {
                     PCRE pcre = ruleset.lpcre.get(j);
-                    label = new Label(1, row, pcre.getvalue());
+                    label = new Label(1, row, pcre.getOptionValue());
                     sheet.addCell(label);
                     row++;
                 }

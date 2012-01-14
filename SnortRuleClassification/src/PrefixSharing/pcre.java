@@ -34,7 +34,7 @@ public class pcre {
     public pcre(String rule) {
         regex = "";
         modifier = "";
-
+        System.out.println("pcre.java. Parse rule: " + rule);
         this.pcrerule = rule;
         parsePcre(rule.trim());
         parsePCREElement();

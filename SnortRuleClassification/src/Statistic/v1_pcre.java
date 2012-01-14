@@ -7,10 +7,10 @@ package Statistic;
 import java.io.File;
 import java.lang.ref.Reference;
 import java.util.LinkedList;
-import snort_rule.OptionMask;
-import snort_rule.PCRE;
-import snort_rule.References;
-import snort_rule.RuleDatabase;
+import VRTSignature.OptionMask;
+import VRTSignature.PCRE;
+import VRTSignature.References;
+import VRTSignature.RuleDatabase;
 
 /**
  *
@@ -70,7 +70,7 @@ public class v1_pcre {
             lstring.add(lspcre.get(i).modify);
         }
         //arraycount
-        int[] count = new int[snort_rule.References._pcreModifier.length];
+        int[] count = new int[VRTSignature.References._pcreModifier.length];
         for (int i = 0; i < count.length; i++) {
             count[i] = 0;
         }
@@ -115,7 +115,7 @@ public class v1_pcre {
             boolean exist = false;
             for(int j=0;j<rPcre.size();j++){
                 PCRE com = rPcre.get(j);
-                if(pcre.CompareModifier(com) && pcre.CompareTo(com)){
+                if(pcre.compareModifierTo(com) && pcre.compareRegexTo(com)){
                     exist = true;
                     break;
                 }

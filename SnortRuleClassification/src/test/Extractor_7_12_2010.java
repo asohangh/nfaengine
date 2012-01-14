@@ -16,7 +16,7 @@ import jxl.*;
 import jxl.write.*;
 import jxl.write.Number;
 
-import snort_rule.*;
+import VRTSignature.*;
 
 /**
  *
@@ -43,7 +43,7 @@ public class Extractor_7_12_2010 {
      */
     private void Action() throws IOException, WriteException {
         db = new RuleDatabase();
-        db.BuildDatabase();
+        db.buildDatabase();
 
        // this.outputExcel();
         this.outputExcelPCRE();
@@ -66,7 +66,7 @@ public class Extractor_7_12_2010 {
             boolean same = false;
             PCRE temp = lpcre.get(i);
             for (int j = 0; j < rpcre.size(); j++) {
-                if (temp.CompareTo(rpcre.get(j))) {
+                if (temp.compareRegexTo(rpcre.get(j))) {
                     same = true;
                     break;
                 }
@@ -259,7 +259,7 @@ public class Extractor_7_12_2010 {
             label = new Label(1, i + 1, "" + (i + 1));
             sheet.addCell(label);
             //Content
-            label = new Label(2, i + 1, con.getvalue());
+            label = new Label(2, i + 1, con.getOptionValue());
             sheet.addCell(label);
             //No Char
             label = new Label(3, i + 1, "" + con.countCharacter());

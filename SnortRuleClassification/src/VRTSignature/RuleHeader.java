@@ -2,7 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package snort_rule;
+package VRTSignature;
+
+import java.util.LinkedList;
 
 /**
  *
@@ -23,6 +25,12 @@ public class RuleHeader {
     RuleHeader(String s, RuleComponent rule) {
         this.value = s;
         ParseHeader(s);
+        this.rule = rule;
+    }
+
+    RuleHeader(LinkedList<String> lHeader, RuleComponent rule) {
+        //todo this.setValue(lHeader);
+        ParseBackupData(lHeader);
         this.rule = rule;
     }
 
@@ -70,5 +78,16 @@ public class RuleHeader {
         String ret;
         ret = this.action + " " + this.protocol + " " + this.srcAddress + " " + this.srcPort + " " + this.direction + " " + this.dstAddress + " " + this.dstPort;
         return ret;
+    }
+
+    private void ParseBackupData(LinkedList<String> s) {
+        //System.out.println(s.size());
+        action = s.get(0);
+        protocol = s.get(1);
+        srcAddress = s.get(2);
+        srcPort = s.get(3);
+        direction = s.get(4);
+        dstAddress = s.get(5);
+        dstPort = s.get(6);
     }
 }

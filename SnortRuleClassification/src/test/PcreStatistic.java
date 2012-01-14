@@ -12,8 +12,8 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import snort_rule.*;
-import snort_rule.PCRE;
+import VRTSignature.*;
+import VRTSignature.PCRE;
 
 /**
  *
@@ -33,7 +33,7 @@ public class PcreStatistic {
 
         //Read pcre from output file.
         outputfolder = System.getProperty("user.dir") + File.separator + "output" + File.separator;
-        lpcre = snort_rule.References.ReadPcreFromFile(outputfolder + "all.pcre.ref");
+        lpcre = VRTSignature.References.ReadPcreFromFile(outputfolder + "all.pcre.ref");
 
 
         //=================================================
@@ -69,7 +69,7 @@ public class PcreStatistic {
             boolean same = false;
             PCRE temp = lpcre.get(i);
             for (int j = 0; j < rpcre.size(); j++) {
-                if (temp.CompareTo(rpcre.get(j))) {
+                if (temp.compareRegexTo(rpcre.get(j))) {
                     same = true;
                     break;
                 }
@@ -99,7 +99,7 @@ public class PcreStatistic {
      *
      */
     public void doCountModifier() {
-        int[] modifier = new int[snort_rule.References._pcreModifier.length];
+        int[] modifier = new int[VRTSignature.References._pcreModifier.length];
         LinkedList<LinkedList<PCRE>> mlpcre = new LinkedList<LinkedList<PCRE>>();//user for store linkedlist of pcre belong to dedicated modifier
         for (int i = 0; i < modifier.length; i++) {
             LinkedList<PCRE> ltemp = new LinkedList<PCRE>();
@@ -109,7 +109,7 @@ public class PcreStatistic {
         for (int i = 0; i < lpcre.size(); i++) {
             PCRE pcre = lpcre.get(i);
             for (int j = 0; j < modifier.length; j++) {
-                if (pcre.modify.contains(snort_rule.References._pcreModifier[j])) {
+                if (pcre.modify.contains(VRTSignature.References._pcreModifier[j])) {
                     modifier[j]++;
                     mlpcre.get(j).add(pcre);
                 }
@@ -120,7 +120,7 @@ public class PcreStatistic {
             BufferedWriter bw = new BufferedWriter(new FileWriter(outputfolder + "modifier.all.pcre.ref"));
             //write each rule
             for (int j = 0; j < modifier.length; j++) {
-                bw.write("\n\n#Modifier: " + snort_rule.References._pcreModifier[j] + "\n\n");
+                bw.write("\n\n#Modifier: " + VRTSignature.References._pcreModifier[j] + "\n\n");
                 LinkedList<PCRE> ltemp = mlpcre.get(j);
                 for (int i = 0; i < ltemp.size(); i++) {
                     bw.write(ltemp.get(i).toString() + "\n");
@@ -128,8 +128,8 @@ public class PcreStatistic {
             }
             bw.write("\n\n# Result: \n");
             for (int j = 0; j < modifier.length; j++) {
-                bw.write(snort_rule.References._pcreModifier[j] + "\t " + modifier[j] + "\n");
-                System.out.println(snort_rule.References._pcreModifier[j] + ": " + modifier[j]);
+                bw.write(VRTSignature.References._pcreModifier[j] + "\t " + modifier[j] + "\n");
+                System.out.println(VRTSignature.References._pcreModifier[j] + ": " + modifier[j]);
             }
             bw.flush();
             bw.close();
@@ -149,7 +149,7 @@ public class PcreStatistic {
                 if (i == j) {
                     continue;
                 }
-                int c = lpcre.get(i).CountPrefix(lpcre.get(j));
+                int c = lpcre.get(i).countPrefix(lpcre.get(j));
                 if (c >= max) {
                     max = c;
                 }
@@ -162,7 +162,7 @@ public class PcreStatistic {
             }
         }
     }
-
+/*
     private void doGetPrefix() {
         LinkedList<String> ls = new LinkedList<String>();
         int[] count = new int[4000];
@@ -173,7 +173,7 @@ public class PcreStatistic {
 
             for (int j = i + 1; j < lpcre.size(); j++) {
 
-                String s = lpcre.get(i).GetPrefix(lpcre.get(j));
+                String s = lpcre.get(i).getPrefix(lpcre.get(j));
                 if (s.length() >= 8) {
                     int c = ls.indexOf(s);
                     if (c != -1) {//have
@@ -190,7 +190,9 @@ public class PcreStatistic {
             System.out.println(i + " . " + count[i] + " .      " + ls.get(i));
         }
     }
-
+     * 
+     */
+/*
     private void doPrefixPartition() {
         //first get list of prefix
         // after this step, ls will containt list of prefix which is share among pcres
@@ -203,7 +205,7 @@ public class PcreStatistic {
             System.out.println(t);
 
             for (int j = i + 1; j < lpcre.size(); j++) {
-                String s = lpcre.get(i).GetPrefix(lpcre.get(j));
+                String s = lpcre.get(i).getPrefix(lpcre.get(j));
                 if (s.length() >= 8) {
                     int c = ls.indexOf(s);
                     if (c != -1) {//have
@@ -288,7 +290,7 @@ public class PcreStatistic {
 
 
     }
-
+*/
     private void doGetSimplePcre() {
         LinkedList<PCRE> spcre = new LinkedList<PCRE>();
         for (int i = 0; i < lpcre.size(); i++) {

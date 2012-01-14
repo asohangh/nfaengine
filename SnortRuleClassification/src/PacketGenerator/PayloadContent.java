@@ -4,7 +4,7 @@
  */
 package PacketGenerator;
 
-import snort_rule.OpContent;
+import VRTSignature.OpContent;
 
 /**
  *
@@ -19,13 +19,13 @@ public class PayloadContent {
     public PayloadContent(OpContent opContent) {
         this.op = opContent;
         System.out.println("PayloadContent: ... ");
-        System.out.println(this.op.getvalue());
+        System.out.println(this.op.getOptionValue());
         this.createPayloadString();
     }
     //*VER1.22|28|REI|29|
 
     public void createPayloadString() {
-        String value = this.op.getvalue();
+        String value = this.op.getOptionValue();
         this.data = "";
         for (int i = 0; i < value.length();) {
             char ch = value.charAt(i);
@@ -65,7 +65,7 @@ public class PayloadContent {
     public String getHexPayload() {
         this.createPayloadHex();
         System.out.println("PayloadContent: ... ");
-        System.out.println(this.op.getvalue());
+        System.out.println(this.op.getOptionValue());
         System.out.println(this.data);
         System.out.println(this.hex);
         return this.hex;

@@ -33,7 +33,7 @@ public class prefixPartition {
         //read from file
         String inputfolder = System.getProperty("user.dir") + File.separator + "output.2.9" +
                 File.separator + "extract" + File.separator;
-        String filename = "icnc";
+        String filename = "4dung";
         filename +=".pcre";
         LinkedList<String> lstring = this.readfromfile(inputfolder + filename);
         System.out.println("Read file ok");

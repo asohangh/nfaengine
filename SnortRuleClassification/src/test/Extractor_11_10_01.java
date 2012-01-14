@@ -24,15 +24,18 @@ import VRTSignature.*;
  *
  * @author heckarim
  */
-public class Extractor_16_05_2011 {
+public class Extractor_11_10_01 {
 
-    private String outputfolder = System.getProperty("user.dir") + File.separator + "output.2.9" + File.separator;
+    //private String outputfolder = System.getProperty("user.dir") + File.separator + "output.2.9" + File.separator;
+    private String workingDir = System.getProperty("user.dir") + "/../snort/vrt.11.8.11" + File.separator;
+    private String outputDir = workingDir + "statistic" + File.separator;
+    private String inputDir = workingDir + "so_rules" + File.separator;
     private RuleDatabase db;
     LinkedList<PCRE> lpcre;
     LinkedList<PCRE> lconstraint;
 
     public static void main(String[] args) throws IOException, WriteException {
-        Extractor_16_05_2011 ex = new Extractor_16_05_2011();
+        Extractor_11_10_01 ex = new Extractor_11_10_01();
         ex.Action();
     }
 
@@ -41,7 +44,7 @@ public class Extractor_16_05_2011 {
      *
      */
     private void Action() throws IOException, WriteException {
-        String rulefolder = System.getProperty("user.dir") + File.separator + "rules.2.9" + File.separator;
+        String rulefolder = this.inputDir;
         db = new RuleDatabase(rulefolder);
         db.buildDatabase();
         this.outputExcel();
@@ -53,19 +56,19 @@ public class Extractor_16_05_2011 {
 
     private void outputExcel() {
         try {
-            this.outputExcelExtraction("snort2.9.extraction.xls");
-            this.outputExcelStatistic("snort2.9.statistic.xls");
+            this.outputExcelExtraction("snort2.9.so.extraction.xls");
+            this.outputExcelStatistic("snort2.9.so.statistic.xls");
 
         } catch (IOException ex) {
-            Logger.getLogger(Extractor_16_05_2011.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Extractor_11_10_01.class.getName()).log(Level.SEVERE, null, ex);
         } catch (WriteException ex) {
-            Logger.getLogger(Extractor_16_05_2011.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Extractor_11_10_01.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     private void outputExcelExtraction(String filename) throws IOException, WriteException {
         // the first step is to create a writable workbook using the factory method on the Workbook class.
-        WritableWorkbook workbook = Workbook.createWorkbook(new File(this.outputfolder + filename));
+        WritableWorkbook workbook = Workbook.createWorkbook(new File(this.outputDir + filename));
         //1. Rule id references.
         this.outExcelReferences(workbook, "references");
         //2. pcre references.
@@ -80,7 +83,7 @@ public class Extractor_16_05_2011 {
 
     private void outputExcelStatistic(String filename) throws IOException, WriteException {
         // the first step is to create a writable workbook using the factory method on the Workbook class.
-        WritableWorkbook workbook = Workbook.createWorkbook(new File(this.outputfolder + filename));
+        WritableWorkbook workbook = Workbook.createWorkbook(new File(this.outputDir + filename));
         //create general
         this.outputGeneralStatistic(workbook, "general");
         //couting content, uri, pcre
@@ -106,7 +109,7 @@ public class Extractor_16_05_2011 {
             Number nb;
             RuleComponent con = this.db.lstRuleAll.get(i);
             //Index
-            nb = new Number(0, i + 1,  (i + 1));
+            nb = new Number(0, i + 1, (i + 1));
             sheet.addCell(nb);
             //SID
             label = new Label(1, i + 1, con.sid);
@@ -141,7 +144,7 @@ public class Extractor_16_05_2011 {
             Label lb;
             Number nb;
             //Index
-            nb = new Number(0, i + 1,  (i + 1));
+            nb = new Number(0, i + 1, (i + 1));
             sheet.addCell(nb);
             //SID
             lb = new Label(1, i + 1, pcre.getSID());
@@ -154,7 +157,7 @@ public class Extractor_16_05_2011 {
             if (References.isSupportablePCRE(pcre)) {
                 support = 1;
             }
-            nb = new Number(3, i + 1,  support);
+            nb = new Number(3, i + 1, support);
             sheet.addCell(nb);
             //PCRE
             lb = new Label(4, i + 1, pcre.toString());
@@ -208,7 +211,7 @@ public class Extractor_16_05_2011 {
             Label lb;
             Number nb;
             //Index
-            nb = new Number(0, i + 1,  (i + 1));
+            nb = new Number(0, i + 1, (i + 1));
             sheet.addCell(nb);
             //SID
             lb = new Label(1, i + 1, rule.sid);
@@ -242,7 +245,7 @@ public class Extractor_16_05_2011 {
             Label lb;
             Number nb;
             //Index
-            nb = new Number(0, i + 1,  (i + 1));
+            nb = new Number(0, i + 1, (i + 1));
             sheet.addCell(nb);
             //SID
             lb = new Label(1, i + 1, pcre.getSID());
@@ -255,7 +258,7 @@ public class Extractor_16_05_2011 {
             if (References.isSupportablePCRE(pcre)) {
                 support = 1;
             }
-            nb = new Number(3, i + 1,  support);
+            nb = new Number(3, i + 1, support);
             sheet.addCell(nb);
             //PCRE
             lb = new Label(4, i + 1, pcre.toString());
@@ -288,20 +291,20 @@ public class Extractor_16_05_2011 {
             Label lb;
             Number nb;
             //Index
-            nb = new Number(0, i + 1,  (i + 1));
+            nb = new Number(0, i + 1, (i + 1));
             sheet.addCell(nb);
             //Rulerset
             lb = new Label(1, i + 1, rs.name);
             sheet.addCell(lb);
             //Active
-            nb = new Number(2, i + 1,  rs.lstRuleActive.size());
+            nb = new Number(2, i + 1, rs.lstRuleActive.size());
             sheet.addCell(nb);
             //Inactive
 
-            nb = new Number(3, i + 1,  rs.lstRuleInactive.size());
+            nb = new Number(3, i + 1, rs.lstRuleInactive.size());
             sheet.addCell(nb);
             //Total
-            nb = new Number(4, i + 1,  (rs.lstRuleActive.size() + rs.lstRuleInactive.size()));
+            nb = new Number(4, i + 1, (rs.lstRuleActive.size() + rs.lstRuleInactive.size()));
             sheet.addCell(nb);
         }
         //title of colums
@@ -339,7 +342,7 @@ public class Extractor_16_05_2011 {
         lb = new Label(2, index, "0");
         sheet.addCell(lb);
         //count
-        nb = new Number(3, index,lrules.size());
+        nb = new Number(3, index, lrules.size());
         sheet.addCell(nb);
         //sheet name
         lb = new Label(4, index, "0c0u0p");
@@ -361,7 +364,7 @@ public class Extractor_16_05_2011 {
         lb = new Label(2, index, "1");
         sheet.addCell(lb);
         //count
-        nb = new Number(3, index,lpcre.size());
+        nb = new Number(3, index, lpcre.size());
         sheet.addCell(nb);
         //sheet name
         lb = new Label(4, index, "0c0u1p");
@@ -382,7 +385,7 @@ public class Extractor_16_05_2011 {
         lb = new Label(2, index, "n");
         sheet.addCell(lb);
         //count
-        nb = new Number(3, index,lpcre.size());
+        nb = new Number(3, index, lpcre.size());
         sheet.addCell(nb);
         //sheet name
         lb = new Label(4, index, "0c0unp");
@@ -403,7 +406,7 @@ public class Extractor_16_05_2011 {
         lb = new Label(2, index, "?");
         sheet.addCell(lb);
         //count
-        nb = new Number(3, index,lrules.size());
+        nb = new Number(3, index, lrules.size());
         sheet.addCell(nb);
         //sheet name
         lb = new Label(4, index, "_ciu_p");
@@ -424,7 +427,7 @@ public class Extractor_16_05_2011 {
         lb = new Label(2, index, "0");
         sheet.addCell(lb);
         //count
-        nb = new Number(3, index,lrules.size());
+        nb = new Number(3, index, lrules.size());
         sheet.addCell(nb);
         //sheet name
         lb = new Label(4, index, "ic0u0p");
@@ -446,7 +449,7 @@ public class Extractor_16_05_2011 {
         lb = new Label(2, index, "1");
         sheet.addCell(lb);
         //count
-       nb = new Number(3, index,lpcre.size());
+        nb = new Number(3, index, lpcre.size());
         sheet.addCell(nb);
         //sheet name
         lb = new Label(4, index, "ic0u1p");
@@ -467,7 +470,7 @@ public class Extractor_16_05_2011 {
         lb = new Label(2, index, "n");
         sheet.addCell(lb);
         //count
-        nb = new Number(3, index,lpcre.size());
+        nb = new Number(3, index, lpcre.size());
         sheet.addCell(nb);
         //sheet name
         lb = new Label(4, index, "ic0unp");

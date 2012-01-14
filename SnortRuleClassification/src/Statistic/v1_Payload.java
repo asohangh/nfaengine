@@ -10,7 +10,7 @@ import java.io.IOException;
 import jxl.Workbook;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
-import snort_rule.RuleDatabase;
+import VRTSignature.RuleDatabase;
 
 /**
  *

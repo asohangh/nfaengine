@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 import jxl.*;
 import jxl.write.*;
 import jxl.write.Number;
-import snort_rule.*;
+import VRTSignature.*;
 
 /**
  *
@@ -48,7 +48,7 @@ public class extract_23_05_11 {
         String rulefolder = System.getProperty("user.dir") + File.separator + "rules.2.9.test" + File.separator;
         String outfolder = System.getProperty("user.dir") + File.separator + "output.2.9" + File.separator;
         db = new RuleDatabase(rulefolder);
-        db.BuildDatabase();
+        db.buildDatabase();
         //this.outputSupportedRules();
         this.outputHeader(outfolder + "all.header");
         

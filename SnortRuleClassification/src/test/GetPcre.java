@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import snort_rule.*;
-import snort_rule.RuleDatabase;
+import VRTSignature.*;
+import VRTSignature.RuleDatabase;
 
 /**
  *
@@ -40,7 +40,7 @@ public class GetPcre {
      */
     private void action() {
         db = new RuleDatabase();
-        db.BuildDatabase();
+        db.buildDatabase();
         //String outputfolder = System.getProperty("user.dir") + File.separator + "output.2.9" + File.separator;
         OptionMask mask = new OptionMask();
         mask.SetPermit("pcre");
@@ -108,7 +108,7 @@ public class GetPcre {
             bw.flush();
             bw.close();
 // it will extract all pcre to file, using writepcretofile from Refrence
-            snort_rule.References.WritePcreToFileRuleComponent(db.lstRuleAll, outputfolder + "all.pcre.ref");
+            VRTSignature.References.WritePcreToFileRuleComponent(db.lstRuleAll, outputfolder + "all.pcre.ref");
             System.out.println("Write to all.pcre.ref OK");
 
         } catch (IOException ex) {
@@ -158,7 +158,7 @@ public class GetPcre {
             boolean same = false;
             PCRE temp = lpcre.get(i);
             for (int j = 0; j < rpcre.size(); j++) {
-                if (temp.CompareTo(rpcre.get(j))) {
+                if (temp.compareRegexTo(rpcre.get(j))) {
                     same = true;
                     break;
                 }
@@ -172,7 +172,7 @@ public class GetPcre {
 
     private void getSimplePCRE() {
         RuleDatabase db = new RuleDatabase();
-        db.BuildDatabase();
+        db.buildDatabase();
         OptionMask mask = new OptionMask();
         mask.SetPermit("pcre");
         LinkedList<PCRE> lpcre = new LinkedList<PCRE>();
@@ -213,7 +213,7 @@ public class GetPcre {
     private void getSupportedPCRE() {
 
         RuleDatabase db = new RuleDatabase();
-        db.BuildDatabase();
+        db.buildDatabase();
         OptionMask mask = new OptionMask();
         mask.SetPermit("pcre");
         LinkedList<PCRE> lpcre = new LinkedList<PCRE>();

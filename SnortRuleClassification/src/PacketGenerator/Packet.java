@@ -5,11 +5,11 @@
 package PacketGenerator;
 
 import java.util.Random;
-import snort_rule.OpContent;
-import snort_rule.PCRE;
-import snort_rule.RuleComponent;
-import snort_rule.RuleHeader;
-import snort_rule.RuleOption;
+import VRTSignature.OpContent;
+import VRTSignature.PCRE;
+import VRTSignature.RuleComponent;
+import VRTSignature.RuleHeader;
+import VRTSignature.RuleOption;
 
 /**
  *

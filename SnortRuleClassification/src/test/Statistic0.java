@@ -4,7 +4,7 @@
  */
 package test;
 
-import snort_rule.*;
+import VRTSignature.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -70,9 +70,9 @@ public class Statistic0 {
         String outFolder = System.getProperty("user.dir")+ File.separator + "output.2.9" + File.separator;
         String ruleFolder = System.getProperty("user.dir")+ File.separator + "rules.2.9" + File.separator;
         this.outputfolder = outFolder;
-        rd.setRuleFolder(outFolder);
-        rd.setRuleFolder(ruleFolder);
-        rd.BuildDatabase();
+        rd.setRuleDir(outFolder);
+        rd.setRuleDir(ruleFolder);
+        rd.buildDatabase();
         //rd.print4Test();
         this.db = rd;
         this.DoScript();

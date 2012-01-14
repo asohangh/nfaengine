@@ -7,7 +7,7 @@ package PacketGenerator;
 import PcreParseTree.ParseTree;
 import PcrePatternGenerator.Contructor;
 import java.util.regex.Pattern;
-import snort_rule.PCRE;
+import VRTSignature.PCRE;
 
 /**
  *
@@ -26,7 +26,7 @@ public class PayloadPCRE {
 
     String getHexPayload() {
         System.out.println("PayloadPCRE: ... ");
-        System.out.println(this.pcre.getvalue());
+        System.out.println(this.pcre.getOptionValue());
         System.out.println(this.data);
         this.createPayloadHex();
         System.out.println(this.hex);
@@ -34,7 +34,7 @@ public class PayloadPCRE {
     }
 
     private void createStringPayload() {
-        ParseTree ps = new ParseTree(pcre.getvalue());
+        ParseTree ps = new ParseTree(pcre.getOptionValue());
         Contructor con = new Contructor(ps);
         PcrePatternGenerator.Pattern pt = con.BuildPattern(true);
         this.data = pt.data;

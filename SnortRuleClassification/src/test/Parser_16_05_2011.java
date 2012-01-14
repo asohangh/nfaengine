@@ -19,7 +19,7 @@ import jxl.*;
 import jxl.read.biff.BiffException;
 import jxl.write.*;
 import jxl.write.Number;
-import snort_rule.*;
+import VRTSignature.*;
 
 /**
  *

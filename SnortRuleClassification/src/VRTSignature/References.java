@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package snort_rule;
+package VRTSignature;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -515,7 +515,7 @@ public class References {
             boolean same = false;
             PCRE temp = lpcre.get(i);
             for (int j = 0; j < rpcre.size(); j++) {
-                if (temp.CompareTo(rpcre.get(j))) {
+                if (temp.compareRegexTo(rpcre.get(j))) {
                     same = true;
                     break;
                 }

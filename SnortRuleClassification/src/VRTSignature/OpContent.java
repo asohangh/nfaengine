@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package snort_rule;
+package VRTSignature;
 
 import java.util.LinkedList;
 
@@ -17,7 +17,15 @@ public class OpContent extends RuleOption {
     OpContent(String sop, RuleComponent rule) {
         super(sop, rule);
         //System.out.println("Optioncontent: " +sop);
-        this.value = this.value.substring(1, this.value.length() - 1);
+        this.optionValue = this.optionValue.substring(1, this.optionValue.length() - 1);
+        this.lstOpModifier = new LinkedList<RuleOption>();
+        this.isContent = true;
+    }
+
+    OpContent(String opname, String opval, RuleComponent rule) {
+        super(opname,opval, rule);
+        //System.out.println("Optioncontent: " +sop);
+        this.optionValue = opval;
         this.lstOpModifier = new LinkedList<RuleOption>();
         this.isContent = true;
     }
@@ -44,10 +52,10 @@ public class OpContent extends RuleOption {
             }
         }
         if (nocase) {
-            if (this.value.compareToIgnoreCase(op.value) != 0) {
+            if (this.optionValue.compareToIgnoreCase(op.optionValue) != 0) {
                 return false;
             }
-        } else if (this.value.compareTo(op.value) != 0) {
+        } else if (this.optionValue.compareTo(op.optionValue) != 0) {
             return false;
         }
 
@@ -63,7 +71,7 @@ public class OpContent extends RuleOption {
      */
     public String getOptionString(){
         String ret;
-        ret = this.optionName + ":\"" + this.value + "\"";
+        ret = this.optionName + ":\"" + this.optionValue + "\"";
         return ret;
     }
 
@@ -74,7 +82,7 @@ public class OpContent extends RuleOption {
      */
     public String toString() {
         String ret;
-        ret = this.optionName + ":\"" + this.value + "\"; ";
+        ret = this.optionName + ":\"" + this.optionValue + "\"; ";
         for (int i = 0; i < this.lstOpModifier.size(); i++) {
             ret = ret + this.lstOpModifier.get(i).toString() + "; ";
         }
@@ -101,15 +109,15 @@ public class OpContent extends RuleOption {
     public int countCharacter() {
         int ret = 0;
 
-        for (int i = 0; i < this.value.length();) {
-            char ch = this.value.charAt(i);
+        for (int i = 0; i < this.optionValue.length();) {
+            char ch = this.optionValue.charAt(i);
             if (ch == '|') {
                 String s = "";
-                for (i++; i < this.value.length(); i++) {
-                    if (this.value.charAt(i) == '|') {
+                for (i++; i < this.optionValue.length(); i++) {
+                    if (this.optionValue.charAt(i) == '|') {
                         break;
                     } else {
-                        s += this.value.charAt(i);
+                        s += this.optionValue.charAt(i);
                     }
                 }
                 ret += s.trim().split(" ").length;

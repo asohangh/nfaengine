@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 import jxl.*;
 import jxl.write.*;
 import jxl.write.Number;
-import snort_rule.*;
+import VRTSignature.*;
 
 /**
  *
@@ -39,7 +39,7 @@ public class v1_statistic {
     private void Action() throws IOException, WriteException {
         String rulefolder = System.getProperty("user.dir") + File.separator + "rules.2.9" + File.separator;
         db = new RuleDatabase(rulefolder);
-        db.BuildDatabase();
+        db.buildDatabase();
         //General statistic.
         String statsGen = outputfolder + "General.v1.stats.xls";
         v1_General gen =new v1_General(db);

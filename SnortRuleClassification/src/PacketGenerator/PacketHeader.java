@@ -5,7 +5,7 @@
 
 package PacketGenerator;
 
-import snort_rule.RuleHeader;
+import VRTSignature.RuleHeader;
 
 /**
  *

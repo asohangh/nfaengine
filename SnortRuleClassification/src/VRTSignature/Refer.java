@@ -1,4 +1,4 @@
-package snort_rule;
+package VRTSignature;
 
 
 import java.io.File;
