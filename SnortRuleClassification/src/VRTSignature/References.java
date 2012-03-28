@@ -41,7 +41,8 @@ public class References {
     public final static String _complexPcreModifier = "A; E; G; U; I; P; H; D; M; C; K; S; Y; O";
     public final static String[] _complexpcreModifer = _complexPcreModifier.split("; ");
 
-
+    public final static String _allDPIModified = "msg; sid; rev; content; pcre; nocase; depth; offset; distance; within";
+    public final static String[] _opDPIModifier = _allDPIModified.split("; ");
 
 
     //
@@ -193,6 +194,15 @@ public class References {
             if (option.compareToIgnoreCase(_opContentModifier[i]) == 0) {
                 return true;
 
+            }
+        }
+        return false;
+    }
+
+    public static boolean isInOptionGroup(String option,String[]group){
+        for (int i = 0; i < group.length; i++) {
+            if (option.compareToIgnoreCase(group[i]) == 0) {
+                return true;
             }
         }
         return false;

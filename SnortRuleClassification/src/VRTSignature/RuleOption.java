@@ -89,9 +89,22 @@ public class RuleOption {
         }
     }
 
+    @Override
     public String toString() {
         String ret;
-        ret = this.optionName + ":" + this.optionValue;
+        if(this.optionValue.isEmpty())
+            ret = this.optionName;
+        else
+            ret = this.optionName + ":" + this.optionValue;
+        return ret;
+    }
+
+    public String getOptionString() {
+        String ret;
+        if(this.optionValue.isEmpty())
+            ret = this.optionName;
+        else
+            ret = this.optionName + ":" + this.optionValue;
         return ret;
     }
 }

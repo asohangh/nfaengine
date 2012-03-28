@@ -186,6 +186,22 @@ public class RuleComponent {
         return ret;
     }
 
+    public String getDPIRules() {
+        String ret;
+        ret = this.header.toString() + " (";
+        for (int i = 0; i < this.lstOption.size(); i++) {
+            RuleOption ro = this.lstOption.get(i);
+            //System.out.println("Op: " + ro.optionName + " ---- " + ro.optionValue);
+
+            if (References.isInOptionGroup(lstOption.get(i).optionName, References._opDPIModifier)) {
+                ret += lstOption.get(i).getOptionString() + "; ";
+            }
+        }
+        ret = ret + ")";
+        //System.out.println(ret);
+        return ret;
+    }
+
     void setInactive() {
         this.isActive = false;
     }
@@ -259,5 +275,21 @@ public class RuleComponent {
 
     void setDeleted() {
         this.isDeleted = true;
+    }
+
+    public String getDPIRulesAny() {
+        String ret;
+        ret = "alert udp any any -> any any" + " (";
+        for (int i = 0; i < this.lstOption.size(); i++) {
+            RuleOption ro = this.lstOption.get(i);
+            //System.out.println("Op: " + ro.optionName + " ---- " + ro.optionValue);
+
+            if (References.isInOptionGroup(lstOption.get(i).optionName, References._opDPIModifier)) {
+                ret += lstOption.get(i).getOptionString() + "; ";
+            }
+        }
+        ret = ret + ")";
+        //System.out.println(ret);
+        return ret;
     }
 }

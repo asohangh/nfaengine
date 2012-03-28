@@ -27,7 +27,7 @@ import VRTSignature.*;
 public class Extractor_11_10_01 {
 
     //private String outputfolder = System.getProperty("user.dir") + File.separator + "output.2.9" + File.separator;
-    private String workingDir = System.getProperty("user.dir") + "/../snort/vrt.11.8.11" + File.separator;
+    private String workingDir = System.getProperty("user.dir") + "/rules.ecti" + File.separator;
     private String outputDir = workingDir + "statistic" + File.separator;
     private String inputDir = workingDir + "so_rules" + File.separator;
     private RuleDatabase db;
@@ -44,10 +44,12 @@ public class Extractor_11_10_01 {
      *
      */
     private void Action() throws IOException, WriteException {
-        String rulefolder = this.inputDir;
+        String rulefolder = this.workingDir;
         db = new RuleDatabase(rulefolder);
         db.buildDatabase();
-        this.outputExcel();
+        String outfile = this.workingDir + "ecti.any.rulex";
+        //this.outputExcel();
+        this.outputECTIRulesFile(outfile);
         //this.outputTestingRulesFile("simple.nids.1.rules");
         //this.outputRules(this.outputfolder + "nids.rules");
 
@@ -718,5 +720,20 @@ public class Extractor_11_10_01 {
             }
         }
         return rPcre;
+    }
+
+    private void outputECTIRulesFile(String string) throws IOException {
+
+        BufferedWriter bw = new BufferedWriter(new FileWriter(string));
+        LinkedList<String> lsid = new LinkedList<String>();
+        for (int i = 0; i < db.lstRuleAll.size(); i++) {
+            RuleComponent rc = db.lstRuleAll.get(i);
+            if (lsid.indexOf(rc.sid) == -1) {
+                lsid.add(rc.sid);
+                bw.write(rc.getDPIRulesAny() + "\n");
+            }
+        }
+        bw.flush();
+        bw.close();
     }
 }
