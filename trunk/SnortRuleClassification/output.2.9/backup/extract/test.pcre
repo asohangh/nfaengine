@@ -1,0 +1,3 @@
+/^Content-type\x3a(\s*|\s*\r?\n\s+)image\x2fbmp/smi
+/\x3c\s*IFRAME\s*[^\x3e]*src=\x22javascript\x3a/smi
+/Content-Type\x3A\s+audio\/(x-wav|mpeg|x-midi)/iH

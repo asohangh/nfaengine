@@ -1,0 +1,2 @@
+#bram0#IMAP
+/\sLOGIN\s[^\n]*?\{/smi
