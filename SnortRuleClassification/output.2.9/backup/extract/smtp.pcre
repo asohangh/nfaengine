@@ -1,0 +1,64 @@
+/^RCPT TO\x3a\s*\x3c?[^\n\x3e]{256}/im
+/^HELP\s[^\n]{500}/ism
+/^expn\s+decode/smi
+/^expn\s+root/smi
+/^expn\s+\*@/smi
+/^rcpt\s+to\:\s*[|\x3b]/smi
+/^rcpt to\:\s*decode/smi
+/^vrfy\s+decode/smi
+/^vrfy\s+root/smi
+/^HELO\s[^\n]{500}/smi
+/^ETRN\s[^\n]{500}/smi
+/^\s*Content-Transfer-Encoding\s*\x3A\s*[^\n]{100}/mi
+/^XEXCH50\s+-\d/smi
+/^EXPN[^\n]{255,}/smi
+/^VRFY[^\n]{255,}/smi
+/^SEND FROM\x3a\s*[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?</smi
+/^SEND FROM\x3a\s+[\w\s@\.]{200,}\x3b[\w\s@\.]{200,}\x3b[\w\s@\.]{200}/smi
+/^SAML FROM\x3a\s*[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?</smi
+/^SAML FROM\x3a\s+[\w\s@\.]{200,}\x3b[\w\s@\.]{200,}\x3b[\w\s@\.]{200}/smi
+/^SOML FROM\x3a\s*[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?</smi
+/^SOML FROM\x3a\s+[\w\s@\.]{200,}\x3b[\w\s@\.]{200,}\x3b[\w\s@\.]{200}/smi
+/^MAIL FROM\x3a\s*[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?</smi
+/^MAIL FROM\x3a\s+[\w\s@\.]{200,}\x3b[\w\s@\.]{200,}\x3b[\w\s@\.]{200}/smi
+/^RCPT TO\x3a\s*[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?<[^\n]*?</smi
+/^RCPT TO\x3a\s*[\w\s@\.]{200,}\x3b[\w\s@\.]{200,}\x3b[\w\s@\.]{200}/smi
+/name=[^\r\n]*?\.(mim|uue|uu|b64|bhx|hqx|xxe)/smi
+/(name|id|number|total|boundary)=\s*[^\r\n\x3b\s\x2c]{300}/smi
+/name=[^\r\n]*?\.(mim|uue|uu|b64|bhx|hqx|xxe)/smi
+/name=\s*[^\r\n\x3b\s\x2c]{300}/smi
+/^\s*Content-Encoding\s*\x3A\s*[^\r\n]{300}/mi
+/^\s*Content-Type\s*\x3A\s*[^\r\n]{300}/mi
+/^\s*SEND\s+[^\n]{246}/smi
+/^\s*SAML\s+[^\n]{246}/smi
+/^\s*MAIL\s+[^\n]{246}/smi
+/^\s*SOML\s+[^\n]{246}/smi
+/Content-Type\x3A\s+audio\/(x-wav|mpeg|x-midi).*filename=[\x22\x27]?.{1,221}\.(vbs|exe|scr|pif|bat)/smi
+/^AUTH\s+\S+\s+[^\n]{128}/mi
+/^\s*MAIL\s+[^\s\n][^\n]{1006,}/smi
+/^STARTTLS/smi
+/^552[A-Z0-9\s\x5F\x2D\x2E\x28\x29\x22\x27]+Headers\s+too\s+large/smi
+/^Content-Transfer-Encoding\s*\x3A\s*base64/smi
+/[^\x0d\x00\x0a]{509}/
+/Content-Type\s*\x3a\s*Message\x2fPartial/smi
+/id\s*=\s*[\x22\x27]?[^\x22\x27\n]*..[\x2f\x5c]/smi
+/.*<[^>]*href[^>]*(file\x3A|[cC]\x3A|\\\\).*>/
+/\r\n\w{200,}\x3a.*\r\n/
+/^RCPT TO\x3a[^\n]+[\x26\x3B\x7C]+/mi
+/\x3C[^\s]+\s[^\x3c\x3E]{80}/si
+/\x3D[^\s\n]{88}/si
+/filename\s*=[^\n]*\.123/si
+/src\s*\x3D(3D)?\s*['"][^'"]{244}/i
+/JBIG2Decode.*?stream(\x0d\x0a|\x0a|\x0d)/smi
+/[A-Za-z0-9_\x2f][A-Za-z0-9_\x2f][BFJNRVZdhlptx159]KQklHMkRlY29kZ[QRSTUVWXYZabcdef][A-Za-z0-9_\x2f][A-Za-z0-9_\x2f]/
+/[A-Za-z0-9_\x2f][A-Za-z0-9_\x2f][BFJNRVZdhlptx159]KYXZhU2NyaXB0/
+/\x3c[^\x3e]*\x00[^\x3e]*\x3e/Rsmi
+/[A-Za-z0-9_\x2f][EUk0]pCSUcyRGVjb2Rl/
+/SmF2YVNjcmlwd[ABCDEFGHIJKLMNOP][A-Za-z0-9_\x2f][A-Za-z0-9_\x2f]/
+/[A-Za-z0-9_\x2f][EUk0]phdmFTY3Jpcc[QRST][A-Za-z0-9_\x2f]/
+/SkJJRzJEZWNvZZ[UVWX][A-Za-z0-9_\x2f]/
+/^\s*MAIL\s+FROM\s*\x3A\s*\x3C?\s*[^\x3E\s]{257}\s*/mi
+/^RCPT\x20TO\x3a\s*\x3c?[^\r\n\x3e]{256}(\x3e|\x0d|\x0a)/smi
+/^\s*MAIL\s*FROM\s*\x3a\s*(\x3c[\x3e]*\x3e|\S+)\s+[^\x09\x0a\x0d\x20\x3d]{40}/mi
+/^RCPT\s+TO\x3a\s+[^\r\n]*\x25[npd]/smi
+/^Content-Disposition\x3A\s*attachment/smi

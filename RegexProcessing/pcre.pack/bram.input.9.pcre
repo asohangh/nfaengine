@@ -1,0 +1,6 @@
+#bram
+/^SILC\x2d\d\n\x2e\d/smi
+/ab(a(b|c)){3,6}d/smi
+#bram
+/^SILC\x2d\d\n\x2e\d/smi
+/ab(a(b|c)){3,6}d/smi

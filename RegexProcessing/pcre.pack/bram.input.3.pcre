@@ -1,0 +1,4 @@
+#bram0
+/^abc\x2d\d\x2e\d/smi 
+/^\sLOGIN\s[^\n]*?\{/smi
+/\sLOGIN\s[^\n]{100}/i

@@ -1,0 +1,21 @@
+REsult: 
+Option	No Rule	No Options	No Rules	No Options	No Rules	No Options
+content	4415	9610	4815	6208	9230	15818
+nocase	2624	5827	3120	3519	5744	9346
+rawbytes	9	13	5	6	14	19
+depth	1090	1335	555	748	1645	2083
+offset	379	511	274	386	653	897
+distance	970	1761	318	537	1288	2298
+within	615	985	259	377	874	1362
+http_client_body	5	12	6	8	11	20
+http_cookie	4	6	0	0	4	6
+http_raw_cookie	0	0	0	0	0	0
+http_header	416	830	75	96	491	926
+http_raw_header	0	0	1	1	1	1
+http_method	14	15	3	3	17	18
+http_uri	934	2559	1079	1224	2013	3783
+http_raw_uri	6	6	0	0	6	6
+http_stat_code	2	2	0	0	2	2
+http_stat_msg	0	0	0	0	0	0
+http_encode	0	0	0	0	0	0
+fast_pattern	1671	1671	2539	2539	4210	4210

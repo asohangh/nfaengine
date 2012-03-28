@@ -1,0 +1,334 @@
+
+#telnet.rules
+
+#finger.rules
+
+#pop3.rules
+
+#web-coldfusion.rules
+
+#shellcode.rules
+
+#icmp-info.rules
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP IRDP router advertisement"; itype:9; reference:arachnids,173; reference:bugtraq,578; reference:cve,1999-0875; classtype:misc-activity; sid:363; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP IRDP router selection"; itype:10; reference:arachnids,174; reference:bugtraq,578; reference:cve,1999-0875; classtype:misc-activity; sid:364; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP PING LINUX/*BSD"; dsize:8; id:13170; itype:8; reference:arachnids,447; classtype:misc-activity; sid:375; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP PING Sun Solaris"; dsize:8; itype:8; reference:arachnids,448; classtype:misc-activity; sid:381; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP traceroute"; itype:8; ttl:1; reference:arachnids,118; classtype:attempted-recon; sid:385; rev:4;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP PING"; icode:0; itype:8; classtype:misc-activity; sid:384; rev:5;)
+alert icmp $HOME_NET any -> $EXTERNAL_NET any (msg:"ICMP Address Mask Reply"; icode:0; itype:18; classtype:misc-activity; sid:386; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Address Mask Reply undefined code"; icode:>0; itype:18; classtype:misc-activity; sid:387; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Address Mask Request"; icode:0; itype:17; classtype:misc-activity; sid:388; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Address Mask Request undefined code"; icode:>0; itype:17; classtype:misc-activity; sid:389; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Alternate Host Address"; icode:0; itype:6; classtype:misc-activity; sid:390; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Alternate Host Address undefined code"; icode:>0; itype:6; classtype:misc-activity; sid:391; rev:8;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Datagram Conversion Error"; icode:0; itype:31; classtype:misc-activity; sid:392; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Datagram Conversion Error undefined code"; icode:>0; itype:31; classtype:misc-activity; sid:393; rev:8;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Destination Unreachable Destination Host Unknown"; icode:7; itype:3; classtype:misc-activity; sid:394; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Destination Unreachable Destination Network Unknown"; icode:6; itype:3; classtype:misc-activity; sid:395; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Destination Unreachable Fragmentation Needed and DF bit was set"; icode:4; itype:3; reference:cve,2004-0790; reference:cve,2005-0068; classtype:misc-activity; sid:396; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Destination Unreachable Host Precedence Violation"; icode:14; itype:3; classtype:misc-activity; sid:397; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Destination Unreachable Host Unreachable for Type of Service"; icode:12; itype:3; classtype:misc-activity; sid:398; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Destination Unreachable Host Unreachable"; icode:1; itype:3; classtype:misc-activity; sid:399; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Destination Unreachable Network Unreachable for Type of Service"; icode:11; itype:3; classtype:misc-activity; sid:400; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Destination Unreachable Network Unreachable"; icode:0; itype:3; classtype:misc-activity; sid:401; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Destination Unreachable Port Unreachable"; icode:3; itype:3; reference:cve,2004-0790; reference:cve,2005-0068; classtype:misc-activity; sid:402; rev:8;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Destination Unreachable Precedence Cutoff in effect"; icode:15; itype:3; classtype:misc-activity; sid:403; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Destination Unreachable Protocol Unreachable"; icode:2; itype:3; reference:cve,2004-0790; reference:cve,2005-0068; classtype:misc-activity; sid:404; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Destination Unreachable Source Host Isolated"; icode:8; itype:3; classtype:misc-activity; sid:405; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Destination Unreachable Source Route Failed"; icode:5; itype:3; classtype:misc-activity; sid:406; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Destination Unreachable cndefined code"; icode:>15; itype:3; classtype:misc-activity; sid:407; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Echo Reply"; icode:0; itype:0; classtype:misc-activity; sid:408; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Echo Reply undefined code"; icode:>0; itype:0; classtype:misc-activity; sid:409; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Fragment Reassembly Time Exceeded"; icode:1; itype:11; classtype:misc-activity; sid:410; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP IPV6 I-Am-Here"; icode:0; itype:34; classtype:misc-activity; sid:411; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP IPV6 I-Am-Here undefined code"; icode:>0; itype:34; classtype:misc-activity; sid:412; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP IPV6 Where-Are-You"; icode:0; itype:33; classtype:misc-activity; sid:413; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP IPV6 Where-Are-You undefined code"; icode:>0; itype:33; classtype:misc-activity; sid:414; rev:7;)
+alert icmp $HOME_NET any -> $EXTERNAL_NET any (msg:"ICMP Information Reply"; icode:0; itype:16; classtype:misc-activity; sid:415; rev:5;)
+alert icmp $HOME_NET any -> $EXTERNAL_NET any (msg:"ICMP Information Reply undefined code"; icode:>0; itype:16; classtype:misc-activity; sid:416; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Information Request"; icode:0; itype:15; classtype:misc-activity; sid:417; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Information Request undefined code"; icode:>0; itype:15; classtype:misc-activity; sid:418; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Mobile Host Redirect"; icode:0; itype:32; classtype:misc-activity; sid:419; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Mobile Host Redirect undefined code"; icode:>0; itype:32; classtype:misc-activity; sid:420; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Mobile Registration Reply"; icode:0; itype:36; classtype:misc-activity; sid:421; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Mobile Registration Reply undefined code"; icode:>0; itype:36; classtype:misc-activity; sid:422; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Mobile Registration Request"; icode:0; itype:35; classtype:misc-activity; sid:423; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Mobile Registration Request undefined code"; icode:>0; itype:35; classtype:misc-activity; sid:424; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Parameter Problem Bad Length"; icode:2; itype:12; classtype:misc-activity; sid:425; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Parameter Problem Missing a Required Option"; icode:1; itype:12; classtype:misc-activity; sid:426; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Parameter Problem Unspecified Error"; icode:0; itype:12; classtype:misc-activity; sid:427; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Parameter Problem undefined Code"; icode:>2; itype:12; classtype:misc-activity; sid:428; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Photuris Reserved"; icode:0; itype:40; classtype:misc-activity; sid:429; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Photuris Unknown Security Parameters Index"; icode:1; itype:40; classtype:misc-activity; sid:430; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Photuris Valid Security Parameters, But Authentication Failed"; icode:2; itype:40; classtype:misc-activity; sid:431; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Photuris Valid Security Parameters, But Decryption Failed"; icode:3; itype:40; classtype:misc-activity; sid:432; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Photuris undefined code!"; icode:>3; itype:40; classtype:misc-activity; sid:433; rev:8;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Redirect for TOS and Host"; icode:3; itype:5; reference:cve,1999-0265; classtype:misc-activity; sid:436; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Redirect for TOS and Network"; icode:2; itype:5; reference:cve,1999-0265; classtype:misc-activity; sid:437; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Redirect undefined code"; icode:>3; itype:5; reference:cve,1999-0265; classtype:misc-activity; sid:438; rev:10;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Reserved for Security Type 19"; icode:0; itype:19; classtype:misc-activity; sid:439; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Reserved for Security Type 19 undefined code"; icode:>0; itype:19; classtype:misc-activity; sid:440; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Router Advertisement"; icode:0; itype:9; reference:arachnids,173; classtype:misc-activity; sid:441; rev:6;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Router Selection"; icode:0; itype:10; reference:arachnids,174; classtype:misc-activity; sid:443; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP SKIP"; icode:0; itype:39; classtype:misc-activity; sid:445; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP SKIP undefined code"; icode:>0; itype:39; classtype:misc-activity; sid:446; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Source Quench undefined code"; icode:>0; itype:4; classtype:misc-activity; sid:448; rev:7;)
+alert icmp $HOME_NET any -> $EXTERNAL_NET any (msg:"ICMP Time-To-Live Exceeded in Transit"; icode:0; itype:11; classtype:misc-activity; sid:449; rev:6;)
+alert icmp $HOME_NET any -> $EXTERNAL_NET any (msg:"ICMP Time-To-Live Exceeded in Transit undefined code"; icode:>1; itype:11; classtype:misc-activity; sid:450; rev:8;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Timestamp Reply"; icode:0; itype:14; classtype:misc-activity; sid:451; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Timestamp Reply undefined code"; icode:>0; itype:14; classtype:misc-activity; sid:452; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Timestamp Request"; icode:0; itype:13; classtype:misc-activity; sid:453; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Timestamp Request undefined code"; icode:>0; itype:13; classtype:misc-activity; sid:454; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Traceroute"; icode:0; itype:30; classtype:misc-activity; sid:456; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Traceroute undefined code"; icode:>0; itype:30; classtype:misc-activity; sid:457; rev:7;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP unassigned type 1"; icode:0; itype:1; metadata:policy security-ips drop; classtype:misc-activity; sid:458; rev:8;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP unassigned type 1 undefined code"; itype:1; metadata:policy security-ips drop; classtype:misc-activity; sid:459; rev:8;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP unassigned type 2"; icode:0; itype:2; metadata:policy security-ips drop; classtype:misc-activity; sid:460; rev:8;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP unassigned type 2 undefined code"; itype:2; metadata:policy security-ips drop; classtype:misc-activity; sid:461; rev:8;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP unassigned type 7"; icode:0; itype:7; metadata:policy security-ips drop; classtype:misc-activity; sid:462; rev:8;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP unassigned type 7 undefined code"; itype:7; metadata:policy balanced-ips drop, policy connectivity-ips drop, policy security-ips drop; reference:cve,1999-0454; classtype:misc-activity; sid:463; rev:10;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP PING undefined code"; icode:>0; itype:8; classtype:misc-activity; sid:365; rev:8;)
+
+#content-replace.rules
+
+#dns.rules
+alert udp $EXTERNAL_NET any -> $HOME_NET 53 (msg:"DNS UDP inverse query"; flow:to_server; byte_test:1,<,16,2; byte_test:1,&,8,2; metadata:policy security-ips drop, service dns; reference:bugtraq,2302; reference:cve,2001-0010; reference:nessus,10605; classtype:attempted-recon; sid:2921; rev:5;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 53 (msg:"DNS TCP inverse query"; flow:to_server,established; byte_test:1,<,16,2; byte_test:1,&,8,2; metadata:policy security-ips drop, service dns; reference:bugtraq,2302; reference:cve,2001-0010; reference:nessus,10605; classtype:attempted-recon; sid:2922; rev:4;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 53 (msg:"DNS TCP inverse query overflow"; flow:to_server,established; byte_test:1,<,16,4; byte_test:1,&,8,4; isdataat:400; metadata:service dns; reference:bugtraq,134; reference:cve,1999-0009; classtype:attempted-admin; sid:3153; rev:5;)
+alert udp $EXTERNAL_NET any -> $HOME_NET 53 (msg:"DNS UDP inverse query overflow"; flow:to_server; isdataat:400; byte_test:1,<,16,2; byte_test:1,&,8,2; metadata:service dns; reference:bugtraq,134; reference:cve,1999-0009; classtype:attempted-admin; sid:3154; rev:7;)
+alert udp $EXTERNAL_NET 53 -> $HOME_NET any (msg:"DNS large number of NXDOMAIN replies - possible DNS cache poisoning"; byte_test:1,&,2,3; byte_test:1,&,1,3; byte_test:1,&,128,2; detection_filter:track by_src, count 1200, seconds 30; metadata:service dns; reference:cve,2008-1447; reference:cve,2009-0233; reference:url,www.kb.cert.org/vuls/id/800113; reference:url,www.microsoft.com/technet/security/bulletin/MS09-008.mspx; classtype:misc-attack; sid:13948; rev:6;)
+alert udp $HOME_NET 53 -> $EXTERNAL_NET any (msg:"DNS excessive outbound NXDOMAIN replies - possible spoof of domain run by local DNS servers"; byte_test:1,&,2,3; byte_test:1,&,1,3; byte_test:1,&,128,2; detection_filter:track by_dst, count 200, seconds 30; metadata:policy security-ips drop, service dns; reference:cve,2008-1447; reference:cve,2009-0233; reference:url,www.kb.cert.org/vuls/id/800113; reference:url,www.microsoft.com/technet/security/bulletin/MS09-008.mspx; classtype:misc-attack; sid:13949; rev:5;)
+
+#web-client.rules
+
+#info.rules
+
+#multimedia.rules
+
+#scan.rules
+alert tcp $EXTERNAL_NET 10101 -> $HOME_NET any (msg:"SCAN myscan"; flow:stateless; ack:0; flags:S; ttl:>220; reference:arachnids,439; classtype:attempted-recon; sid:613; rev:7;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 80 (msg:"SCAN cybercop os probe"; flow:stateless; dsize:0; flags:SF12; reference:arachnids,146; classtype:attempted-recon; sid:619; rev:7;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"SCAN FIN"; flow:stateless; flags:F,12; reference:arachnids,27; classtype:attempted-recon; sid:621; rev:8;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"SCAN ipEye SYN scan"; flow:stateless; flags:S; seq:1958810375; reference:arachnids,236; classtype:attempted-recon; sid:622; rev:8;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"SCAN NULL"; flow:stateless; ack:0; flags:0; seq:0; reference:arachnids,4; classtype:attempted-recon; sid:623; rev:7;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"SCAN SYN FIN"; flow:stateless; flags:SF,12; reference:arachnids,198; classtype:attempted-recon; sid:624; rev:8;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"SCAN synscan portscan"; flow:stateless; flags:SF; id:39426; reference:arachnids,441; classtype:attempted-recon; sid:630; rev:7;)
+
+#scada.rules
+alert tcp $EXTERNAL_NET any -> $HOME_NET 502 (msg:"SCADA Modbus invalid protocol version"; flow:established,to_server; byte_test:2,>,0,2; threshold:type limit, track by_src, count 1, seconds 300; reference:url,www.modbus.org/docs/Modbus_Application_Protocol_V1_1b.pdf; classtype:protocol-command-decode; sid:15072; rev:2;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 502 (msg:"SCADA Modbus user-defined function code - 65 to 72"; flow:established,to_server; byte_test:1,>,64,7; byte_test:1,<,73,7; threshold:type limit, track by_src, count 1, seconds 300; reference:url,www.modbus.org/docs/Modbus_Application_Protocol_V1_1b.pdf; classtype:protocol-command-decode; sid:15074; rev:2;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 502 (msg:"SCADA Modbus oversized payload"; flow:established,to_server; byte_test:2,>,256,4; threshold:type limit, track by_src, count 1, seconds 300; reference:url,www.modbus.org/docs/Modbus_Application_Protocol_V1_1b.pdf; classtype:protocol-command-decode; sid:15073; rev:2;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 502 (msg:"SCADA Modbus user-defined function code - 100 to 110"; flow:established,to_server; byte_test:1,>,99,7; byte_test:1,<,111,7; threshold:type limit, track by_src, count 1, seconds 300; reference:url,www.modbus.org/docs/Modbus_Application_Protocol_V1_1b.pdf; classtype:protocol-command-decode; sid:15075; rev:2;)
+alert tcp $EXTERNAL_NET 502 -> $HOME_NET any (msg:"SCADA Modbus exception returned"; flow:established,to_client; byte_test:1,&,128,7; threshold:type limit, track by_src, count 1, seconds 300; reference:url,www.modbus.org/docs/Modbus_Application_Protocol_V1_1b.pdf; classtype:protocol-command-decode; sid:15071; rev:2;)
+
+#p2p.rules
+
+#web-iis.rules
+
+#pop2.rules
+
+#mysql.rules
+alert tcp $SQL_SERVERS 3306 -> $EXTERNAL_NET any (msg:"MYSQL server greeting finished"; flow:from_server,established; byte_test:1,>,0,3; flowbits:isset,mysql.server_greeting; flowbits:unset,mysql.server_greeting; flowbits:noalert; reference:bugtraq,10655; reference:cve,2004-0627; reference:nessus,12639; reference:url,www.nextgenss.com/advisories/mysql-authbypass.txt; classtype:attempted-user; sid:3666; rev:9;)
+
+#spyware-put.rules
+
+#ftp.rules
+
+#imap.rules
+alert tcp $EXTERNAL_NET any -> $HOME_NET 143 (msg:"IMAP Qualcomm WorldMail IMAP Literal Token Parsing Buffer Overflow"; flow:established,to_server; flowbits:isset,qualcom.worldmail.ok; dsize:>668; metadata:policy balanced-ips drop, policy security-ips drop, service imap; reference:bugtraq,15980; reference:cve,2005-4267; classtype:attempted-admin; sid:17328; rev:1;)
+
+#smtp.rules
+alert tcp $EXTERNAL_NET any -> $HOME_NET 105 (msg:"SMTP Mercury Mail Transport System Buffer Overflow attempt"; flow:to_server,established,no_stream; isdataat:527; metadata:policy balanced-ips drop, policy security-ips drop; reference:bugtraq,16396; reference:cve,2005-4411; classtype:attempted-user; sid:17283; rev:2;)
+
+#backdoor.rules
+
+#web-frontpage.rules
+
+#web-misc.rules
+
+#phishing-spam.rules
+
+#dos.rules
+alert udp any 19 <> any 7 (msg:"DOS UDP echo+chargen bomb"; flow:to_server; reference:cve,1999-0103; reference:cve,1999-0635; classtype:attempted-dos; sid:271; rev:9;)
+alert ip $EXTERNAL_NET any -> $HOME_NET any (msg:"DOS IGMP dos attack"; fragbits:M+; ip_proto:2; reference:bugtraq,514; reference:cve,1999-0918; reference:url,www.microsoft.com/technet/security/bulletin/MS99-034.mspx; classtype:attempted-dos; sid:272; rev:13;)
+alert udp $EXTERNAL_NET any -> $HOME_NET 161 (msg:"DOS Bay/Nortel Nautica Marlin"; flow:to_server; dsize:0; reference:bugtraq,1009; reference:cve,2000-0221; classtype:attempted-dos; sid:279; rev:8;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 135:139 (msg:"DOS Winnuke attack"; flow:stateless; flags:U+; reference:bugtraq,2010; reference:cve,1999-0153; classtype:attempted-dos; sid:1257; rev:13;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 3372 (msg:"DOS MSDTC attempt"; flow:to_server,established; dsize:>1023; reference:bugtraq,4006; reference:cve,2002-0224; reference:nessus,10939; classtype:attempted-dos; sid:1408; rev:14;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 6789:6790 (msg:"DOS DB2 dos attempt"; flow:to_server,established; dsize:1; reference:bugtraq,3010; reference:cve,2001-1143; reference:nessus,10871; classtype:denial-of-service; sid:1641; rev:13;)
+alert ip $EXTERNAL_NET any -> $HOME_NET any (msg:"DOS linux kernel SCTP chunkless packet denial of service attempt"; ip_proto:132; dsize:12; reference:bugtraq,18755; reference:cve,2006-2934; classtype:attempted-dos; sid:7021; rev:4;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"DOS record route rr denial of service attempt"; ipopts:rr; icode:0; itype:8; metadata:policy security-ips drop; reference:bugtraq,870; reference:cve,1999-0986; reference:cve,1999-1339; reference:cve,2001-0752; classtype:attempted-dos; sid:8730; rev:4;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 2513 (msg:"DOS Citrix IMA DOS event data length denial of service attempt"; flow:established,to_server; byte_test:4,<,6,8,little; reference:bugtraq,20986; reference:cve,2006-5861; classtype:denial-of-service; sid:9325; rev:3;)
+alert tcp $EXTERNAL_NET any <> $HOME_NET 179 (msg:"DOS BGP spoofed connection reset attempt"; flow:established; flags:RSF*; threshold:type both,track by_dst,count 10,seconds 10; reference:bugtraq,10183; reference:cve,2004-0230; reference:url,www.uniras.gov.uk/vuls/2004/236929/index.htm; classtype:attempted-dos; sid:2523; rev:11;)
+alert ip $EXTERNAL_NET any -> $HOME_NET any (msg:"DOS Linux kernel SCTP Unknown Chunk Types denial of service attempt"; ip_proto:132; dsize:>12; byte_test:1,>,14,12; metadata:policy balanced-ips drop, policy security-ips drop; reference:bugtraq,24376; reference:cve,2007-2876; classtype:attempted-dos; sid:17302; rev:1;)
+
+#icmp.rules
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP PING NMAP"; dsize:0; itype:8; reference:arachnids,162; classtype:attempted-recon; sid:469; rev:4;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP icmpenum v1.1.1"; dsize:0; icmp_id:666 ; icmp_seq:0; id:666; itype:8; reference:arachnids,450; classtype:attempted-recon; sid:471; rev:4;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP redirect host"; icode:1; itype:5; reference:arachnids,135; reference:cve,1999-0265; classtype:bad-unknown; sid:472; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP redirect net"; icode:0; itype:5; reference:arachnids,199; reference:cve,1999-0265; classtype:bad-unknown; sid:473; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP traceroute ipopts"; ipopts:rr; itype:0; reference:arachnids,238; classtype:attempted-recon; sid:475; rev:4;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Source Quench"; icode:0; itype:4; reference:bugtraq,13124; reference:cve,2004-0791; classtype:bad-unknown; sid:477; rev:4;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Broadscan Smurf Scanner"; dsize:4; icmp_id:0; icmp_seq:0; itype:8; classtype:attempted-recon; sid:478; rev:4;)
+alert icmp any any -> any any (msg:"ICMP Destination Unreachable Communication Administratively Prohibited"; icode:13; itype:3; classtype:misc-activity; sid:485; rev:5;)
+alert icmp any any -> any any (msg:"ICMP Destination Unreachable Communication with Destination Host is Administratively Prohibited"; icode:10; itype:3; classtype:misc-activity; sid:486; rev:5;)
+alert icmp any any -> any any (msg:"ICMP Destination Unreachable Communication with Destination Network is Administratively Prohibited"; icode:9; itype:3; classtype:misc-activity; sid:487; rev:5;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP PATH MTU denial of service attempt"; itype:3; icode:4; byte_test:2,<,576,2; reference:bugtraq,13124; reference:cve,2004-1060; classtype:attempted-dos; sid:3626; rev:6;)
+
+#oracle.rules
+
+#chat.rules
+
+#blacklist.rules
+
+#botnet-cnc.rules
+
+#web-attacks.rules
+
+#misc.rules
+alert ip $EXTERNAL_NET any -> $HOME_NET any (msg:"MISC source route lsrr"; ipopts:lsrr; reference:arachnids,418; reference:bugtraq,646; reference:cve,1999-0510; reference:cve,1999-0909; reference:url,www.microsoft.com/technet/security/bulletin/MS99-038.mspx; classtype:bad-unknown; sid:500; rev:7;)
+alert ip $EXTERNAL_NET any -> $HOME_NET any (msg:"MISC source route lsrre"; ipopts:lsrre; reference:arachnids,420; reference:bugtraq,646; reference:cve,1999-0909; reference:url,www.microsoft.com/technet/security/bulletin/MS99-038.mspx; classtype:bad-unknown; sid:501; rev:7;)
+alert ip $EXTERNAL_NET any -> $HOME_NET any (msg:"MISC source route ssrr"; ipopts:ssrr ; reference:cve,1999-0510; classtype:bad-unknown; sid:502; rev:4;)
+alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"MISC Large UDP Packet"; dsize:>4000; reference:arachnids,247; classtype:bad-unknown; sid:521; rev:2;)
+alert ip $EXTERNAL_NET any -> $HOME_NET any (msg:"MISC IP option SATID stream_id set"; ipopts:satid; classtype:bad-unknown; sid:8733; rev:1;)
+alert ip $EXTERNAL_NET any -> $HOME_NET any (msg:"MISC IP option SEC security set"; ipopts:sec; classtype:bad-unknown; sid:8732; rev:1;)
+alert ip $EXTERNAL_NET any -> $HOME_NET any (msg:"MISC IP option TS timestamp set"; ipopts:ts; classtype:bad-unknown; sid:8731; rev:2;)
+alert udp $EXTERNAL_NET 123 -> $HOME_NET 123 (msg:"MISC ntp mode 7 denial of service attempt"; byte_test:1,&,4,0; byte_test:1,&,2,0; byte_test:1,&,1,0; metadata:service ntp; reference:bugtraq,37255; reference:cve,2009-3563; classtype:attempted-dos; sid:16350; rev:2;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET [1918,6014,10110,14206,18302] (msg:"MISC IBM Tivoli Monitoring Express Universal Agent Buffer Overflow"; flow:to_server,established; dsize:>1002; metadata:policy security-ips drop; reference:bugtraq,23558; reference:cve,2007-2137; classtype:attempted-admin; sid:17298; rev:2;)
+
+#experimental.rules
+
+#rpc.rules
+
+#web-cgi.rules
+
+#policy.rules
+alert ip $EXTERNAL_NET any -> $HOME_NET any (msg:"POLICY IPv6 encapsulated in IPv4 activity"; ip_proto:41; reference:bugtraq,29235; reference:cve,2008-2136; classtype:policy-violation; sid:8446; rev:2;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 6504 (msg:"POLICY CA BightStor ARCserver Backup possible insecure method attempt"; flow:established, to_server; dce_iface:506b1890-14c8-11d1-bbc3-00805fa6962e; dce_opnum:383-396; metadata:policy balanced-ips drop, policy security-ips drop, service dcerpc; reference:cve,2007-5328; reference:url,secunia.com/advisories/27192/; classtype:attempted-user; sid:17577; rev:1;)
+
+#sql.rules
+
+#attack-responses.rules
+
+#other-ids.rules
+
+#web-activex.rules
+
+#bad-traffic.rules
+alert tcp $EXTERNAL_NET any <> $HOME_NET 0 (msg:"BAD-TRAFFIC tcp port 0 traffic"; flow:stateless; classtype:misc-activity; sid:524; rev:9;)
+alert udp $EXTERNAL_NET any <> $HOME_NET 0 (msg:"BAD-TRAFFIC udp port 0 traffic"; flow:to_server; reference:bugtraq,576; reference:cve,1999-0675; reference:nessus,10074; classtype:misc-activity; sid:525; rev:11;)
+alert ip $EXTERNAL_NET any -> $HOME_NET any (msg:"BAD-TRAFFIC ip reserved bit set"; fragbits:R; classtype:misc-activity; sid:523; rev:8;)
+alert ip $EXTERNAL_NET any -> $HOME_NET any (msg:"BAD-TRAFFIC Unassigned/Reserved IP protocol"; ip_proto:>134; reference:url,www.iana.org/assignments/protocol-numbers; classtype:non-standard-protocol; sid:1627; rev:6;)
+alert ip any any -> any any (msg:"BAD-TRAFFIC IP Proto 53 SWIPE"; ip_proto:53; reference:bugtraq,8211; reference:cve,2003-0567; reference:nessus,11791; classtype:non-standard-protocol; sid:2186; rev:7;)
+alert ip any any -> any any (msg:"BAD-TRAFFIC IP Proto 55 IP Mobility"; ip_proto:55; reference:bugtraq,8211; reference:cve,2003-0567; reference:nessus,11791; classtype:non-standard-protocol; sid:2187; rev:7;)
+alert ip any any -> any any (msg:"BAD-TRAFFIC IP Proto 77 Sun ND"; ip_proto:77; reference:bugtraq,8211; reference:cve,2003-0567; reference:nessus,11791; classtype:non-standard-protocol; sid:2188; rev:7;)
+alert ip any any -> any any (msg:"BAD-TRAFFIC IP Proto 103 PIM"; ip_proto:103; reference:bugtraq,8211; reference:cve,2003-0567; reference:nessus,11791; classtype:non-standard-protocol; sid:2189; rev:7;)
+
+#ddos.rules
+alert icmp 3.3.3.3/32 any -> $EXTERNAL_NET any (msg:"DDOS Stacheldraht server spoof"; icmp_id:666; itype:0; reference:arachnids,193; reference:cve,2000-0138; classtype:attempted-dos; sid:224; rev:7;)
+
+#web-php.rules
+
+#virus.rules
+
+#nntp.rules
+
+#voip.rules
+alert tcp $EXTERNAL_NET any -> $HOME_NET 2000 (msg:"VOIP-SIP Asterisk data length field overflow"; flow:established,to_server; dsize:>992; byte_test:4,>,992,0,little; reference:bugtraq,20617; reference:cve,2006-5444; classtype:attempted-user; sid:12359; rev:5;)
+alert udp $EXTERNAL_NET any -> $HOME_NET 5060 (msg:"VOIP-SIP response too small"; dsize:<11; reference:url,www.ietf.org/rfc/rfc3261.txt; classtype:misc-activity; sid:11974; rev:2;)
+
+#exploit.rules
+alert ip any any -> any any (msg:"EXPLOIT IGMP IGAP account overflow attempt"; ip_proto:2; byte_test:1,>,63,0; byte_test:1,<,67,0; byte_test:1,>,16,12; reference:bugtraq,9952; reference:cve,2004-0176; reference:cve,2004-0367; classtype:attempted-admin; sid:2462; rev:7;)
+alert ip any any -> any any (msg:"EXPLOIT IGMP IGAP message overflow attempt"; ip_proto:2; byte_test:1,>,63,0; byte_test:1,<,67,0; byte_test:1,>,64,13; reference:bugtraq,9952; reference:cve,2004-0176; reference:cve,2004-0367; classtype:attempted-admin; sid:2463; rev:7;)
+alert ip any any -> any any (msg:"EXPLOIT EIGRP prefix length overflow attempt"; ip_proto:88; byte_test:1,>,32,44; reference:bugtraq,9952; reference:cve,2004-0176; reference:cve,2004-0367; classtype:attempted-admin; sid:2464; rev:7;)
+alert udp $EXTERNAL_NET any -> $HOME_NET 41524 (msg:"EXPLOIT ARCserve discovery service overflow"; flow:to_server; dsize:>966; reference:bugtraq,12491; reference:cve,2005-0260; classtype:attempted-admin; sid:3472; rev:4;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 13724 (msg:"EXPLOIT VERITAS NetBackup vnetd buffer overflow attempt"; flow:to_server,established; flowbits:isset,vnetd.bpspsserver.connection; byte_test:4,>,1024,0; isdataat:1024; flowbits:unset,vnetd.bpspsserver.connection; reference:bugtraq,17264; reference:cve,2006-0991; classtype:attempted-admin; sid:6011; rev:1;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 13701 (msg:"EXPLOIT Veritas NetBackup Volume Manager connection attempt"; flow:to_server,established; byte_test:1,>,3,10,dec,string; byte_test:1,<,11,10,dec,string; flowbits:set,veritas.vmd.connect; flowbits:noalert; classtype:protocol-command-decode; sid:6404; rev:2;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET [5800,5900:5999] (msg:"EXPLOIT RealVNC password authentication bypass attempt"; flow:to_server,established; flowbits:isset,vnc.server.auth.types; flowbits:unset,vnc.server.auth.types; dsize:1; byte_test:1,=,1,0; reference:bugtraq,17978; reference:cve,2006-2369; classtype:attempted-admin; sid:6471; rev:4;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 2967 (msg:"EXPLOIT symantec antivirus realtime virusscan overflow attempt"; flow:to_server,established; byte_test:1,=,1,0; byte_test:1,=,10,4; byte_test:2,=,36,16; byte_jump:2,32; byte_test:1,!,0,0,relative; reference:bugtraq,18107; reference:cve,2006-2630; classtype:attempted-admin; sid:6512; rev:1;)
+alert udp $EXTERNAL_NET any -> $HOME_NET 4569 (msg:"EXPLOIT Asterisk IAX2 truncated mini-frame packet overflow attempt"; flow:to_server; dsize:<4; byte_test:2,<,32768,0; reference:bugtraq,18307; reference:cve,2006-2923; classtype:attempted-admin; sid:6515; rev:2;)
+alert udp $EXTERNAL_NET any -> $HOME_NET 4569 (msg:"EXPLOIT Asterisk IAX2 truncated full-frame packet overflow attempt"; flow:to_server; dsize:<12; byte_test:2,&,32768,0; reference:bugtraq,18307; reference:cve,2006-2923; classtype:attempted-admin; sid:6514; rev:2;)
+alert udp $EXTERNAL_NET any -> $HOME_NET 5093 (msg:"EXPLOIT Sentinel license manager buffer overflow attempt"; flow:to_server; dsize:>836; reference:bugtraq,12742; reference:cve,2005-0353; classtype:attempted-admin; sid:11265; rev:2;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 20031 (msg:"EXPLOIT BakBone NetVault heap overflow attempt"; flow:to_server,established; byte_test:4,>,1000,0,little; isdataat:1000; reference:bugtraq,12967; reference:cve,2005-1009; classtype:attempted-admin; sid:12081; rev:3;)
+alert udp $EXTERNAL_NET any -> $HOME_NET 2048 (msg:"EXPLOIT Squid proxy long WCCP packet"; flow:to_server; dsize:>1428; reference:bugtraq,12432; reference:cve,2005-0211; classtype:attempted-user; sid:12222; rev:2;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 13701 (msg:"EXPLOIT Veritas NetBackup vmd shared library buffer overflow attempt"; flow:established,to_server; dsize:4; byte_test:4,>,84,0; metadata:policy security-ips drop; reference:bugtraq,15353; reference:cve,2005-3116; classtype:attempted-admin; sid:12904; rev:1;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 705 (msg:"EXPLOIT RealNetworks Helix AgentX receive_agentx stack buffer overflow attempt"; flow:established,to_server; flags:*P; dsize:<20; detection_filter:track by_src, count 2, seconds 2; metadata:service snmp; reference:bugtraq,39564; reference:cve,2010-1318; reference:url,labs.idefense.com/intelligence/vulnerabilities/display.php?id=867; classtype:attempted-admin; sid:16576; rev:2;)
+
+#snmp.rules
+alert udp any any -> 255.255.255.255 161 (msg:"SNMP Broadcast request"; flow:to_server; metadata:service snmp; reference:bugtraq,4088; reference:bugtraq,4089; reference:bugtraq,4132; reference:cve,2002-0012; reference:cve,2002-0013; classtype:attempted-recon; sid:1415; rev:12;)
+alert udp any any -> 255.255.255.255 162 (msg:"SNMP broadcast trap"; flow:to_server; metadata:service snmp; reference:bugtraq,4088; reference:bugtraq,4089; reference:bugtraq,4132; reference:cve,2002-0012; reference:cve,2002-0013; classtype:attempted-recon; sid:1416; rev:12;)
+alert udp $EXTERNAL_NET any -> $HOME_NET 161 (msg:"SNMP request udp"; flow:to_server; metadata:service snmp; reference:bugtraq,4088; reference:bugtraq,4089; reference:bugtraq,4132; reference:cve,2002-0012; reference:cve,2002-0013; classtype:attempted-recon; sid:1417; rev:13;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 161 (msg:"SNMP request tcp"; flow:stateless; metadata:service snmp; reference:bugtraq,4088; reference:bugtraq,4089; reference:bugtraq,4132; reference:cve,2002-0012; reference:cve,2002-0013; classtype:attempted-recon; sid:1418; rev:13;)
+alert udp $EXTERNAL_NET any -> $HOME_NET 162 (msg:"SNMP trap udp"; flow:to_server; metadata:service snmp; reference:bugtraq,4088; reference:bugtraq,4089; reference:bugtraq,4132; reference:cve,2002-0012; reference:cve,2002-0013; classtype:attempted-recon; sid:1419; rev:12;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 162 (msg:"SNMP trap tcp"; flow:stateless; metadata:service snmp; reference:bugtraq,4088; reference:bugtraq,4089; reference:bugtraq,4132; reference:cve,2002-0012; reference:cve,2002-0013; classtype:attempted-recon; sid:1420; rev:13;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 705 (msg:"SNMP AgentX/tcp request"; flow:stateless; metadata:service snmp; reference:bugtraq,4088; reference:bugtraq,4089; reference:bugtraq,4132; reference:cve,2002-0012; reference:cve,2002-0013; classtype:attempted-recon; sid:1421; rev:13;)
+
+#tftp.rules
+
+#x11.rules
+
+#rservices.rules
+
+#netbios.rules
+
+#specific-threats.rules
+alert tcp $EXTERNAL_NET any -> $HOME_NET 21064 (msg:"SPECIFIC-THREATS Ingres long message heap buffer overflow attempt"; flow:to_server,established; isdataat:1169; byte_test:2,>,1168,0,little; reference:cve,2007-3334; classtype:attempted-admin; sid:12202; rev:3;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 6070 (msg:"SPECIFIC-THREATS CA BrightStor Agent for Microsoft SQL overflow attempt"; flow:to_server,established; isdataat:3000; reference:bugtraq,14453; reference:cve,2005-1272; classtype:attempted-admin; sid:11683; rev:3;)
+alert udp $EXTERNAL_NET any -> $HOME_NET 4011 (msg:"SPECIFIC-THREATS Fujitsu SystemcastWizard Lite PXEService UDP Handling Buffer Overflow"; dsize:>1024; reference:bugtraq,33342; reference:cve,2009-0270; classtype:attempted-admin; sid:17524; rev:1;)
+alert udp $EXTERNAL_NET any -> $HOME_NET 65535 (msg:"SPECIFIC-THREATS LANDesk Management Suite Alerting Service buffer overflow"; dsize:>268; reference:bugtraq,23483; reference:cve,2007-1674; classtype:attempted-admin; sid:17567; rev:1;)
+
+Result: rule just don't havetelnet.rules	0
+finger.rules	0
+pop3.rules	0
+web-coldfusion.rules	0
+shellcode.rules	0
+icmp-info.rules	79
+content-replace.rules	0
+dns.rules	6
+web-client.rules	0
+info.rules	0
+multimedia.rules	0
+scan.rules	7
+scada.rules	5
+p2p.rules	0
+web-iis.rules	0
+pop2.rules	0
+mysql.rules	1
+spyware-put.rules	0
+ftp.rules	0
+imap.rules	1
+smtp.rules	1
+backdoor.rules	0
+web-frontpage.rules	0
+web-misc.rules	0
+phishing-spam.rules	0
+dos.rules	11
+icmp.rules	11
+oracle.rules	0
+chat.rules	0
+blacklist.rules	0
+botnet-cnc.rules	0
+web-attacks.rules	0
+misc.rules	9
+experimental.rules	0
+rpc.rules	0
+web-cgi.rules	0
+policy.rules	2
+sql.rules	0
+attack-responses.rules	0
+other-ids.rules	0
+web-activex.rules	0
+bad-traffic.rules	8
+ddos.rules	1
+web-php.rules	0
+virus.rules	0
+nntp.rules	0
+voip.rules	2
+exploit.rules	15
+snmp.rules	7
+tftp.rules	0
+x11.rules	0
+rservices.rules	0
+netbios.rules	0
+specific-threats.rules	4
+Sum	170

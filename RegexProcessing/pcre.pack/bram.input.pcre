@@ -1,0 +1,14 @@
+#bram0#size5
+/\x5BDRIVE\s+LIST\x5D/smi
+/\x3Cchat\x3E[^\r\n]*\x3C\x2Fchat\x3E/smi
+/000File\s+is\s+executed\x2E\x2E\x2E/smi
+/Instant\s+Remote\s+Control\s+Service/smi
+/\x2FGR\d+\x3B\d+/smi
+#bram0#size5
+/\x2Fnotifier\x2F(configINTERNAL\.ini)|(update\.cgi)\?/Ui
+/\x2Fnewsurfer4\x2F((register\.asp)|(survey\.asp\?nUserId=))/Ui
+/\x2Fs(earch)?\x2Ephp3?\x3Fsearch\x3D/Ui
+/<OBJECT\s+[^>]*classid\s*=\s*[\x22\x27]?\s*clsid\s*\x3a\s*\x7B?\s*C0EF89EE-EEC7-4535-A041-F1EBF79560A7/si
+/\x2Fxml\x2Ftoolbar\x2F(sports)|(news)|(horoscope2)|(horoscope)|(weather2)|(weather)\.php/Ui
+
+

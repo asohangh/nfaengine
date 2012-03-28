@@ -1,0 +1,164 @@
+
+#telnet.rules
+
+#finger.rules
+
+#pop3.rules
+
+#web-coldfusion.rules
+
+#shellcode.rules
+
+#icmp-info.rules
+
+#content-replace.rules
+
+#dns.rules
+
+#web-client.rules
+
+#info.rules
+
+#multimedia.rules
+
+#scan.rules
+
+#scada.rules
+
+#p2p.rules
+
+#web-iis.rules
+
+#pop2.rules
+
+#mysql.rules
+
+#spyware-put.rules
+
+#ftp.rules
+
+#imap.rules
+
+#smtp.rules
+
+#backdoor.rules
+
+#web-frontpage.rules
+
+#web-misc.rules
+
+#phishing-spam.rules
+
+#dos.rules
+
+#icmp.rules
+
+#oracle.rules
+
+#chat.rules
+
+#blacklist.rules
+
+#botnet-cnc.rules
+
+#web-attacks.rules
+
+#misc.rules
+
+#experimental.rules
+
+#rpc.rules
+
+#web-cgi.rules
+
+#policy.rules
+
+#sql.rules
+
+#attack-responses.rules
+
+#other-ids.rules
+
+#web-activex.rules
+
+#bad-traffic.rules
+
+#ddos.rules
+
+#web-php.rules
+
+#virus.rules
+
+#nntp.rules
+
+#voip.rules
+
+#exploit.rules
+
+#snmp.rules
+
+#tftp.rules
+
+#x11.rules
+
+#rservices.rules
+
+#netbios.rules
+
+#specific-threats.rules
+
+Result: rule have uricontent;telnet.rules	0
+finger.rules	0
+pop3.rules	0
+web-coldfusion.rules	0
+shellcode.rules	0
+icmp-info.rules	0
+content-replace.rules	0
+dns.rules	0
+web-client.rules	0
+info.rules	0
+multimedia.rules	0
+scan.rules	0
+scada.rules	0
+p2p.rules	0
+web-iis.rules	0
+pop2.rules	0
+mysql.rules	0
+spyware-put.rules	0
+ftp.rules	0
+imap.rules	0
+smtp.rules	0
+backdoor.rules	0
+web-frontpage.rules	0
+web-misc.rules	0
+phishing-spam.rules	0
+dos.rules	0
+icmp.rules	0
+oracle.rules	0
+chat.rules	0
+blacklist.rules	0
+botnet-cnc.rules	0
+web-attacks.rules	0
+misc.rules	0
+experimental.rules	0
+rpc.rules	0
+web-cgi.rules	0
+policy.rules	0
+sql.rules	0
+attack-responses.rules	0
+other-ids.rules	0
+web-activex.rules	0
+bad-traffic.rules	0
+ddos.rules	0
+web-php.rules	0
+virus.rules	0
+nntp.rules	0
+voip.rules	0
+exploit.rules	0
+snmp.rules	0
+tftp.rules	0
+x11.rules	0
+rservices.rules	0
+netbios.rules	0
+specific-threats.rules	0
+Sum	0
