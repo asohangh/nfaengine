@@ -42,7 +42,7 @@ public class icnc_generator {
      */
 
     private void action() throws FileNotFoundException, IOException {
-        String file = infolder + "ieice.200.pcre";
+        String file = infolder + "ieice.100.pcre";
         //this.readfromfile_v1(file); //v1 support only sigle group.
         this.readFromFile_v2(file); //v2 support multipe group.
         System.out.println("finish readfromfile");
@@ -94,7 +94,7 @@ public class icnc_generator {
         //Generate Testbench
         gen.genTestBench();
         //this.hdlGen.outputExcelStatistic();
-        gen.genMZInstructionFile();
+       // gen.genMZInstructionFile();
         //this.calculateChar();
     }
 
