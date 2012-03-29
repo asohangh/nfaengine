@@ -31,9 +31,9 @@ public class icnc_generator {
     RTL_Creator_v2 creator;
     //ieice section
     public static String infolder = System.getProperty("user.dir")
-            + File.separator + "ieice" + File.separator + "test.2" + File.separator;
+            + File.separator + "ieice" + File.separator + "test.3" + File.separator;
     public static String outfolder = System.getProperty("user.dir")
-            + File.separator + "ieice" + File.separator + "test.2" + File.separator;
+            + File.separator + "ieice" + File.separator + "test.3" + File.separator;
     /*//LVTN secsion
     public static String infolder = System.getProperty("user.dir")
     + File.separator + "lvtn" + File.separator + "4dung" + File.separator;
@@ -42,7 +42,7 @@ public class icnc_generator {
      */
 
     private void action() throws FileNotFoundException, IOException {
-        String file = infolder + "ieice.100.pcre";
+        String file = infolder + "web-activex.rules";
         //this.readfromfile_v1(file); //v1 support only sigle group.
         this.readFromFile_v2(file); //v2 support multipe group.
         System.out.println("finish readfromfile");
@@ -93,9 +93,10 @@ public class icnc_generator {
 
         //Generate Testbench
         gen.genTestBench();
-        //this.hdlGen.outputExcelStatistic();
+        gen.outputExcelStatistic();
+        gen.outstatistic();
        // gen.genMZInstructionFile();
-        //this.calculateChar();
+        this.calculateChar();
     }
 
     private void readFromFile_v1(String file) throws FileNotFoundException, IOException {

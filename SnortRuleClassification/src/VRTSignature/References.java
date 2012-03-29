@@ -329,7 +329,7 @@ public class References {
      *  +,! /| or ^|
      *  +,! backreference
      *  +,! ^ not at the begining.
-     *  +,! complex modifier.
+     *  //+,! complex modifier.
      */
     public static boolean isSupportablePCRE(PCRE rule) {
         //Remove rule contraint inside constraint
