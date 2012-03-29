@@ -4,6 +4,7 @@
  */
 package HDL_Generator;
 
+import BRAM.BRAM;
 import Builder.MzInstructionBuilder_v1;
 import RTL_Creator.RTL_Creator_v2;
 import RegexEnginev2.BlockChar;
@@ -27,6 +28,14 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import jxl.Workbook;
+import jxl.write.Label;
+import jxl.write.WritableCellFormat;
+import jxl.write.WritableFont;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
 
 /**
  *
@@ -1568,7 +1577,7 @@ public class HDL_Generator_v2 {
 
     public void outstatistic() {
         //num of char. num of reduce char
-        System.out.println("outstatistic: print charsize");
+        System.out.println("outstatistic() print charsize");
         rtlCreator.printCharSize();
     }
 
@@ -1669,7 +1678,109 @@ public class HDL_Generator_v2 {
         } catch (IOException ex) {
             Logger.getLogger(HDL_Generator_v2.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-
     }
+    
+    public void outputExcelStatistic() {
+        try {
+            WritableWorkbook workbook = Workbook.createWorkbook(new File(this.genfolder + "Report.xls"));
+           
+            //ouput rules
+            WritableSheet sheet = workbook.createSheet("Rules", 0); // sheet name
+            int row = 1;
+            /*
+            for (int i = 0; i < this.rtlCreator.lsGroup.size(); i++) {
+                Label label = new Label(0, row, Integer.toString(i));
+                sheet.addCell(label);
+                LinkedList<String> list = this.rtlCreator.lsGroup.get(i).lengine.get(i).;
+                for (int j = 0; j < list.size(); j++) {
+                    //index
+                    label = new Label(1, row, Integer.toString(row));
+                    sheet.addCell(label);
+                    //value
+                    label = new Label(2, row, list.get(j));
+                    sheet.addCell(label);
+                    row++;
+                }
+            }
+
+            //write titles of columns
+            WritableFont wf = new WritableFont(WritableFont.ARIAL, 12, WritableFont.BOLD);
+            WritableCellFormat w1 = new WritableCellFormat(wf);
+            String titles = "Index Bram; Index Pcre; PCRE";
+            String[] atitle = titles.split("; ");
+            for (int i = 0; i < atitle.length; i++) {
+                Label label = new Label(i, 0, atitle[i], w1);
+                sheet.addCell(label);
+            }
+
+*/
+            WritableFont wf = new WritableFont(WritableFont.ARIAL, 12, WritableFont.BOLD);
+            WritableCellFormat w1 = new WritableCellFormat(wf);
+            String titles = "Index Bram; Index Pcre; PCRE";
+            String[] atitle = titles.split("; ");
+            //ouput statis tic
+            sheet = workbook.createSheet("Statistic", 1); // sheet name
+            for (int i = 0; i < this.rtlCreator.lsGroup.size(); i++) {
+                //BRAM bram = this.rtlCreator.arrayBRam[i];
+                ReEngineGroup group = this.rtlCreator.lsGroup.get(i);
+                Label label = new Label(0, i + 1, "Group" + Integer.toString(i));
+                sheet.addCell(label);
+                //no of cpre
+                label = new Label(1, i + 1, Integer.toString(group.lengine.size()));
+                sheet.addCell(label);
+                // no of char
+                label = new Label(2, i + 1, Integer.toString(group.noChar));
+                sheet.addCell(label);
+
+                //count nfa state
+                int nfa = 0;
+                for (int j = 0; j < group.lengine.size(); j++) {
+                    ReEngine re = group.lengine.get(j);
+                    nfa += re.nfa.lState.size();
+                }
+                label = new Label(3, i + 1, Integer.toString(nfa));
+                sheet.addCell(label);
+
+                //count no state crb
+                int state = 0, crb = 0;
+                for (int j = 0; j < group.lengine.size(); j++) {
+                    ReEngine re = group.lengine.get(j);
+                    for (int k = 0; k < re.listBlockState.size(); k++) {
+                        if (re.listBlockState.get(k).isConRep) {
+                            crb++;
+                            BlockConRep bcr = (BlockConRep) re.listBlockState.get(k);
+
+                        } else {
+                            state++;
+                        }
+                    }
+                }
+                label = new Label(4, i + 1, Integer.toString(state));
+                sheet.addCell(label);
+                label = new Label(5, i + 1, Integer.toString(crb));
+                sheet.addCell(label);
+            }
+
+
+
+            //write titles of columns
+            wf = new WritableFont(WritableFont.ARIAL, 12, WritableFont.BOLD);
+            w1 = new WritableCellFormat(wf);
+            titles = "BRAM; No PCRE; No Char; No NFA; No State; No CRB";
+            atitle = titles.split("; ");
+            for (int i = 0; i < atitle.length; i++) {
+                Label label = new Label(i, 0, atitle[i], w1);
+                sheet.addCell(label);
+            }
+
+
+            workbook.write();
+            workbook.close();
+        } catch (WriteException ex) {
+            Logger.getLogger(HDL_Generator_v1.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(HDL_Generator_v1.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
 }

@@ -26,12 +26,12 @@ public class DoIt {
         rd.setOutputFolder(outdir);
         
          // Backup database
-         //rd.buildDatabase();
-        //rd.backupDatabase("allsig");
+        rd.buildDatabase();
+        rd.backupDatabase("allsig.xls");
         
          // Restore database
-        rd.restoreDatabase(outdir, "allsig.xls");
-        rd.backupDatabase(outdir, "test2");       
+        //rd.restoreDatabase(outdir, "allsig.xls");
+        //rd.backupDatabase(outdir, "test2");       
         //rd.print4Test();
         //Statistic0 st = new Statistic0(rd);
         //st.DoScript();
