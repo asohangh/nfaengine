@@ -3,11 +3,12 @@
  * and open the template in the editor.
  */
 
-package DFA;
+package dfa;
 
-import NFA.NFAEdge;
-import NFA.NFAState;
 import java.util.LinkedList;
+
+import nfa.NFAEdge;
+import nfa.NFAState;
 
 /**
  *

@@ -4,9 +4,9 @@
  */
 package ParseTree;
 
-import PCREv2.Element;
-import PCREv2.PcreRule;
-import PCREv2.Refer;
+import mip.pcre.pcre_v2.Element;
+import mip.pcre.pcre_v2.PCREPattern;
+import mip.pcre.pcre_v2.Refer;
 
 
 /*
@@ -41,10 +41,10 @@ import PCREv2.Refer;
  */
 public class ParseTree {
 
-    private PcreRule rule;
+    private PCREPattern rule;
     private int index = 0;
 
-    public ParseTree(PcreRule other) {
+    public ParseTree(PCREPattern other) {
         this.rule = other;
     }
     //Building Nodev2 Function nest.
@@ -98,7 +98,7 @@ public class ParseTree {
      * @param rule
      * @return
      */
-    public Node parseConcat(PcreRule rule) {
+    public Node parseConcat(PCREPattern rule) {
         Node temp = parseRep(rule);
         if (temp == null) {
             PCRE.Refer.println("Somethig wrong, parseConcat", null);
@@ -117,7 +117,7 @@ public class ParseTree {
      * @param rule
      * @return
      */
-    public Node parseRep(PcreRule rule) {
+    public Node parseRep(PCREPattern rule) {
         Node temp = parseAtom(rule);
         if (temp == null) {
             System.out.println("Somethingworng rep");
@@ -142,12 +142,12 @@ public class ParseTree {
      * @param rule
      * @return
      */
-    public Node parseAtom(PcreRule rule) {
+    public Node parseAtom(PCREPattern rule) {
         Node temp = null;
         if (rule.isNotEnd(index)) {
             Element e = rule.getElement(index);
             if (e.isParentheis) {
-                PcreRule other = new PcreRule(e);
+                PCREPattern other = new PCREPattern(e);
                 ParseTree parsetree = new ParseTree(other);
                 temp = parsetree.parsePcre();
                 index++;

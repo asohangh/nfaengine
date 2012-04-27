@@ -1,8 +1,9 @@
 package RegexEnginev2;
 
-import NFA.NFAEdge;
 import java.util.LinkedList;
-import PCREv2.Refer;
+
+import mip.pcre.pcre_v2.Refer;
+import nfa.NFAEdge;
 
 public class BlockChar {
 

@@ -1,0 +1,16 @@
+/[0-9]+/R
+/exec_sdbinfo\s+[\x26\x3b\x7c\x3e\x3c]/i
+/CHAR\(.*?CHAR\(.*?CHAR\(.*?CHAR\(.*?CHAR\(/smi
+/CHAR\(.*?CHAR\(.*?CHAR\(/smi
+/s\x00e\x00t\x00(\s\x00)+a\x00n\x00s\x00i\x00_\x00p\x00a\x00d\x00d\x00i\x00n\x00g\x00(\s\x00)+o\x00f\x00f\x00/smi
+/set\s+ansi_padding\s+off/smi
+/(update|exec|insert|union)[^\/\\]*\/\*.*\*\//Uis
+/sipark-log-summary\.jsp\?(username|numa(a|b)|type)[^\s]*\s/Umi
+/union\s+select\s+[^\/\\]+from\s+[^\/\\]+/Pi
+/insert\s+into\s+[^\/\\]+/Ui
+/union\s+select\s+[^\/\\]+from\s+[^\/\\]+/Ui
+/update\s+[^\/\\]+set\s+[^\/\\]+/Pi
+/exec\s+master/Ui
+/insert\s+into\s+[^\/\\]+/Pi
+/update\s+[^\/\\]+set\s+[^\/\\]+/Ui
+/exec\s+master/Pi

@@ -1,0 +1,6 @@
+/^(\x03|\x04|\x05)/sm
+/ftp\x3A\x2F\x2F[\w\x2E\x2F]+[^\x2F]\x3Btype=D/i
+/^(GET|POST|PUT|HEAD)/mi
+/^Cache-Control\x3A\s*(max-(age|stale)|min-fresh|s-maxage)\s*\x3D[^\d]+\x0A/smi
+/^HTTP[^\n]+\x2D100/i
+/^content-length\s*\x3A/mi

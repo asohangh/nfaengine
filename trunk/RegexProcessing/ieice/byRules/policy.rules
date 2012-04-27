@@ -1,0 +1,16 @@
+/^USER\s+(anonymous|ftp)[^\w]*[\r\n]/smi
+/mstshash\s*\x3d\s*Administr/smi
+/^User-Agent\x3A[^\n\r]+Gizmo/smi
+/User-Agent\x3A[^\n\r]+WebshotsNetClient/smiH
+/SILC\x2d\d\x2e\d/smi
+/User-Agent\x3A[^\n\r]+Google[^\n\r]+Desktop/smiH
+/^\xfe\x37\x00\x23/m
+/^\s*\w+\s+NO LOGIN/smi
+/^SSH-[12]\.\d+/smi
+/^X-LINK2STATE\s+CHUNK/smi
+/^STOR[^\r\n]+?\.(com|dll|exe|js|vbs)/smi
+/\/F[^\/>]+\.(exe|dll|com|swf)/smi
+/^Content-Type\x3a[\x20\x09]+application\/octet-stream/smiH
+/Cookie\x3A.*s_sq=aolsnssignin/si
+/^Content-Type\x3a[\x20\x09]+application\/x-msdos-program/smiH
+/<\s*object[^>]*?data\s*\x3A[^,>]*?base64/smi

@@ -4,7 +4,7 @@
  */
 package RegexEnginev2;
 
-import NFA.NFA;
+import nfa.NFA;
 
 /**
  *

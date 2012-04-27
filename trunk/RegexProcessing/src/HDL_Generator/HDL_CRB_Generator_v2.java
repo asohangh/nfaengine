@@ -2,9 +2,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package HDL_Generator;
+package hdl_generator;
 
-import NFA.NFA;
 import ParseTree.ParseTree;
 import ParseTree.RegexTree;
 import RegexEnginev2.BlockChar;
@@ -15,6 +14,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
+
+import nfa.NFA;
 
 /**
  *

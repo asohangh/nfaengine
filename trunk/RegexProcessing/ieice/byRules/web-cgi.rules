@@ -1,0 +1,8 @@
+/evtdump\x3f.*?\x2525[^\x20]*?\x20HTTP/i
+/ShellExample.cgi\?[^\n\r\&]*\x2a/Ui
+/update=[^\r\n\x26]+/Ui
+/awstats.pl?[^\r\n]*logfile=\x7C/Ui
+/awstats.pl?[^\r\n]*configdir=\x7C/Ui
+/itemid=\d*[^\d\&\;\r\n]/i
+/db4web_c(\.exe)?\/.*(\.\.[\\|\/]|[a-z]\:)/smiU
+/\x2fwiki[^\n]*\x3fuselang=[^\n\x26\x3f]*[a-zA-Z\x2d]/Usmi

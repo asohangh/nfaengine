@@ -2,12 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package DFA;
+package dfa;
 
-import NFA.NFA;
-import NFA.NFAEdge;
-import NFA.NFAState;
 import java.util.LinkedList;
+
+import nfa.NFA;
+import nfa.NFAEdge;
+import nfa.NFAState;
 
 /**
  *

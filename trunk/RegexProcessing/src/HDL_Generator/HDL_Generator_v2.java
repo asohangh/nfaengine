@@ -2,9 +2,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package HDL_Generator;
+package hdl_generator;
 
-import BRAM.BRAM;
 import Builder.MzInstructionBuilder_v1;
 import RTL_Creator.RTL_Creator_v2;
 import RegexEnginev2.BlockChar;
@@ -28,6 +27,8 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import bram.BRAM;
 
 import jxl.Workbook;
 import jxl.write.Label;

@@ -4,10 +4,11 @@
  */
 package RegexEnginev2;
 
-import NFA.NFA;
-import PCREv2.PcreRule;
 import ParseTree.RegexTree;
 import java.util.LinkedList;
+
+import mip.pcre.pcre_v2.PCREPattern;
+import nfa.NFA;
 
 /**
  *
@@ -69,7 +70,7 @@ public class ReEngineGroup {
     public void buildPrefix(LinkedList<String> lsprefix) {
         for (int i = 0; i < lsprefix.size(); i++) {
             String s = lsprefix.get(i);
-            PcreRule rule = new PcreRule(s);
+            PCREPattern rule = new PCREPattern(s);
             RegexTree tree = new RegexTree(rule);
             tree.parseTree();
             NFA nfa = new NFA();
@@ -89,7 +90,7 @@ public class ReEngineGroup {
 
         for (int i = 0; i < lsinfix.size(); i++) {
             String s = lsinfix.get(i);
-            PcreRule rule = new PcreRule(s);
+            PCREPattern rule = new PCREPattern(s);
             RegexTree tree = new RegexTree(rule);
             tree.parseTree();
             NFA nfa = new NFA();
@@ -109,7 +110,7 @@ public class ReEngineGroup {
         int sizeChar = 0;
         for (int i = 0; i < lsengine.size(); i++) {
             String s = lsengine.get(i);
-            PcreRule rule = new PcreRule(s);
+            PCREPattern rule = new PCREPattern(s);
             sizeChar += rule.getNoChar();
             RegexTree tree = new RegexTree(rule);
             tree.parseTree();

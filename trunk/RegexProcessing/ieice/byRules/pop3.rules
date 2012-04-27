@@ -1,0 +1,4 @@
+/^DELE\s+-\d/smi
+/^UIDL\s+-\d/smi
+/^USER\s+[^\n]*?%/smi
+/^PASS\s+[^\n]*?%/smi
