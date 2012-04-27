@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package PCREv2;
+package mip.pcre.pcre_v2;
 
 import java.util.LinkedList;
 
@@ -24,7 +24,6 @@ public class ElementParser {
     }
 
     public void parseElement() {
-
         while (index < pcre.length()) {
             Element e = this.getElement();
             if (e.isAtom) {
@@ -423,8 +422,8 @@ public class ElementParser {
      */
     private void parseParenthesis(Element e) {
         String value = e.value.trim();
-        char chr = value.charAt(0);
-        int last;
+       // char chr = value.charAt(0);
+        //int last;
         if (value.length() == 6) {
             if (value.charAt(0) == '!' && value.charAt(1) == 'p') {
                 //is prefix

@@ -1,0 +1,13 @@
+/^Argument\s+\//smi
+/^Directory/smiR
+/--backup-dir\s+\x2e\x2e\x2f/
+/^(CLIENT|MACHINE)_INFO/Ri
+/SELECT\s*(TO_(DATE|CHAR)|(VARCHAR|TIMESTAMP)_FORMAT)\s*\('[^']*'\s*,\s*''\)/smi
+/^(UN)?SUBSCRIBE\s/smi
+/\x3d\x00\x12\x00..........(.[\x80-\xff]|...[\x80-\xff])/smiR
+/^URL\x3b\w+\x3amailto\x3a[^\n]*%[^\n]*\.(cmd|bat)/smi
+/[^\n]*?[\x25\x22]\x2E(com|bat|cmd|exe)/Ri
+/PW\x2E?[0-9]+\s*,\s*/
+/^\s*[^\x3e]*src\s*\x3d\s*[\x22\x27][^\x22\x27]*javascript\x3a/iR
+/^(MZ|PK|BZh|BZ|GIF8|BM|IC|PI|CI|CP)/R
+/\x0D\x0A?(MZ|PK|BZh|BZ|GIF8|BM|IC|PI|CI|CP)/

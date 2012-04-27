@@ -1,4 +1,4 @@
-package PCREv2;
+package mip.pcre.pcre_v2;
 
 /**
  *

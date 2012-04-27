@@ -4,14 +4,16 @@
  */
 package RegexEngine;
 
-import HDL_Generator.HDL_CRB_Generator_v1;
-import NFA.NFAEdge;
-import NFA.NFA;
 import ParseTree.ParseTree;
 import PCRE.Refer;
 import ParseTree.RegexTree;
+import hdl_generator.HDL_CRB_Generator_v1;
+
 import java.io.IOException;
 import java.util.LinkedList;
+
+import nfa.NFA;
+import nfa.NFAEdge;
 
 /**
  *

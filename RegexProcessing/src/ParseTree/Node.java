@@ -4,8 +4,8 @@
  */
 package ParseTree;
 
-import PCREv2.Element;
-import PCREv2.Refer;
+import mip.pcre.pcre_v2.Element;
+import mip.pcre.pcre_v2.Refer;
 
 /**
  *

@@ -4,15 +4,17 @@
  */
 package test;
 
-import HDL_Generator.HDL_Generator_v2;
-import PCREv2.PcreRule;
 import RTL_Creator.RTL_Creator_v2;
+import hdl_generator.HDL_Generator_v2;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
+
+import mip.pcre.pcre_v2.PCREPattern;
 
 /**
  *
@@ -140,7 +142,7 @@ public class icnc_generator {
         for (int i = 0; i < this.len.size(); i++) {
             int size;
             String pcre = this.len.get(i);
-            PcreRule rule = new PcreRule(pcre);
+            PCREPattern rule = new PCREPattern(pcre);
             size = rule.getNoChar();
             System.out.println("\t" + size + " - " + pcre);
             count += rule.getNoChar();

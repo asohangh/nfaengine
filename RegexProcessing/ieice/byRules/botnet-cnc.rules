@@ -1,0 +1,7 @@
+/^User-Agent\x3A[^\r\n]*beagle_beagle/smiH
+/tip\x3D[a-zA-Z]+\x26cli\x3D[a-zA-Z]+\x26tipo\x3Dcli\x26inf\x3D/smi
+/^connected\x2e[^\x0D\x0A]*20\d\d[^\x0D\x0A]*ver\x3A\s+Legends\s2\x2e1/smi
+/^User\x2DAgent\x3A\s+Ryeol\s+HTTP\s+Client\s+Class/smiH
+/^Host\x3A\s+.*jaiku\x2Ecom/smiH
+/^\x2Fcap\x2Ftemp\x2F[A-Za-z0-9]+\x2Ejpg/miU
+/\d+&/miR

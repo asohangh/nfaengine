@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package PCREv2;
+package mip.pcre.pcre_v2;
 
 /**
  *
@@ -70,6 +70,6 @@ public class ElementAtom extends Element {
                 ret = value;
                 break;
         }
-        return value;
+        return ret;
     }
 }

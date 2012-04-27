@@ -1,0 +1,11 @@
+/^POST\s/smi
+/\.x[sm]l/Ui
+/default.idq[^\r\n]*ciRestriction[^\r\n]*script/smi
+/\/_vti_bin\/\.dll\/(%(0[1-9]|1[0-f])|%3f|\x22|\x2a|\x3a|<|>)[\\\/]~[0-9]/Ui
+/filename\x3d\x22[^\x22]*asp/smiH
+/.cmd\x22.*\x26.*/smi
+/CiWebHitsFile=\/?([^\r\n\x3b\&]*\.\.\/)?/i
+/^Authorization|3A|\s*Basic\s+TERBUF9Bbm9ueW1vdXM6TGRhcFBhc3N3b3JkXzE=/smi
+/.bat\x22.*\x26.*/smi
+/%.*%/smiI
+/^(GET|OPTIONS|HEAD|POST|PUT|DELETE|CONNECT|PROPFIND|PROPPATCH|MKCOL|COPY|MOVE|LOCK|UNLOCK)[^\r\n]*\s+[^\r\n]*\x2f\x25c0\x25af\x2f/mi

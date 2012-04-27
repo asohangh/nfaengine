@@ -4,15 +4,17 @@
  */
 package Builder;
 
-import BRAM.BRAM;
-import HDL_Generator.HDL_Generator_v1;
 import RTL_Creator.RTL_Creator_v1;
+import hdl_generator.HDL_Generator_v1;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
+
+import bram.BRAM;
 
 /**
  *

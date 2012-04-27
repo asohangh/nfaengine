@@ -5,9 +5,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import NFA.*;
 import java.io.File;
-import PCREv2.PcreRule;
+
+import mip.pcre.pcre_v2.PCREPattern;
+import nfa.*;
 
 /**
  *
@@ -26,7 +27,7 @@ public class ReEngine {
     public static String _default_file_name = "reengine.dot";
     public LinkedList<BlockChar> listBlockChar;    // All block char in RegEx engine.
     public LinkedList<BlockState> listBlockState;  // All block State in RegEx engine.
-    public PcreRule rule;                           // Need infomation about pcre Rule
+    public PCREPattern rule;                           // Need infomation about pcre Rule
     public LinkedList<BlockState> listEndState;     // it use for prefix share and generate hdl.
     //orther attribute
     public int order;                      // use in building a list of engine.

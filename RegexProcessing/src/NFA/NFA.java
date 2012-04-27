@@ -2,16 +2,17 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package NFA;
+package nfa;
 
-import PCREv2.PcreRule;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import ParseTree.Node;
-import PCREv2.Refer;
 import ParseTree.RegexTree;
 import java.util.LinkedList;
+
+import mip.pcre.pcre_v2.PCREPattern;
+import mip.pcre.pcre_v2.Refer;
 
 /**
  *
@@ -500,7 +501,7 @@ public class NFA {
         this.lState.remove(state);
     }
 
-    public PcreRule getRule() {
+    public PCREPattern getRule() {
         if (this.tree != null) {
             return this.tree.rule;
         }

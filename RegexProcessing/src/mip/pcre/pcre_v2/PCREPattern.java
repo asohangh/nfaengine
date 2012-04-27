@@ -1,4 +1,4 @@
-package PCREv2;
+package mip.pcre.pcre_v2;
 
 import java.util.LinkedList;
 
@@ -10,7 +10,7 @@ import java.util.LinkedList;
  *
  * include dedicated method for parse tree;
  */
-public class PcreRule {
+public class PCREPattern {
 
     // pcre:  /<pattern>/[<modifier>]
     private String regex;         //Content of pcreRule
@@ -20,13 +20,13 @@ public class PcreRule {
     // index for element process
     private String pcrerule;
 
-    public PcreRule() {
+    public PCREPattern() {
         regex = "";
         modifier = "";
         pcrerule = "";
     }
 
-    public PcreRule(String rule) {
+    public PCREPattern(String rule) {
         System.out.println("PcreRule.java: " + rule);
         regex = "";
         modifier = "";
@@ -41,7 +41,7 @@ public class PcreRule {
      * this func for parse tree
      * @param e
      */
-    public PcreRule(Element e) {
+    public PCREPattern(Element e) {
         if (e.isParentheis) {
             ElementParenthesis epar = (ElementParenthesis) e;
             this.modifier = epar.modifier;

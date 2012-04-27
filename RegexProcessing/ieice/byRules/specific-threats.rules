@@ -1,0 +1,12 @@
+/^X-Mailer\x3A[^\r\n]*zhangpo/smi
+/^Subject\x3A[^\r\n]*don't\sbe\slate!/smi
+/^From\x3A[^\r\n]*Trojaner-Info<webmaster@trojaner-info\x2Ede>/smi
+/^Subject\x3A[^\r\n]*Trojaner-Info\sNewsletter/smi
+/BEGIN\x3AVEVENT\x0D\x0A.*X-MICROSOFT-CDO-MODPROPS\x3A[^\n]*X-MICROSOFT-CDO-MODPROPS.+X-MICROSOFT-CDO-MODPROPS\x3A.+END\x3AVEVENT/smi
+/spell\.customDictionaryOpen\x5C\((\s*\d|[^\x2C]+\x2C\s*[A-Z\d_])/smi
+/getAnnots\x5C?\([^\x29\x2C]+\x2C\s*[^\x29\x2C]+\x2C\s*[^\x29\x2C]+\x2C\s*-\d/smi
+/\x29\s*\x2f\s*Math.LN2\x29/i
+/(C|#43)(o|#6F)(l|#6C)(o|#6F)(r|#72)(s|#73)\s*1073741838/smi
+/var num \x3D (-1|168430090)\x3B/i
+/\x2EgetElementsByTagName\x28[^\x29]+?\x2EremoveNode\x28true\x29/smi
+/on(before|de)activate\s*\x3d\s*function\s*\x28\x29\s*\x7b\s*call(back|malFunc)\x28\x29/i

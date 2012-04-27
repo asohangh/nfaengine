@@ -4,8 +4,9 @@
  */
 package RegexEnginev2;
 
-import NFA.NFAEdge;
 import java.util.LinkedList;
+
+import nfa.NFAEdge;
 
 /**
  *

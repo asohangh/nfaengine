@@ -4,8 +4,6 @@
  */
 package RTL_Creator;
 
-import BRAM.BRAM;
-import NFA.NFA;
 import ParseTree.ParseTree;
 import ParseTree.RegexTree;
 import RegexEngine.BlockConRep;
@@ -14,6 +12,10 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
+
+import bram.BRAM;
+
+import nfa.NFA;
 
 /**
  * 1. BRam structure

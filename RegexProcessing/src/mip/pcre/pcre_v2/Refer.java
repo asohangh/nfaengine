@@ -1,6 +1,6 @@
-package PCREv2;
+package mip.pcre.pcre_v2;
 
-import ParseTree.Node;
+import mip.pcre.parsetree_v2.*;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.logging.Level;
@@ -169,12 +169,12 @@ public class Refer {
         boolean success = false;
         File folder = new File(path);
         if (folder.exists()) {
-            PCREv2.Refer.println("Create folder: " + path + " existed", doc);
+            mip.pcre.pcre_v2.Refer.println("Create folder: " + path + " existed", doc);
         } else {
             success = (new File(path)).mkdirs();
         }
         if (success) {
-            PCREv2.Refer.println("Create folder: " + path + " is created", doc);
+            mip.pcre.pcre_v2.Refer.println("Create folder: " + path + " is created", doc);
         }
         return success;
     }

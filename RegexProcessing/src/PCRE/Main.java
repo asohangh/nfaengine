@@ -1,7 +1,7 @@
 package PCRE;
 
-import DFA.DFA;
-import NFA.NFA;
+import dfa.DFA;
+import nfa.NFA;
 import ParseTree.ParseTree;
 import ParseTree.RegexTree;
 

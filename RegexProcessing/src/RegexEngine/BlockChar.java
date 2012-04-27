@@ -1,9 +1,10 @@
 package RegexEngine;
 
-import NFA.NFAEdge;
-import NFA.NFAState;
 import java.util.LinkedList;
 import java.io.BufferedWriter;
+
+import nfa.NFAEdge;
+import nfa.NFAState;
 import PCRE.Refer;
 
 public class BlockChar {

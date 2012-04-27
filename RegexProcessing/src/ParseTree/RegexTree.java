@@ -4,12 +4,13 @@
  */
 package ParseTree;
 
-import PCREv2.PcreRule;
-import PCREv2.Refer;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.text.Document;
+
+import mip.pcre.pcre_v2.PCREPattern;
+import mip.pcre.pcre_v2.Refer;
 
 /**
  *
@@ -18,22 +19,22 @@ import javax.swing.text.Document;
 public class RegexTree {
 
     public Node root;			// Root of the tree
-    public PcreRule rule;                   // DataStructure for Pcre rule.
+    public PCREPattern rule;                   // DataStructure for Pcre rule.
     public static String _default_folder = System.getProperty("user.dir") + System.getProperty("file.separator");
     public static String _default_file_name = "parsetree.dot";
     private boolean no_CRB = false;
 
-    public RegexTree(PcreRule rule) {
+    public RegexTree(PCREPattern rule) {
         this.rule = rule;
     }
 
     public RegexTree(String rule) {
-        this.rule = new PcreRule(rule);
+        this.rule = new PCREPattern(rule);
     }
 
     public RegexTree(String rule, boolean no_CRB) {
         this.no_CRB = no_CRB;
-        this.rule = new PcreRule(rule);
+        this.rule = new PCREPattern(rule);
     }
 
     public void parseTree() {
