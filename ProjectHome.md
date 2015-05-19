@@ -1,0 +1,4 @@
+-Related to NIDS (Network intrusion detection system)
+-This project create tool in java to parse pcre (Perl Compatible Regular Expressions) from Snort rule to parse tree.
+-Turn parse tree to nfa structure, or hardware structure based on fpga.
+-Create the Simulator for  hardware structure.
